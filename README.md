@@ -23,7 +23,18 @@ Supported project types and features:
 * Comprehensive UI for version administration
 * Command line interface with scripting engine
 * Own breed of script files for automated processing of large number of changes
- 
+
+Installation
+-
+
+### Eclipse update site
+* Releases: (soon)
+* Snapshots: (soon)
+
+### Command line tool 
+Call the main package "..." directly with 
+`java -jar ...`
+
 User's manual
 -
 -> See respective wiki page (soon)
