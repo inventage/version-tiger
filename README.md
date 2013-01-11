@@ -24,11 +24,11 @@ Supported project types and features:
 * Command line interface with scripting engine
 * Own breed of script files for automated processing of large number of changes
  
-Users manual
+User's manual
 -
 -> See respective wiki page (soon)
 
 
-Developers manual
+Developer's manual
 -
 -> See respective wiki page (soon)
