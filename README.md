@@ -5,7 +5,9 @@ Are you tired of the renaming orgy every time your project changes the version? 
 an Eclipse plugin/command line tool for easy and fast version administration (snapshot/release) of Maven artifacts. 
 Incrementing the version in all your dependent projects is now a matter of a single click.
 
-[screenshot]
+<a href='https://raw.github.com/wiki/inventage/snapshere-khan/update_version_dialog.png'>
+  <img src='https://raw.github.com/wiki/inventage/snapshere-khan/update_version_dialog.png' width='480px'/>
+</a>
 
 Features
 -
