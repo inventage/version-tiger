@@ -31,8 +31,8 @@ Then, check the plugin and install it.
 ### 2. Version your projects
 Start the versioning dialog by right clicking on a Maven/Tycho project and choosing the "Update version..." item.
 
-<a href='https://raw.github.com/wiki/inventage/snapshere-khan/update_version_context_menue_entry.png'>
-  <img src='https://raw.github.com/wiki/inventage/snapshere-khan/update_version_context_menue_entry.png' width='480px'/>
+<a href='https://raw.github.com/wiki/inventage/snapshere-khan/update_version_context_menu_entry.png'>
+  <img src='https://raw.github.com/wiki/inventage/snapshere-khan/update_version_context_menu_entry.png' width='480px'/>
 </a>
 
 It brings up the dialog which lets you select the desired new version in the chosen projects.
