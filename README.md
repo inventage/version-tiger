@@ -24,7 +24,7 @@ Quick Start
 ### 1. Install the plugin in Eclipse
 To do so, open the "Help -> Install new software..." menu and enter our release URL as software site:
 
-    https://raw.github.com/inventage/snapshere-khan_data/master/releases/
+    https://raw.github.com/inventage/snapshere-khan-repos/master/releases/
 
 Then, check the plugin and install it.
 
