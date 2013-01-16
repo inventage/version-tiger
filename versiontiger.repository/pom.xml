@@ -1,0 +1,52 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.inventage.tools.versiontiger</groupId>
+		<artifactId>versiontiger.parent</artifactId>
+		<version>1.0.2-SNAPSHOT</version>
+		<relativePath>../versiontiger.parent/pom.xml</relativePath>
+	</parent>
+
+	<artifactId>versiontiger.repository</artifactId>
+	<packaging>eclipse-repository</packaging>
+
+	<name>Version-Tiger - Repository</name>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<configuration>
+					<target>
+						<ant antfile="${basedir}/deploy.xml"><target name="update.p2"/></ant>
+					</target>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<phase>deploy</phase>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho.extras</groupId>
+				<artifactId>tycho-p2-extras-plugin</artifactId>
+				<configuration>
+					<source>
+						<repository>
+							<url>file:${project.build.directory}/repository</url>
+							<layout>p2</layout>
+						</repository>
+					</source>
+					<destination>${p2.release.repository}</destination>
+					<append>true</append>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

@@ -1,0 +1,142 @@
+Manifest-Version: 1.0
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: CDC-1.0/Foundation-1.0,J2SE-1.3
+Bundle-SymbolicName: org.eclipse.core.runtime; singleton:=true
+Require-Bundle: org.eclipse.osgi;bundle-version="[3.5.0,4.0.0)";visibi
+ lity:=reexport,org.eclipse.equinox.common;bundle-version="[3.5.0,4.0.
+ 0)";visibility:=reexport,org.eclipse.core.jobs;bundle-version="[3.2.0
+ ,4.0.0)";visibility:=reexport,org.eclipse.equinox.registry;bundle-ver
+ sion="[3.4.0,4.0.0)";visibility:=reexport,org.eclipse.equinox.prefere
+ nces;bundle-version="[3.2.0,4.0.0)";visibility:=reexport,org.eclipse.
+ core.contenttype;bundle-version="[3.3.0,4.0.0)";visibility:=reexport,
+ org.eclipse.core.runtime.compatibility.auth;bundle-version="[3.2.0,4.
+ 0.0)";resolution:=optional,org.eclipse.equinox.app;bundle-version="[1
+ .0.0,2.0.0)";visibility:=reexport
+Bundle-Activator: org.eclipse.core.internal.runtime.PlatformActivator
+Export-Package: org.eclipse.core.internal.preferences.legacy;x-interna
+ l:=true,org.eclipse.core.internal.runtime;x-friends:="org.eclipse.cor
+ e.runtime.compatibility",org.eclipse.core.runtime;version="3.4.0"
+Bundle-Version: 3.5.0.v20090525
+Bundle-ActivationPolicy: lazy
+Bundle-Vendor: %providerName
+Bundle-Name: %pluginName
+DynamicImport-Package: org.eclipse.core.internal.runtime.auth
+Bundle-ManifestVersion: 2
+
+Name: org/eclipse/core/internal/runtime/PlatformActivator.class
+SHA1-Digest: LIJHFb/1PYmd7VICoy6+a5Sq5+0=
+
+Name: org/eclipse/core/internal/runtime/Messages.class
+SHA1-Digest: nP8P0tVyF3DHDafkMwKrDKEA50U=
+
+Name: org/eclipse/core/internal/runtime/PlatformLogWriter.class
+SHA1-Digest: yObI+FQtLJYW0tbAdo8MoToDhNg=
+
+Name: org/eclipse/core/runtime/IProduct.class
+SHA1-Digest: s7ngH/E5MZ1YSS8QmJGggGZWXJM=
+
+Name: org/eclipse/core/internal/runtime/InternalPlatform.class
+SHA1-Digest: CfMSvUnWWEGnHyvBTBVXv4D9TVA=
+
+Name: org/eclipse/core/internal/runtime/messages.properties
+SHA1-Digest: XSckk2pINvoNohdA+HIC96CKaSw=
+
+Name: org/eclipse/core/runtime/Preferences$IPropertyChangeListener.cla
+ ss
+SHA1-Digest: 4injDvrQrZcU15r/nduvBLliPwM=
+
+Name: org/eclipse/core/runtime/PerformanceStats.class
+SHA1-Digest: t6gBWa4w7YcOxbbunhx/NnWSfgE=
+
+Name: org/eclipse/core/runtime/PerformanceStats$PerformanceListener.cl
+ ass
+SHA1-Digest: JhjD6zxU2vdzkizVsHsDikXGL4M=
+
+Name: org/eclipse/core/internal/runtime/Product.class
+SHA1-Digest: ytsQC5Kf64mrj5JeR08oGgL2DWk=
+
+Name: org/eclipse/core/runtime/Preferences.class
+SHA1-Digest: jwUxuvrKp/UTO31uW44/+fCbnJY=
+
+Name: plugin.properties
+SHA1-Digest: WkaWsB1ufAz1gxSW3jY8IV3s3Ks=
+
+Name: org/eclipse/core/internal/preferences/legacy/InitLegacyPreferenc
+ es.class
+SHA1-Digest: A2xtNwABAFIuTzOIpEU90tLYCpo=
+
+Name: org/eclipse/core/runtime/IPlatformRunnable.class
+SHA1-Digest: Dt3kWwh6WFmO+8g0MviG26QReWc=
+
+Name: org/eclipse/core/runtime/ILibrary.class
+SHA1-Digest: Y0wg1RnYJbL209dGB2bRAYJrRd0=
+
+Name: org/eclipse/core/runtime/IProductProvider.class
+SHA1-Digest: Aw4YNcxLM0kPbPOiGIOHT4vlHOs=
+
+Name: org/eclipse/core/runtime/ILog.class
+SHA1-Digest: 7oy6dbTHNw87Un0AUbPBmmQFtVY=
+
+Name: org/eclipse/core/runtime/Preferences$1.class
+SHA1-Digest: 7IoDCU/+7JX0ViJOCjsuVD/UEXc=
+
+Name: org/eclipse/core/internal/runtime/CompatibilityHelper.class
+SHA1-Digest: mL1DT4ac8ZFub8br/E/e29DVVCc=
+
+Name: plugin.xml
+SHA1-Digest: 9i6RthsvxiQ+nLDSI8EHZ8u0O/s=
+
+Name: org/eclipse/core/internal/runtime/PerformanceStatsProcessor.clas
+ s
+SHA1-Digest: hWS+WX3YkfUKSHQYX9b7ygHJo0Y=
+
+Name: org/eclipse/core/runtime/IPluginDescriptor.class
+SHA1-Digest: FgzvW6I7JffUr+gp9LYHYjlgoe0=
+
+Name: org/eclipse/core/internal/runtime/Log.class
+SHA1-Digest: EsAZAabhKkuIZo2x0C/WAKcUHMI=
+
+Name: META-INF/eclipse.inf
+SHA1-Digest: KyT9FF7C7t86NoBoa2kZT3ZJBfw=
+
+Name: org/eclipse/core/internal/preferences/legacy/PreferenceForwarder
+ .class
+SHA1-Digest: DaWtqzpusvANAW66GkUHjsxMsQo=
+
+Name: org/eclipse/core/runtime/IPluginPrerequisite.class
+SHA1-Digest: vVdhQAd8K8eQuzDoVtEK2v8VGU4=
+
+Name: .api_description
+SHA1-Digest: aXGicjVZS1hr+9y69BmjAsO1WEI=
+
+Name: about.html
+SHA1-Digest: ejOZra0kypGLQQ2bJtGTX+LI8tU=
+
+Name: org/eclipse/core/internal/runtime/Log$1.class
+SHA1-Digest: 1B1Zc9q1pnqMp9lwmj9rvcMCbvY=
+
+Name: org/eclipse/core/runtime/IPluginRegistry.class
+SHA1-Digest: cQvFdlNlLu0wzgxJPmAVLKwxVF8=
+
+Name: .options
+SHA1-Digest: hhvqz9biFE+Zm9DCBqwgKD7DjVU=
+
+Name: org/eclipse/core/runtime/Plugin.class
+SHA1-Digest: kn4XY23GQtTGnDyuKZJJ1h5lLJQ=
+
+Name: org/eclipse/core/runtime/Platform.class
+SHA1-Digest: hcjvhBmc2+3T79btg7rUm74M/Ss=
+
+Name: org/eclipse/core/internal/preferences/legacy/ProductPreferencesS
+ ervice.class
+SHA1-Digest: g/MSafBqufEaGks7QogBqlmhl40=
+
+Name: org/eclipse/core/runtime/Plugin$1.class
+SHA1-Digest: ECZHXf5/tT7rzHmzye3Xqk78XS8=
+
+Name: org/eclipse/core/runtime/Preferences$PropertyChangeEvent.class
+SHA1-Digest: VAIQLR2+Jv+iks/tPqMUM3ejHGs=
+
+Name: org/eclipse/core/runtime/Plugin$2.class
+SHA1-Digest: Pq//uJSVxRrvz3woErmQWBgxf+A=
+

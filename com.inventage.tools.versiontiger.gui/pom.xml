@@ -1,0 +1,17 @@
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<artifactId>versiontiger.parent</artifactId>
+		<groupId>com.inventage.tools.versiontiger</groupId>
+		<version>1.0.2-SNAPSHOT</version>
+		<relativePath>../versiontiger.parent/pom.xml</relativePath>
+	</parent>
+
+	<artifactId>com.inventage.tools.versiontiger.gui</artifactId>
+	<packaging>eclipse-feature</packaging>
+	<name>Version-Tiger - UI Feature</name>
+
+</project>

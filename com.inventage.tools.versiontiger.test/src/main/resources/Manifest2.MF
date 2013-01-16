@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Export-Package: com.google.common.annotations;version="11.0.1",com.goo
+ gle.common.base;version="11.0.1",com.google.common.cache;version="11.
+ 0.1",com.google.common.collect;version="11.0.1",com.google.common.eve
+ ntbus;version="11.0.1",com.google.common.hash;version="11.0.1",com.go
+ ogle.common.io;version="11.0.1",com.google.common.math;version="11.0.
+ 1",com.google.common.net;version="11.0.1",com.google.common.primitive
+ s;version="11.0.1",com.google.common.util.concurrent;version="11.0.1"
+ ,com.google.common.base.internal;version="11.0.1";x-internal:=true
+Bundle-Vendor: %Bundle-Vendor
+Bundle-Version: 11.0.1
+Bundle-Name: %Bundle-Name
+Created-By: 1.6.0_27 (Sun Microsystems Inc.)
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: com.google.guava
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+

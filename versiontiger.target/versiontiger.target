@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.6"?>
+
+<target name="Version-Tiger" sequenceNumber="0">
+	<locations>
+	
+		<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+			<unit id="org.eclipse.platform.feature.group" version="3.5.1.R35x_v20090910-9gEeG1_FthkNDSP2odXdThaOu9GFDPn83DGB7"/>
+			<repository location="http://download.eclipse.org/releases/galileo/"/>
+		</location>
+		
+		<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+			<unit id="com.google.guava" version="10.0.1.v201203051515"/>
+			<unit id="org.junit" version="4.8.1.v4_8_1_v20100427-1100"/>
+			<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20120526062928/repository/"/>
+		</location>
+		
+		<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+			<unit id="org.mockito.mockito-all" version="1.9.5"/>
+			<unit id="de.pdark.decentxml" version="1.4.0"/> 
+			<repository location="https://raw.github.com/inventage/version-tiger-repos/master/dependencies/"/>
+		</location>
+		
+	</locations>
+</target>

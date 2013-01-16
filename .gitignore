@@ -1,6 +1,6 @@
-*.class
-
-# Package Files #
-*.jar
-*.war
-*.ear
+com.inventage.tools.versiontiger/target
+com.inventage.tools.versiontiger.test/target
+com.inventage.tools.versiontiger.gui/target
+com.inventage.tools.versiontiger.ui/target
+com.inventage.tools.versiontiger.universedefinition/target
+versiontiger.repository/target

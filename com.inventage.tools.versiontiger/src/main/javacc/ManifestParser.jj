@@ -1,0 +1,436 @@
+options {
+	STATIC = false;
+	SUPPORT_CLASS_VISIBILITY_PUBLIC = false;
+}
+
+PARSER_BEGIN(ManifestParser)
+package com.inventage.tools.versiontiger.internal.manifest;
+
+import java.io.StringReader;
+import com.inventage.tools.versiontiger.OsgiVersion;
+import com.inventage.tools.versiontiger.internal.impl.VersionFactory;
+
+@SuppressWarnings("all")
+public class ManifestParser {
+	public ManifestParser(String input) {
+		this(new StringReader(input));
+	}
+
+	public Manifest parse() {
+		try {
+			return manifest();
+		} catch (ParseException e) {
+			throw new IllegalStateException("Parsing error: " + e.getMessage(), e);
+		}
+	}
+
+}
+
+PARSER_END(ManifestParser)
+
+// single char tokens we need for parsing
+TOKEN :
+{
+	<COLON: ":">
+|	<EQ: "=">
+|	<SPACE: " ">
+|	<DASH: "-">
+|	<DOT: ".">
+|	<COMMA: ",">
+|	<SEMICOLON: ";">
+|	<QUOTE: "\"">
+|	<UNDERSCORE: "_">
+|	<ZERO: "0">
+|	<ONE: "1">
+|	<NUM: ["0"-"9"]>
+|	<ALPHA_B: "B">
+|	<ALPHA_F: "F">
+|	<ALPHA_H: "H">
+|	<ALPHA_M: "M">
+|	<ALPHA_R: "R">
+|	<ALPHA_V: "V">
+|	<ALPHA_a: "a">
+|	<ALPHA_b: "b">
+|	<ALPHA_d: "d">
+|	<ALPHA_e: "e">
+|	<ALPHA_f: "f">
+|	<ALPHA_g: "g">
+|	<ALPHA_i: "i">
+|	<ALPHA_l: "l">
+|	<ALPHA_m: "m">
+|	<ALPHA_n: "n">
+|	<ALPHA_o: "o">
+|	<ALPHA_q: "q">
+|	<ALPHA_r: "r">
+|	<ALPHA_s: "s">
+|	<ALPHA_t: "t">
+|	<ALPHA_u: "u">
+|	<ALPHA_v: "v">
+|	<ALPHA : ["A"-"Z"] | ["a"-"z"]>
+|	<NEWLINE : ("\n" | "\r" | "\r\n")>
+|	<LPAREN: "(">
+|	<RPAREN: ")">
+|	<LBRACE: "[">
+|	<RBRACE: "]">
+|	<OTHER: ~["\r","\n"]>
+}
+
+// special tokens to ignore
+SPECIAL_TOKEN :
+{
+	<CONTINUATION: ("\n" | "\r" | "\r\n") " ">
+}
+
+Token num() :
+{
+	Token t;
+}
+{
+(	t=<NUM>
+|	t=<ZERO>
+|	t=<ONE>
+)	{ return t; }
+}
+
+Token alphanum() :
+{
+	Token t;
+}
+{
+(	t=num()
+|	t=<ALPHA_B>
+|	t=<ALPHA_F>
+|	t=<ALPHA_H>
+|	t=<ALPHA_M>
+|	t=<ALPHA_R>
+|	t=<ALPHA_V>
+|	t=<ALPHA_a>
+|	t=<ALPHA_b>
+|	t=<ALPHA_d>
+|	t=<ALPHA_e>
+|	t=<ALPHA_f>
+|	t=<ALPHA_g>
+|	t=<ALPHA_i>
+|	t=<ALPHA_l>
+|	t=<ALPHA_m>
+|	t=<ALPHA_n>
+|	t=<ALPHA_o>
+|	t=<ALPHA_q>
+|	t=<ALPHA_r>
+|	t=<ALPHA_s>
+|	t=<ALPHA_t>
+|	t=<ALPHA_u>
+|	t=<ALPHA_v>
+|	t=<ALPHA>
+)	{ return t; }
+}
+
+// chars for header names
+Token headerchar() :
+{
+	Token t;
+}
+{
+(	t=alphanum()
+|	t=<DASH>
+|	t=<UNDERSCORE>
+)	{ return t; }
+}
+
+// any char for header values (except newlines)
+Token otherchar() :
+{
+	Token t;
+}
+{
+(	t=<COLON>
+|	t=<EQ>
+|	t=<SPACE>
+|	t=<DASH>
+|	t=<DOT>
+|	t=<COMMA>
+|	t=<SEMICOLON>
+|	t=<QUOTE>
+|	t=<UNDERSCORE>
+|	t=alphanum()
+|	t=<LPAREN>
+|	t=<RPAREN>
+|	t=<LBRACE>
+|	t=<RBRACE>
+|	t=<OTHER>
+)	{ return t; }
+}
+
+// Chars for require bundle ids
+Token requireBundleIdToken() :
+{
+	Token t;
+}
+{
+(	t=headerchar()
+|	t=<DOT>
+)	{ return t; }
+}
+
+// Chars for require bundle attribute names (except "version")
+Token requireBundleAttributeNameToken() :
+{
+	Token t;
+}
+{
+(	t=headerchar()
+|	t=<DOT>
+|	t=<COLON>
+)	{ return t; }
+}
+
+// any char for require bundle attribute values (everything except comma, semicolon and newline)
+Token requireBundleAttributeValueToken() :
+{
+	Token t;
+}
+{
+(	t=<COLON>
+|	t=<DOT>
+|	t=<EQ>
+|	t=<SPACE>
+|	t=<DASH>
+|	t=<QUOTE>
+|	t=<UNDERSCORE>
+|	t=alphanum()
+|	t=<LPAREN>
+|	t=<RPAREN>
+|	t=<LBRACE>
+|	t=<RBRACE>
+|	t=<OTHER>
+)	{ return t; }
+}
+
+// chars for OSGi version qualifiers
+Token osgiVersionQualifierToken() :
+{
+	Token t;
+}
+{
+(	t=alphanum()
+|	t=<DASH>
+|	t=<UNDERSCORE>
+)	{ return t; }
+}
+
+Manifest manifest() :
+{
+	Manifest manifest = new Manifest();
+	ManifestSection section;
+	Token t;
+}
+{
+	<ALPHA_M> <ALPHA_a> <ALPHA_n> <ALPHA_i> <ALPHA_f> <ALPHA_e> <ALPHA_s> <ALPHA_t> <DASH> <ALPHA_V> <ALPHA_e> <ALPHA_r> <ALPHA_s> <ALPHA_i> <ALPHA_o> <ALPHA_n> 
+    <COLON> <SPACE> <ONE> <DOT> <ZERO>
+    t=<NEWLINE> { manifest.setNewLine(t.image); }
+    section=section() { manifest.addSection(section); }
+    (
+    	LOOKAHEAD(2)
+    	<NEWLINE>
+    	section=section() { manifest.addSection(section); }
+    )*
+    (t=<NEWLINE> { manifest.setLastNewLine(t.image); })?
+    <EOF>
+    {
+    	return manifest;
+    }
+}
+
+ManifestSection section() :
+{
+	ManifestSection section = new ManifestSection();
+	ManifestHeader header;
+	Token t;
+}
+{
+	(
+			LOOKAHEAD(fragmentHostHeader())
+			header=fragmentHostHeader() { section.addHeader(header); }
+		|	LOOKAHEAD(requireBundleHeader())
+			header=requireBundleHeader() { section.addHeader(header); }
+		|	header=header() { section.addHeader(header); }
+	)+
+	{ return section; }
+}
+
+FragmentHostHeader fragmentHostHeader() :
+{
+	FragmentHostHeader header = new FragmentHostHeader();
+	RequireBundle bundle;
+	Token t;
+}
+{
+	<ALPHA_F> <ALPHA_r> <ALPHA_a> <ALPHA_g> <ALPHA_m> <ALPHA_e> <ALPHA_n> <ALPHA_t> <DASH> <ALPHA_H> <ALPHA_o> <ALPHA_s> <ALPHA_t> 
+	<COLON>
+	<SPACE>
+	bundle=requireBundle() { header.setHostBundle(bundle); }
+	t=<NEWLINE>
+	{
+		header.setNewLine(t.image);
+		return header;
+	}
+}
+
+RequireBundleHeader requireBundleHeader() :
+{
+	RequireBundleHeader header = new RequireBundleHeader();
+	RequireBundle bundle;
+	StringBuilder sb = new StringBuilder();
+	Token t;
+}
+{
+	<ALPHA_R> <ALPHA_e> <ALPHA_q> <ALPHA_u> <ALPHA_i> <ALPHA_r> <ALPHA_e> <DASH> <ALPHA_B> <ALPHA_u> <ALPHA_n> <ALPHA_d> <ALPHA_l> <ALPHA_e> 
+	<COLON>
+	<SPACE>
+	bundle=requireBundle() { header.addRequireBundle(bundle); }
+	(
+		<COMMA>
+		bundle=requireBundle()
+		{ header.addRequireBundle(bundle); }
+	)*
+	t=<NEWLINE>
+	{
+		header.setNewLine(t.image);
+		return header;
+	}
+}
+
+RequireBundle requireBundle() :
+{
+	RequireBundle result = new RequireBundle();
+	StringBuilder id = new StringBuilder();
+	Token t;
+	RequireBundleAttribute rba;
+}
+{
+	( t=requireBundleIdToken() { id.append(t.image); } )+ { result.setId(id.toString()); }
+	(
+		<SEMICOLON>
+		(
+			LOOKAHEAD(versionAttribute())
+			rba=versionAttribute() { result.addRequireBundleAttribute(rba); }
+		|	rba=requireBundleAttribute() { result.addRequireBundleAttribute(rba); }
+		)
+	)*
+	{ return result; }
+}
+
+VersionAttribute versionAttribute() :
+{
+	VersionAttribute result = new VersionAttribute();
+	VersionRange vr;
+}
+{
+	<ALPHA_b> <ALPHA_u> <ALPHA_n> <ALPHA_d> <ALPHA_l> <ALPHA_e> <DASH> <ALPHA_v> <ALPHA_e> <ALPHA_r> <ALPHA_s> <ALPHA_i> <ALPHA_o> <ALPHA_n> 
+	<EQ>
+	(
+		<QUOTE>
+		vr=versionRange()
+		<QUOTE> { result.setQuotes(true); }
+	|
+		vr=versionRange() { result.setQuotes(false); }
+	)
+	{
+		result.setVersionRange(vr);
+		return result;
+	}
+}
+
+VersionRange versionRange() :
+{
+	VersionRange result = new VersionRange();
+	OsgiVersion v;
+}
+{
+	(v=osgiVersion() { result.setStartInclusive(true); result.setStartVersion(v); }
+	|
+		(<LBRACE> { result.setStartInclusive(true); } | <LPAREN> { result.setStartInclusive(false); })
+		v=osgiVersion() { result.setStartVersion(v); }
+		<COMMA>
+		v=osgiVersion() { result.setEndVersion(v); }
+		(<RBRACE> { result.setEndInclusive(true); } | <RPAREN> { result.setEndInclusive(false); })
+	)
+	{ return result; }
+}
+
+OsgiVersion osgiVersion() :
+{
+	StringBuilder version = new StringBuilder();
+	Token t;
+}
+{
+	(t=num() { version.append(t.image); })+ (
+		<DOT> { version.append("."); } (t=num() { version.append(t.image); })+ (
+			<DOT> { version.append("."); } (t=num() { version.append(t.image); })+ (
+				<DOT> { version.append("."); } (t=osgiVersionQualifierToken() { version.append(t.image); })+
+			)?
+		)?
+	)?
+	{
+		return new VersionFactory().createOsgiVersion(version.toString());
+	}
+}
+
+GenericRequireBundleAttribute requireBundleAttribute() :
+{
+	Token t;
+	StringBuilder name = new StringBuilder();
+	GenericRequireBundleAttribute result = new GenericRequireBundleAttribute();
+	StringBuilder value = new StringBuilder();
+}
+{
+	(t=requireBundleAttributeNameToken() { name.append(t.image); })+ { result.setName(name.toString()); }
+	(
+		<EQ>
+		(
+			t=requireBundleAttributeValueToken() { value.append(t); }
+		)*
+		{ result.setValue(value.toString()); }
+	)?
+	{
+		return result;
+	}
+}
+
+GenericManifestHeader header() :
+{
+	GenericManifestHeader header = new GenericManifestHeader();
+	String name;
+	StringBuilder value = new StringBuilder();
+	Token t;
+}
+{
+	name=headername() { header.setName(name); }
+	<COLON>
+	<SPACE>
+	(t=otherchar() {
+		if (t.specialToken != null) {
+			value.append(t.specialToken.image);
+		}
+		value.append(t.image);
+	})*
+	t=<NEWLINE>
+	{
+		header.setValue(value.toString());
+		header.setNewLine(t.image);
+		return header;
+	}
+}
+
+String headername() :
+{
+	Token t;
+	StringBuilder name = new StringBuilder();
+}
+{
+	t=alphanum() { name.append(t.image); }
+	(t=headerchar() { name.append(t.image); })*
+	{
+		return name.toString();
+	}
+}

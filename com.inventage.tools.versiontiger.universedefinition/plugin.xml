@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="projectUniverseProviders" name="Project Universe ProvidersProviders" schema="schema/projectUniverseProviders.exsd"/>
+   <extension
+         point="org.eclipse.ui.keywords">
+      <keyword
+            id="com.inventage.tools.versiontiger.universedefinition.preference.page.keywords"
+            label="%com.inventage.tools.versiontiger.universedefinition.preference.page.keywords">
+      </keyword>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="com.inventage.tools.versiontiger.universedefinition.ui.VersioningPreferencePage"
+            id="com.inventage.tools.versiontiger.universedefinition.preference.page"
+            name="%com.inventage.tools.versiontiger.universedefinition.preference.page.name">
+         <keywordReference
+               id="com.inventage.tools.versiontiger.universedefinition.preference.page.keywords">
+         </keywordReference>
+      </page>
+   </extension>
+   <extension
+         point="com.inventage.tools.versiontiger.universedefinition.projectUniverseProviders">
+      <provider
+            class="com.inventage.tools.versiontiger.universedefinition.fromfile.FileProjectUniverseProvider">
+      </provider>
+      <provider
+            class="com.inventage.tools.versiontiger.universedefinition.workspaceprojects.AllWorkspaceProjectsUniverseProvider">
+      </provider>
+   </extension>
+
+</plugin>

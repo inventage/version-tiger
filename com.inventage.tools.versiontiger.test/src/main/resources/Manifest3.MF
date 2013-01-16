@@ -1,0 +1,29 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.7.1
+Created-By: 10.0-b23 (Sun Microsystems Inc.)
+
+Name: org/eclipse/core/runtime/IExtensionPoint.class
+SHA1-Digest: LZ/Pek4NrbX1vcBNRUTZ2ffx1zY=
+
+Name: org/eclipse/core/internal/registry/ExtensionPointHandle.class
+SHA1-Digest: Vnif4BbF6rxTiw9mD3Qp9dkd4Kg=
+
+Name: org/eclipse/core/runtime/IPluginDescriptor.class
+SHA1-Digest: YaYoVk+FSqV5iZm4+V24bNCMP4Q=
+
+Name: META-INF/eclipse.inf
+SHA1-Digest: KyT9FF7C7t86NoBoa2kZT3ZJBfw=
+
+Name: org/eclipse/core/runtime/IExtension.class
+SHA1-Digest: cIQWMqmHERVWEZPKbFoTPnQdChw=
+
+Name: org/eclipse/core/internal/registry/ExtensionHandle.class
+SHA1-Digest: O6FOqVjRiV4But9dDo3sqlKFEm8=
+
+Name: org/eclipse/core/internal/registry/BundleHelper.class
+SHA1-Digest: sPe2szCNJIHsaYwrtYPjNxGlZRM=
+
+Name: org/eclipse/core/internal/registry/RegistryCompatibilityHelper.c
+ lass
+SHA1-Digest: Ce8YKQAY5LPfoCm8R4cond931DQ=
+

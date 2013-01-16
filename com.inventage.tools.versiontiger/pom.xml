@@ -1,0 +1,67 @@
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>com.inventage.tools.versiontiger</artifactId>
+	<packaging>eclipse-plugin</packaging>
+	<name>Version-Tiger</name>
+
+	<parent>
+		<artifactId>versiontiger.parent</artifactId>
+		<groupId>com.inventage.tools.versiontiger</groupId>
+		<version>1.0.2-SNAPSHOT</version>
+		<relativePath>../versiontiger.parent/pom.xml</relativePath>
+	</parent>
+	
+	<!-- Dependencies only for CLI assembly -->
+	<dependencies>
+		<dependency>
+			<groupId>de.pdark</groupId>
+			<artifactId>decentxml</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>javacc-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>javacc</goal>
+						</goals>
+						<phase>generate-sources</phase>
+						<configuration>
+							<outputDirectory>${project.build.directory}/generated-sources</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<descriptors>
+						<descriptor>src/assembly/cli.xml</descriptor>
+					</descriptors>
+					<archive>
+						<manifest>
+							<mainClass>com.inventage.tools.versiontiger.internal.impl.Main</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-cli</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

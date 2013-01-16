@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="false" name="com.inventage.tools.versiontiger">
+   <implementation class="com.inventage.tools.versiontiger.internal.impl.VersioningImpl"/>
+   <service>
+      <provide interface="com.inventage.tools.versiontiger.Versioning"/>
+   </service>
+</scr:component>

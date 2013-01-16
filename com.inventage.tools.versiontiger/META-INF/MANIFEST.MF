@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Version-Tiger
+Bundle-SymbolicName: com.inventage.tools.versiontiger;singleton:=true
+Bundle-Version: 1.0.2.qualifier
+Bundle-Vendor: Inventage
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Service-Component: OSGI-INF/versioning.xml
+Export-Package: com.inventage.tools.versiontiger,
+ com.inventage.tools.versiontiger.strategy,
+ com.inventage.tools.versiontiger.util
+Bundle-ActivationPolicy: lazy
+Import-Package: de.pdark.decentxml;version="1.4.0"
