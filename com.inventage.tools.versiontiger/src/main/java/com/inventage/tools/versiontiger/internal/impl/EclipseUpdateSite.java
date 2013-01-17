@@ -17,8 +17,8 @@ class EclipseUpdateSite extends MavenProjectImpl {
 
 	private String siteContent;
 
-	EclipseUpdateSite(String projectPath, VersioningLogger logger) {
-		super(projectPath, logger);
+	EclipseUpdateSite(String projectPath, VersioningLogger logger, VersionFactory versionFactory) {
+		super(projectPath, logger, versionFactory);
 	}
 
 	@Override
@@ -29,7 +29,7 @@ class EclipseUpdateSite extends MavenProjectImpl {
 	}
 
 	private OsgiVersion asOsgiVersion(MavenVersion mavenVersion) {
-		return new VersionFactory().createOsgiVersion(mavenVersion);
+		return getVersionFactory().createOsgiVersion(mavenVersion);
 	}
 
 	private void updateSiteFeatures(String id, OsgiVersion oldVersion, OsgiVersion newVersion) {

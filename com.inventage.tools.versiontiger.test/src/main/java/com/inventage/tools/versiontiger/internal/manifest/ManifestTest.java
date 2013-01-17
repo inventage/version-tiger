@@ -10,14 +10,15 @@ import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import com.inventage.tools.versiontiger.internal.manifest.ManifestParser;
 import com.inventage.tools.versiontiger.NullVersioningLogger;
+import com.inventage.tools.versiontiger.OsgiVersion;
 import com.inventage.tools.versiontiger.internal.impl.OsgiVersionImpl;
-import com.inventage.tools.versiontiger.internal.manifest.Manifest;
-import com.inventage.tools.versiontiger.internal.manifest.ManifestSection;
+import com.inventage.tools.versiontiger.internal.impl.VersionFactory;
 
 public class ManifestTest {
-
+	
+	VersionFactory versionFactory = new VersionFactory(OsgiVersion.OSGI_DEFAULT_RELEASE_SUFFIX, OsgiVersion.OSGI_DEFAULT_SNAPSHOT_SUFFIX);
+	
 	@Test
 	public void shouldPrint() throws Exception {
 		// given
@@ -58,10 +59,10 @@ public class ManifestTest {
 		String input = "Manifest-Version: 1.0\nRequire-Bundle: foo.bar;bundle-version=\"1.0\"," +
 				"asdf.b.c;bundle-version=\"12.12.23\";visibility:=reexport," +
 				"foo;resolution:=optional\nOther-Header: foo\n\n";
-		Manifest manifest = new ManifestParser(input).manifest();
+		Manifest manifest = new ManifestParser(input, new VersionFactory(OsgiVersion.OSGI_DEFAULT_RELEASE_SUFFIX, OsgiVersion.OSGI_DEFAULT_SNAPSHOT_SUFFIX)).manifest();
 		
 		// when
-		boolean result = manifest.updateRequireBundleReference("asdf.b.c", new OsgiVersionImpl("12.12.23"), new OsgiVersionImpl("33.1.0.qualifier"), new NullVersioningLogger().createVersioningLoggerItem());
+		boolean result = manifest.updateRequireBundleReference("asdf.b.c", new OsgiVersionImpl("12.12.23", versionFactory), new OsgiVersionImpl("33.1.0.qualifier", versionFactory), new NullVersioningLogger().createVersioningLoggerItem());
 		
 		// then
 		assertTrue(result);
@@ -80,10 +81,10 @@ public class ManifestTest {
 				"Manifest-Version: 1.0\n" +
 				"Fragment-Host: " + id + ";bundle-version=\"" + oldVersion + "\";visibility:=reexport\n" +
 				"Other-Header: foo\n\n";
-		Manifest manifest = new ManifestParser(input).manifest();
+		Manifest manifest = new ManifestParser(input, new VersionFactory(OsgiVersion.OSGI_DEFAULT_RELEASE_SUFFIX, OsgiVersion.OSGI_DEFAULT_SNAPSHOT_SUFFIX)).manifest();
 		
 		// when
-		boolean result = manifest.updateFragmentHostReference(id, new OsgiVersionImpl(oldVersion), new OsgiVersionImpl(newVersion + ".qualifier"), new NullVersioningLogger().createVersioningLoggerItem());
+		boolean result = manifest.updateFragmentHostReference(id, new OsgiVersionImpl(oldVersion, versionFactory), new OsgiVersionImpl(newVersion + ".qualifier", versionFactory), new NullVersioningLogger().createVersioningLoggerItem());
 		
 		// then
 		assertTrue(result);

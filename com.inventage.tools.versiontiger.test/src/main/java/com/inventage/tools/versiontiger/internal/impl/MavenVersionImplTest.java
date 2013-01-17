@@ -8,15 +8,18 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.inventage.tools.versiontiger.MavenVersion;
+import com.inventage.tools.versiontiger.OsgiVersion;
 import com.inventage.tools.versiontiger.Version;
 import com.inventage.tools.versiontiger.internal.impl.MavenVersionImpl;
 
 public class MavenVersionImplTest {
 
+	VersionFactory versionFactory = new VersionFactory(OsgiVersion.OSGI_DEFAULT_RELEASE_SUFFIX, OsgiVersion.OSGI_DEFAULT_SNAPSHOT_SUFFIX);
+	
 	@Test
 	public void shouldMajor() throws Exception {
 		// given
-		MavenVersionImpl version = new MavenVersionImpl("1.2.3-SNAPSHOT");
+		MavenVersionImpl version = new MavenVersionImpl("1.2.3-SNAPSHOT", versionFactory);
 
 		// when
 		int result = version.major();
@@ -28,7 +31,7 @@ public class MavenVersionImplTest {
 	@Test
 	public void shouldMinor() throws Exception {
 		// given
-		MavenVersionImpl version = new MavenVersionImpl("1.2.3-SNAPSHOT");
+		MavenVersionImpl version = new MavenVersionImpl("1.2.3-SNAPSHOT", versionFactory);
 
 		// when
 		int result = version.minor();
@@ -40,7 +43,7 @@ public class MavenVersionImplTest {
 	@Test
 	public void shouldBugfix() throws Exception {
 		// given
-		MavenVersionImpl version = new MavenVersionImpl("1.2.3-SNAPSHOT");
+		MavenVersionImpl version = new MavenVersionImpl("1.2.3-SNAPSHOT", versionFactory);
 
 		// when
 		int result = version.bugfix();
@@ -52,7 +55,7 @@ public class MavenVersionImplTest {
 	@Test
 	public void shouldSuffix() throws Exception {
 		// given
-		MavenVersionImpl version = new MavenVersionImpl("1.2.3-RC3-SNAPSHOT");
+		MavenVersionImpl version = new MavenVersionImpl("1.2.3-RC3-SNAPSHOT", versionFactory);
 
 		// when
 		String result = version.suffix();
@@ -64,7 +67,7 @@ public class MavenVersionImplTest {
 	@Test
 	public void shouldToString() {
 		// given
-		MavenVersionImpl version = new MavenVersionImpl("1-SNAPSHOT");
+		MavenVersionImpl version = new MavenVersionImpl("1-SNAPSHOT", versionFactory);
 
 		// when
 		String result = version.toString();
@@ -76,7 +79,7 @@ public class MavenVersionImplTest {
 	@Test
 	public void shouldIncrementMajor() throws Exception {
 		// given
-		MavenVersionImpl version = new MavenVersionImpl("1.2.3-SNAPSHOT");
+		MavenVersionImpl version = new MavenVersionImpl("1.2.3-SNAPSHOT", versionFactory);
 
 		// when
 		MavenVersion result = version.incrementMajorAndSnapshot();
@@ -88,7 +91,7 @@ public class MavenVersionImplTest {
 	@Test
 	public void shouldIncrementMajorWhenRelease() throws Exception {
 		// given
-		MavenVersionImpl version = new MavenVersionImpl("1.2.3");
+		MavenVersionImpl version = new MavenVersionImpl("1.2.3", versionFactory);
 
 		// when
 		Version result = version.incrementMajorAndSnapshot();
@@ -100,7 +103,7 @@ public class MavenVersionImplTest {
 	@Test
 	public void shouldIncrementMajorWhenOnlyMajorRelease() throws Exception {
 		// given
-		MavenVersionImpl version = new MavenVersionImpl("1-SNAPSHOT");
+		MavenVersionImpl version = new MavenVersionImpl("1-SNAPSHOT", versionFactory);
 
 		// when
 		Version result = version.incrementMajorAndSnapshot();
@@ -112,7 +115,7 @@ public class MavenVersionImplTest {
 	@Test
 	public void shouldIncrementMinor() throws Exception {
 		// given
-		MavenVersionImpl version = new MavenVersionImpl("1.2.3-SNAPSHOT");
+		MavenVersionImpl version = new MavenVersionImpl("1.2.3-SNAPSHOT", versionFactory);
 
 		// when
 		Version result = version.incrementMinorAndSnapshot();
@@ -124,7 +127,7 @@ public class MavenVersionImplTest {
 	@Test
 	public void shouldIncrementMinorWhenRelease() throws Exception {
 		// given
-		MavenVersionImpl version = new MavenVersionImpl("1.2.3");
+		MavenVersionImpl version = new MavenVersionImpl("1.2.3", versionFactory);
 
 		// when
 		Version result = version.incrementMinorAndSnapshot();
@@ -136,7 +139,7 @@ public class MavenVersionImplTest {
 	@Test
 	public void shouldIncrementMinorWhenOnlyMajor() throws Exception {
 		// given
-		MavenVersionImpl version = new MavenVersionImpl("1-SNAPSHOT");
+		MavenVersionImpl version = new MavenVersionImpl("1-SNAPSHOT", versionFactory);
 
 		// when
 		Version result = version.incrementMinorAndSnapshot();
@@ -148,7 +151,7 @@ public class MavenVersionImplTest {
 	@Test
 	public void shouldIncrementMinorWhenOnlyMajorAndRelease() throws Exception {
 		// given
-		MavenVersionImpl version = new MavenVersionImpl("1");
+		MavenVersionImpl version = new MavenVersionImpl("1", versionFactory);
 
 		// when
 		Version result = version.incrementMinorAndSnapshot();
@@ -160,7 +163,7 @@ public class MavenVersionImplTest {
 	@Test
 	public void shouldIncrementBugfix() throws Exception {
 		// given
-		MavenVersionImpl version = new MavenVersionImpl("1.2.3-SNAPSHOT");
+		MavenVersionImpl version = new MavenVersionImpl("1.2.3-SNAPSHOT", versionFactory);
 
 		// when
 		Version result = version.incrementBugfixAndSnapshot();
@@ -172,7 +175,7 @@ public class MavenVersionImplTest {
 	@Test
 	public void shouldIncrementBugfixWhenRelease() throws Exception {
 		// given
-		MavenVersionImpl version = new MavenVersionImpl("1.2.3");
+		MavenVersionImpl version = new MavenVersionImpl("1.2.3", versionFactory);
 
 		// when
 		Version result = version.incrementBugfixAndSnapshot();
@@ -184,7 +187,7 @@ public class MavenVersionImplTest {
 	@Test
 	public void shouldIncrementBugfixWhenOnlyMinor() throws Exception {
 		// given
-		MavenVersionImpl version = new MavenVersionImpl("1.2-SNAPSHOT");
+		MavenVersionImpl version = new MavenVersionImpl("1.2-SNAPSHOT", versionFactory);
 
 		// when
 		Version result = version.incrementBugfixAndSnapshot();
@@ -196,7 +199,7 @@ public class MavenVersionImplTest {
 	@Test
 	public void shouldIncrementBugfixWhenOnlyMinorAndRelease() throws Exception {
 		// given
-		MavenVersionImpl version = new MavenVersionImpl("1.2");
+		MavenVersionImpl version = new MavenVersionImpl("1.2", versionFactory);
 
 		// when
 		Version result = version.incrementBugfixAndSnapshot();
@@ -213,8 +216,8 @@ public class MavenVersionImplTest {
 		String extendedQualifierVersion2 = "1.2.4-RC_5-SNAPSHOT";
 
 		// when
-		MavenVersionImpl version1 = new MavenVersionImpl(extendedQualifierVersion1);
-		MavenVersionImpl version2 = new MavenVersionImpl(extendedQualifierVersion2);
+		MavenVersionImpl version1 = new MavenVersionImpl(extendedQualifierVersion1, versionFactory);
+		MavenVersionImpl version2 = new MavenVersionImpl(extendedQualifierVersion2, versionFactory);
 
 		// then
 		assertEquals("1.2.4-RC5-SNAPSHOT", version1.toString());
@@ -228,7 +231,7 @@ public class MavenVersionImplTest {
 		String extendedQualifierVersion = "1.2.4-RC5-SNAPSH.OT";
 
 		// when
-		new MavenVersionImpl(extendedQualifierVersion);
+		new MavenVersionImpl(extendedQualifierVersion, versionFactory);
 
 		// then
 		// Exception should be thrown.
@@ -241,7 +244,7 @@ public class MavenVersionImplTest {
 		String extendedQualifierVersion = "1.2.4-RC5-SNAPSHOT";
 
 		// when
-		MavenVersionImpl version = new MavenVersionImpl(extendedQualifierVersion);
+		MavenVersionImpl version = new MavenVersionImpl(extendedQualifierVersion, versionFactory);
 
 		// then
 		assertEquals("1.2.4-RC5", version.releaseVersion().toString());
@@ -254,7 +257,7 @@ public class MavenVersionImplTest {
 		String extendedQualifierVersion = "1.2.4-A-B-C-D-E-SNAPSHOT";
 
 		// when
-		MavenVersionImpl version = new MavenVersionImpl(extendedQualifierVersion);
+		MavenVersionImpl version = new MavenVersionImpl(extendedQualifierVersion, versionFactory);
 
 		// then
 		assertEquals("1.2.4-A-B-C-D-E", version.releaseVersion().toString());
@@ -273,12 +276,12 @@ public class MavenVersionImplTest {
 		// when
 		boolean areAllValid = true;
 		try {
-			new MavenVersionImpl(versionWithoutQualifier);
-			new MavenVersionImpl(versionWithQualifier);
-			new MavenVersionImpl(versionWithNumericQualifier);
-			new MavenVersionImpl(versionWithArbitraryQualifier);
-			new MavenVersionImpl(versionWithoutMinor);
-			new MavenVersionImpl(versionWithoutMinorButWithQualifier);
+			new MavenVersionImpl(versionWithoutQualifier, versionFactory);
+			new MavenVersionImpl(versionWithQualifier, versionFactory);
+			new MavenVersionImpl(versionWithNumericQualifier, versionFactory);
+			new MavenVersionImpl(versionWithArbitraryQualifier, versionFactory);
+			new MavenVersionImpl(versionWithoutMinor, versionFactory);
+			new MavenVersionImpl(versionWithoutMinorButWithQualifier, versionFactory);
 		} catch (IllegalArgumentException e) {
 			areAllValid = false;
 		}
@@ -296,8 +299,8 @@ public class MavenVersionImplTest {
 		// when
 		boolean allValid = true;
 		try {
-			new MavenVersionImpl(versionWithTooManySubversions);
-			new MavenVersionImpl(versionWithInvalidQualifier);
+			new MavenVersionImpl(versionWithTooManySubversions, versionFactory);
+			new MavenVersionImpl(versionWithInvalidQualifier, versionFactory);
 		} catch (IllegalArgumentException e) {
 			allValid = false;
 		}
@@ -308,19 +311,19 @@ public class MavenVersionImplTest {
 
 	@Test
 	public void shouldIsLower() throws Exception {
-		assertTrue(new MavenVersionImpl("1.2.3-SNAPSHOT").isLowerThan(new MavenVersionImpl("1.2.3-SNAPSHOT"), true));
-		assertFalse(new MavenVersionImpl("1.2.3-SNAPSHOT").isLowerThan(new MavenVersionImpl("1.2.3-SNAPSHOT"), false));
-		assertTrue(new MavenVersionImpl("1.2.3-SNAPSHOT").isLowerThan(new MavenVersionImpl("1.2.4-SNAPSHOT"), true));
-		assertTrue(new MavenVersionImpl("1.2.3-SNAPSHOT").isLowerThan(new MavenVersionImpl("2.2.3-SNAPSHOT"), false));
-		assertTrue(new MavenVersionImpl("1.2.3-SNAPSHOT").isLowerThan(new MavenVersionImpl("1.3.3-SNAPSHOT"), false));
-		assertFalse(new MavenVersionImpl("1.2.3-SNAPSHOT").isLowerThan(new MavenVersionImpl("1.2.2-SNAPSHOT"), true));
-		assertFalse(new MavenVersionImpl("1.2.3-SNAPSHOT").isLowerThan(new MavenVersionImpl("1.1.3-SNAPSHOT"), true));
-		assertFalse(new MavenVersionImpl("1.2.3-SNAPSHOT").isLowerThan(new MavenVersionImpl("0.2.3-SNAPSHOT"), true));
-		assertTrue(new MavenVersionImpl("1.2.3-SNAPSHOT").isLowerThan(new MavenVersionImpl("1.2.3-OTHER"), true));
-		assertTrue(new MavenVersionImpl("1.2.3").isLowerThan(new MavenVersionImpl("1.2.3"), true));
-		assertFalse(new MavenVersionImpl("1.2.3").isLowerThan(new MavenVersionImpl("1.2.3"), false));
-		assertFalse(new MavenVersionImpl("1.2.3").isLowerThan(new MavenVersionImpl("1.2.3-SNAPSHOT"), false));
-		assertTrue(new MavenVersionImpl("1.2.3").isLowerThan(new MavenVersionImpl("1.2.3-SNAPSHOT"), true));
+		assertTrue(new MavenVersionImpl("1.2.3-SNAPSHOT", versionFactory).isLowerThan(new MavenVersionImpl("1.2.3-SNAPSHOT", versionFactory), true));
+		assertFalse(new MavenVersionImpl("1.2.3-SNAPSHOT", versionFactory).isLowerThan(new MavenVersionImpl("1.2.3-SNAPSHOT", versionFactory), false));
+		assertTrue(new MavenVersionImpl("1.2.3-SNAPSHOT", versionFactory).isLowerThan(new MavenVersionImpl("1.2.4-SNAPSHOT", versionFactory), true));
+		assertTrue(new MavenVersionImpl("1.2.3-SNAPSHOT", versionFactory).isLowerThan(new MavenVersionImpl("2.2.3-SNAPSHOT", versionFactory), false));
+		assertTrue(new MavenVersionImpl("1.2.3-SNAPSHOT", versionFactory).isLowerThan(new MavenVersionImpl("1.3.3-SNAPSHOT", versionFactory), false));
+		assertFalse(new MavenVersionImpl("1.2.3-SNAPSHOT", versionFactory).isLowerThan(new MavenVersionImpl("1.2.2-SNAPSHOT", versionFactory), true));
+		assertFalse(new MavenVersionImpl("1.2.3-SNAPSHOT", versionFactory).isLowerThan(new MavenVersionImpl("1.1.3-SNAPSHOT", versionFactory), true));
+		assertFalse(new MavenVersionImpl("1.2.3-SNAPSHOT", versionFactory).isLowerThan(new MavenVersionImpl("0.2.3-SNAPSHOT", versionFactory), true));
+		assertTrue(new MavenVersionImpl("1.2.3-SNAPSHOT", versionFactory).isLowerThan(new MavenVersionImpl("1.2.3-OTHER", versionFactory), true));
+		assertTrue(new MavenVersionImpl("1.2.3", versionFactory).isLowerThan(new MavenVersionImpl("1.2.3", versionFactory), true));
+		assertFalse(new MavenVersionImpl("1.2.3", versionFactory).isLowerThan(new MavenVersionImpl("1.2.3", versionFactory), false));
+		assertFalse(new MavenVersionImpl("1.2.3", versionFactory).isLowerThan(new MavenVersionImpl("1.2.3-SNAPSHOT", versionFactory), false));
+		assertTrue(new MavenVersionImpl("1.2.3", versionFactory).isLowerThan(new MavenVersionImpl("1.2.3-SNAPSHOT", versionFactory), true));
 	}
 
 }

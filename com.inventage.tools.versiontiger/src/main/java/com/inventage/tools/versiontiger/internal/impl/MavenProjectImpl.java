@@ -22,15 +22,21 @@ class MavenProjectImpl implements MavenProject {
 	private String id;
 	private MavenVersion version;
 	private MavenVersion oldVersion;
-	private VersioningLogger logger;
+	private final VersioningLogger logger;
+	private final VersionFactory versionFactory; 
 	
-	protected MavenProjectImpl(String projectPath, VersioningLogger logger) {
+	protected MavenProjectImpl(String projectPath, VersioningLogger logger, VersionFactory versionFactory) {
 		this.projectPath = projectPath;
 		this.logger = logger;
+		this.versionFactory = versionFactory;
 	}
 	
 	protected VersioningLogger getLogger() {
 		return logger;
+	}
+	
+	protected VersionFactory getVersionFactory() {
+		return versionFactory;
 	}
 
 	public String projectPath() {
@@ -61,7 +67,7 @@ class MavenProjectImpl implements MavenProject {
 			if (currentVersion == null) {
 				currentVersion = new XmlHandler().readElement(getPomContent(), "project/parent/version");
 			}
-			version = new VersionFactory().createMavenVersion(currentVersion);
+			version = getVersionFactory().createMavenVersion(currentVersion);
 		}
 
 		return version;

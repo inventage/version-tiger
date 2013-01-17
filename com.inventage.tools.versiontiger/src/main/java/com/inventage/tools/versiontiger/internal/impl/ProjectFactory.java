@@ -19,12 +19,16 @@ import de.pdark.decentxml.XMLStringBuilderSource;
 class ProjectFactory {
 	
 	private final String rootPath;
+	
+	private VersionFactory versionFactory;
 
-	ProjectFactory(String rootPath) {
+	ProjectFactory(String rootPath, VersionFactory versionFactory) {
 		this.rootPath = rootPath;
+		this.versionFactory = versionFactory;
 	}
 
 	MavenProject createProjectFromRootFilePath(String projectPath, VersioningLogger logger) {
+		
 		File projectFile = new FileHandler().createFileFromPath(rootPath, projectPath);
 		if (!exists(projectFile)) {
 			throw new IllegalStateException("Project does not exist: " + projectFile);
@@ -53,27 +57,27 @@ class ProjectFactory {
 	}
 
 	private MavenProject createPluginProject(File projectPath, VersioningLogger logger) {
-		return new EclipsePlugin(projectPath.getAbsolutePath(), logger);
+		return new EclipsePlugin(projectPath.getAbsolutePath(), logger, versionFactory);
 	}
 
 	private MavenProject createFeatureProject(File projectPath, VersioningLogger logger) {
-		return new EclipseFeature(projectPath.getAbsolutePath(), logger);
+		return new EclipseFeature(projectPath.getAbsolutePath(), logger, versionFactory);
 	}
 
 	private MavenProject createRepositoryProject(File projectPath, VersioningLogger logger) {
-		return new EclipseRepository(projectPath.getAbsolutePath(), logger);
+		return new EclipseRepository(projectPath.getAbsolutePath(), logger, versionFactory);
 	}
 
 	private MavenProject createUpdatesiteProject(File projectPath, VersioningLogger logger) {
-		return new EclipseUpdateSite(projectPath.getAbsolutePath(), logger);
+		return new EclipseUpdateSite(projectPath.getAbsolutePath(), logger, versionFactory);
 	}
 
 	private MavenProject createApplicationProject(File projectPath, VersioningLogger logger) {
-		return new EclipseApplication(projectPath.getAbsolutePath(), logger);
+		return new EclipseApplication(projectPath.getAbsolutePath(), logger, versionFactory);
 	}
 
 	private MavenProject createAnyMavenProject(File projectPath, VersioningLogger logger) {
-		return new MavenProjectImpl(projectPath.getAbsolutePath(), logger);
+		return new MavenProjectImpl(projectPath.getAbsolutePath(), logger, versionFactory);
 	}
 	
 	private boolean exists(File projectPath) {

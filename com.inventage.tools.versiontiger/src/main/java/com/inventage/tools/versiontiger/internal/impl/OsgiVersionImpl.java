@@ -11,91 +11,101 @@ public class OsgiVersionImpl implements OsgiVersion {
 
 	private static final Pattern PATTERN_VERSION = Pattern.compile("^\\d+(\\.\\d+(\\.\\d+(\\.([\\w\\-\\_]+))?)?)?$");
 	private static final String OSGI_DELIMITER = ".";
-	private static final String OSGI_SNAPSHOT_SUFFIX = "qualifier";
+	
+	private final VersionFactory versionFactory;
 	
 	private final GeneralVersion gv;
-	private final String qualifier;
+	private final String inputQualifier;
 	
-	public OsgiVersionImpl(String version) {
+	public OsgiVersionImpl(String version, VersionFactory versionFactory) {
+		
+		this.versionFactory = versionFactory;
+		
 		Matcher matcher = PATTERN_VERSION.matcher(version);
 		if (!matcher.matches()) {
 			throw new IllegalArgumentException("Invalid OSGi version: " + version);
 		}
 		
-		String inputQualifier = matcher.group(4);
+		String qualifierMatch = matcher.group(4);
+		this.inputQualifier = qualifierMatch == null ? "" :qualifierMatch; 
 		int qualifierStartIndex = matcher.start(4);
 		String gvVersion = version.substring(0, qualifierStartIndex < 0 ? version.length() : qualifierStartIndex - 1);
 		
-		if (OSGI_SNAPSHOT_SUFFIX.equals(inputQualifier)) {
-			qualifier = null;
-			gv = new GeneralVersion(gvVersion, true);
-		} else {
-			qualifier = inputQualifier;
-			gv = new GeneralVersion(gvVersion, false);
-		}
+		gv = new GeneralVersion(gvVersion, false /* doesn't care */);
 	}
 	
-	public OsgiVersionImpl(Integer major, Integer minor, Integer bugfix, String qualifier, boolean snapshot) {
-		if (minor == null && (qualifier != null || snapshot)) {
+	public OsgiVersionImpl(Integer major, Integer minor, Integer bugfix, boolean snapshot, VersionFactory versionFactory) {
+		
+		this.versionFactory = versionFactory;
+		this.inputQualifier = null;
+		
+		boolean paddingNecessary = (snapshot && !versionFactory.getOsgiSnapshotQualifier().isEmpty())
+				|| (!snapshot && !versionFactory.getOsgiReleaseQualifier().isEmpty());
+		
+		if (minor == null && paddingNecessary) {
 			minor = 0;
 		}
-		if (bugfix == null && (qualifier != null || snapshot)) {
+		if (bugfix == null && paddingNecessary) {
 			bugfix = 0;
 		}
 		gv = new GeneralVersion(major, minor, bugfix, snapshot);
-		this.qualifier = qualifier;
 	}
 	
 	@Override
 	public String qualifier() {
-		return qualifier;
+		return inputQualifier;
 	}
 	
 	@Override
 	public String toString() {
 		StringBuilder version = new StringBuilder(gv.versionString());
 		
-		if (isSnapshot()) {
-			version.append(OSGI_DELIMITER);
-			version.append(OSGI_SNAPSHOT_SUFFIX);
+		if (inputQualifier != null) {
+			conditionallyAppendQualifier(version, inputQualifier);
 		}
-		else if (qualifier != null && !qualifier.isEmpty()) {
-			version.append(OSGI_DELIMITER);
-			version.append(qualifier);
+		else if (isSnapshot()) {
+			conditionallyAppendQualifier(version, versionFactory.getOsgiSnapshotQualifier());
+		}
+		else {
+			conditionallyAppendQualifier(version, versionFactory.getOsgiReleaseQualifier());
 		}
 
 		return version.toString();
+	}
+	
+	private void conditionallyAppendQualifier(StringBuilder version, String qualifier) {
+		if (qualifier != null && !qualifier.isEmpty()) {
+			version.append(OSGI_DELIMITER);
+			version.append(qualifier);
+		}
 	}
 
 	@Override
 	public OsgiVersion incrementMajorAndSnapshot() {
 		GeneralVersion inc = gv.incrementMajorAndSnapshot();
-		
-		return new OsgiVersionImpl(inc.major(), nullToZero(inc.minor()), nullToZero(inc.bugfix()), qualifier, true);
+		return versionFactory.createOsgiVersion(inc.major(), nullToZero(inc.minor()), nullToZero(inc.bugfix()), true);
 	}
 
 	@Override
 	public OsgiVersion incrementMinorAndSnapshot() {
 		GeneralVersion inc = gv.incrementMinorAndSnapshot();
-		
-		return new OsgiVersionImpl(inc.major(), nullToZero(inc.minor()), nullToZero(inc.bugfix()), qualifier, true);
+		return versionFactory.createOsgiVersion(inc.major(), nullToZero(inc.minor()), nullToZero(inc.bugfix()), true);
 	}
 
 	@Override
 	public OsgiVersion incrementBugfixAndSnapshot() {
 		GeneralVersion inc = gv.incrementBugfixAndSnapshot();
-		
-		return new OsgiVersionImpl(inc.major(), nullToZero(inc.minor()), nullToZero(inc.bugfix()), qualifier, true);
+		return versionFactory.createOsgiVersion(inc.major(), nullToZero(inc.minor()), nullToZero(inc.bugfix()), true);
 	}
 
 	@Override
 	public OsgiVersion releaseVersion() {
-		return gv.isSnapshot() ? new OsgiVersionImpl(gv.major(), gv.minor(), gv.bugfix(), qualifier, false) : this;
+		return versionFactory.createOsgiVersion(gv.major(), gv.minor(), gv.bugfix(), false);
 	}
 
 	@Override
 	public OsgiVersion snapshotVersion() {
-		return gv.isSnapshot() ? this : new OsgiVersionImpl(gv.major(), gv.minor(), gv.bugfix(), qualifier, true);
+		return versionFactory.createOsgiVersion(gv.major(), gv.minor(), gv.bugfix(), true);
 	}
 
 	@Override

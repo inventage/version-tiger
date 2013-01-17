@@ -19,7 +19,7 @@ public class Main {
 			executeCommandFromArgumentFile(args, commandExecuter);
 
 			System.out.println("Reading commands from standard input:");
-			commandExecuter.executeCommands(stdIn, logger);
+			commandExecuter.executeCommands(stdIn);
 		} catch (IOException e) {
 			throw new IllegalStateException("Cannot read commands.", e);
 		} finally {
@@ -38,7 +38,7 @@ public class Main {
 
 	private void executeCommandFromArgumentFile(String[] args, CommandExecuter commandExecuter) {
 		if (args.length >= 1) {
-			commandExecuter.execute("include " + args[0], logger);
+			commandExecuter.execute(new Command("include " + args[0]));
 		}
 	}
 

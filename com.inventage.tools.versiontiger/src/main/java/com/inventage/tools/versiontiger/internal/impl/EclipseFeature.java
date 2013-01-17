@@ -16,8 +16,8 @@ class EclipseFeature extends MavenProjectImpl {
 
 	private String featureContent;
 
-	EclipseFeature(String projectPath, VersioningLogger logger) {
-		super(projectPath, logger);
+	EclipseFeature(String projectPath, VersioningLogger logger, VersionFactory versionFactory) {
+		super(projectPath, logger, versionFactory);
 	}
 
 	@Override
@@ -30,7 +30,7 @@ class EclipseFeature extends MavenProjectImpl {
 	}
 
 	private OsgiVersion asOsgiVersion(MavenVersion mavenVersion) {
-		return new VersionFactory().createOsgiVersion(mavenVersion);
+		return getVersionFactory().createOsgiVersion(mavenVersion);
 	}
 
 	private void setFeatureVersion(OsgiVersion newVersion, OsgiVersion oldVersion) {

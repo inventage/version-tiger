@@ -14,8 +14,8 @@ class EclipsePlugin extends MavenProjectImpl {
 
 	private String manifestContent;
 	
-	EclipsePlugin(String projectPath, VersioningLogger logger) {
-		super(projectPath, logger);
+	EclipsePlugin(String projectPath, VersioningLogger logger, VersionFactory versionFactory) {
+		super(projectPath, logger, versionFactory);
 	}
 
 	@Override
@@ -28,7 +28,7 @@ class EclipsePlugin extends MavenProjectImpl {
 	}
 
 	private OsgiVersion asOsgiVersion(MavenVersion mavenVersion) {
-		return new VersionFactory().createOsgiVersion(mavenVersion);
+		return getVersionFactory().createOsgiVersion(mavenVersion);
 	}
 
 	private void setPluginVersion(OsgiVersion newVersion, OsgiVersion oldVersion) {
@@ -86,7 +86,7 @@ class EclipsePlugin extends MavenProjectImpl {
 	
 	private Manifest parseManifest() {
 		try {
-			return new ManifestParser(getManifestContent()).parse();
+			return new ManifestParser(getManifestContent(), getVersionFactory()).parse();
 		}
 		catch (IllegalStateException e) {
 			throw new IllegalStateException("Can't parse manifest: " + getManifestFile().toString() + ". " + e.getMessage(), e);

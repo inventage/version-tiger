@@ -12,10 +12,13 @@ public class MavenVersionImpl implements MavenVersion {
 	private static final String MAVEN_SUFFIX_DELIMITER = "-";
 	private static final String MAVEN_SNAPSHOT_SUFFIX = "SNAPSHOT";
 	
+	private final VersionFactory versionFactory;
+	
 	private final GeneralVersion gv;
 	private final String suffix;
 	
-	public MavenVersionImpl(String version) {
+	public MavenVersionImpl(String version, VersionFactory versionFactory) {
+		this.versionFactory = versionFactory;
 		Matcher matcher = VERSION_PATTERN.matcher(version);
 		if (!matcher.matches()) {
 			throw new IllegalArgumentException("Invalid maven version: " + version);
@@ -36,7 +39,8 @@ public class MavenVersionImpl implements MavenVersion {
 		}
 	}
 	
-	public MavenVersionImpl(Integer major, Integer minor, Integer bugfix, String suffix, boolean snapshot) {
+	public MavenVersionImpl(Integer major, Integer minor, Integer bugfix, String suffix, boolean snapshot, VersionFactory versionFactory) {
+		this.versionFactory = versionFactory;
 		gv = new GeneralVersion(major, minor, bugfix, snapshot);
 		this.suffix = suffix;
 	}
@@ -67,31 +71,31 @@ public class MavenVersionImpl implements MavenVersion {
 	public MavenVersion incrementMajorAndSnapshot() {
 		GeneralVersion inc = gv.incrementMajorAndSnapshot();
 		
-		return new MavenVersionImpl(inc.major(), inc.minor(), inc.bugfix(), suffix, inc.isSnapshot());
+		return versionFactory.createMavenVersion(inc.major(), inc.minor(), inc.bugfix(), suffix, inc.isSnapshot());
 	}
 
 	@Override
 	public MavenVersion incrementMinorAndSnapshot() {
 		GeneralVersion inc = gv.incrementMinorAndSnapshot();
 		
-		return new MavenVersionImpl(inc.major(), inc.minor(), inc.bugfix(), suffix, inc.isSnapshot());
+		return versionFactory.createMavenVersion(inc.major(), inc.minor(), inc.bugfix(), suffix, inc.isSnapshot());
 	}
 
 	@Override
 	public MavenVersion incrementBugfixAndSnapshot() {
 		GeneralVersion inc = gv.incrementBugfixAndSnapshot();
 		
-		return new MavenVersionImpl(inc.major(), inc.minor(), inc.bugfix(), suffix, inc.isSnapshot());
+		return versionFactory.createMavenVersion(inc.major(), inc.minor(), inc.bugfix(), suffix, inc.isSnapshot());
 	}
 
 	@Override
 	public MavenVersion releaseVersion() {
-		return gv.isSnapshot() ? new MavenVersionImpl(gv.major(), gv.minor(), gv.bugfix(), suffix, false) : this;
+		return gv.isSnapshot() ? versionFactory.createMavenVersion(gv.major(), gv.minor(), gv.bugfix(), suffix, false) : this;
 	}
 
 	@Override
 	public MavenVersion snapshotVersion() {
-		return gv.isSnapshot() ? this : new MavenVersionImpl(gv.major(), gv.minor(), gv.bugfix(), suffix, true);
+		return gv.isSnapshot() ? this : versionFactory.createMavenVersion(gv.major(), gv.minor(), gv.bugfix(), suffix, true);
 	}
 
 	@Override

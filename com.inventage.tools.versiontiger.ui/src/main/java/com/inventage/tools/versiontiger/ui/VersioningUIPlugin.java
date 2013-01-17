@@ -5,6 +5,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
 import com.inventage.tools.versiontiger.Versioning;
+import com.inventage.tools.versiontiger.ui.preferences.OsgiQualifiersStore;
 import com.inventage.tools.versiontiger.universedefinition.UniverseDefinitions;
 
 /**
@@ -32,6 +33,12 @@ public class VersioningUIPlugin extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 		versioning = loadVersioning(context);
+		
+		/* On first start, we update the versionings osgi qualifiers according the the settings. They also get updated on every preferences update. */
+		OsgiQualifiersStore store = new OsgiQualifiersStore(getPreferenceStore());
+		versioning.setOsgiReleaseQualifier(store.loadReleaseQualifier());
+		versioning.setOsgiSnapshotQualifier(store.loadSnapshotQualifier());
+		
 		universeDefinitions = loadUniverseDefinitions(context);
 	}
 

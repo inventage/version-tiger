@@ -17,4 +17,7 @@ public interface Versioning {
 
 	void executeCommandScript(BufferedReader commandScript, String rootPath, VersioningLogger logger) throws IOException;
 
+	void setOsgiReleaseQualifier(String osgiReleaseQualifier);
+	
+	void setOsgiSnapshotQualifier(String osgiSnapshotQualifier);
 }

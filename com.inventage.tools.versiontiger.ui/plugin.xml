@@ -88,5 +88,23 @@
             commandId="com.inventage.tools.versiontiger.ui.edit.runCommandFile">
       </handler>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="com.inventage.tools.versiontiger.ui.preferences.VersionTigerPreferencesPage"
+            id="com.inventage.tools.versiontiger.ui.preferences.page"
+            name="%com.inventage.tools.versiontiger.ui.preferences.page.title">
+         <keywordReference
+               id="com.inventage.tools.versiontiger.ui.preferences.page.keywords">
+         </keywordReference>
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.keywords">
+      <keyword
+            id="com.inventage.tools.versiontiger.ui.preferences.page.keywords"
+            label="%com.inventage.tools.versiontiger.ui.preferences.page.keywords">
+      </keyword>
+   </extension>
 
 </plugin>

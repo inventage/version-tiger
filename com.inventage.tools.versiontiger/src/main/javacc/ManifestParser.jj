@@ -12,8 +12,12 @@ import com.inventage.tools.versiontiger.internal.impl.VersionFactory;
 
 @SuppressWarnings("all")
 public class ManifestParser {
-	public ManifestParser(String input) {
-		this(new StringReader(input));
+	
+	private VersionFactory versionFactory;
+	
+	public ManifestParser(String input, VersionFactory versionFactory) {
+        this(new StringReader(input));
+        this.versionFactory = versionFactory;
 	}
 
 	public Manifest parse() {
@@ -372,7 +376,7 @@ OsgiVersion osgiVersion() :
 		)?
 	)?
 	{
-		return new VersionFactory().createOsgiVersion(version.toString());
+		return versionFactory.createOsgiVersion(version.toString());
 	}
 }
 

@@ -20,8 +20,8 @@ class EclipseRepository extends MavenProjectImpl {
 
 	private String categoryContent;
 
-	EclipseRepository(String projectPath, VersioningLogger logger) {
-		super(projectPath, logger);
+	EclipseRepository(String projectPath, VersioningLogger logger, VersionFactory versionFactory) {
+		super(projectPath, logger, versionFactory);
 	}
 
 	@Override
@@ -37,7 +37,7 @@ class EclipseRepository extends MavenProjectImpl {
 	}
 
 	private OsgiVersion asOsgiVersion(MavenVersion mavenVersion) {
-		return new VersionFactory().createOsgiVersion(mavenVersion);
+		return getVersionFactory().createOsgiVersion(mavenVersion);
 	}
 
 	private void setProductVersion(OsgiVersion newVersion, OsgiVersion oldVersion, File productFile) {

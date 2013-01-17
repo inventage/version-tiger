@@ -30,7 +30,7 @@ import com.inventage.tools.versiontiger.VersioningLoggerItem;
  */
 public class ConsoleLogger implements VersioningLogger {
 
-	public static final String CONSOLE_IDENTIFIER = "VersionTigerConsole";
+	public static final String CONSOLE_IDENTIFIER = "Version Tiger Console";
 	
 	public final static String LINE_DELIMITER = "\n";
 	public final static String DELIMITER = " - ";
