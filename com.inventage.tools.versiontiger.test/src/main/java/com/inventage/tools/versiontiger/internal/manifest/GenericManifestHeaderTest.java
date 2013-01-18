@@ -24,4 +24,19 @@ public class GenericManifestHeaderTest {
 		assertEquals("foo: line1\n line2\r\n line3\r\n", result.toString());
 	}
 
+	@Test
+	public void shouldPrintWithoutNewLine() throws Exception {
+		// given
+		GenericManifestHeader genericManifestHeader = new GenericManifestHeader();
+		genericManifestHeader.setName("foo");
+		genericManifestHeader.setValue("line1\n line2\r\n line3");
+		StringBuilder result = new StringBuilder();
+		
+		// when
+		genericManifestHeader.print(result);
+		
+		// then
+		assertEquals("foo: line1\n line2\r\n line3", result.toString());
+	}
+
 }

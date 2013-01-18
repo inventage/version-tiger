@@ -46,8 +46,16 @@ public class ManifestParserTest {
 			{ "Manifest-Version: 1.0\nFragment-Host: ch.my.bundle;bundle-version=\"[1.0,2.0)\"\n\n", null },
 			{ "Manifest-Version: 1.0\nFragment-Host: ch.my.bundle;bundle-version=\"[1.0,2.0)\";myattribute=val\n\n", null },
 			{ "Manifest-Version: 1.0\nFoo: line0\n line1\n line2\n line3\nBar: bla\n\n", null },
+			{ "Manifest-Version: 1.0\nFoo: bar", null },
 			{ "Manifest-Version: 1.0\nFoo: bar\n", null },
 			{ "Manifest-Version: 1.0\nFoo: bar\n\n", null },
+			{ "Manifest-Version: 1.0\nFoo: bar\n\n\n", null },
+			{ "Manifest-Version: 1.0\nFoo: bar\n\n\n\n", null },
+			{ "Manifest-Version: 1.0\nFoo: bar\n\nOther: bla", null },
+			{ "Manifest-Version: 1.0\nFoo: bar\n\nOther: bla\n", null },
+			{ "Manifest-Version: 1.0\nFoo: bar\n\nOther: bla\n\n", null },
+			{ "Manifest-Version: 1.0\nFoo: bar\n\nOther: bla\n\n\n", null },
+			{ "Manifest-Version: 1.0\nFoo: bar\n\nOther: bla\n\n\n\n", null },
 			{ "Manifest-Version: 1.0\nRequire-Bu\n ndle: bar\n\n", "Manifest-Version: 1.0\nRequire-Bundle: bar\n\n" }, // better than no newline support in header names
 		});
 	}

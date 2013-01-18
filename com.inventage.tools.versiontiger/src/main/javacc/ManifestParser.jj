@@ -234,7 +234,7 @@ Manifest manifest() :
     	<NEWLINE>
     	section=section() { manifest.addSection(section); }
     )*
-    (t=<NEWLINE> { manifest.setLastNewLine(t.image); })?
+    (t=<NEWLINE> { manifest.appendLastNewLine(t.image); })*
     <EOF>
     {
     	return manifest;
@@ -269,11 +269,11 @@ FragmentHostHeader fragmentHostHeader() :
 	<COLON>
 	<SPACE>
 	bundle=requireBundle() { header.setHostBundle(bundle); }
-	t=<NEWLINE>
-	{
-		header.setNewLine(t.image);
-		return header;
-	}
+	(
+		t=<NEWLINE> { header.setNewLine(t.image); }
+	|	<EOF>
+	)
+	{ return header; }
 }
 
 RequireBundleHeader requireBundleHeader() :
@@ -293,11 +293,10 @@ RequireBundleHeader requireBundleHeader() :
 		bundle=requireBundle()
 		{ header.addRequireBundle(bundle); }
 	)*
-	t=<NEWLINE>
-	{
-		header.setNewLine(t.image);
-		return header;
-	}
+	(	t=<NEWLINE> { header.setNewLine(t.image); }
+	|	<EOF>
+	)
+	{ return header; }
 }
 
 RequireBundle requireBundle() :
@@ -413,13 +412,11 @@ GenericManifestHeader header() :
 			value.append(t.specialToken.image);
 		}
 		value.append(t.image);
-	})*
-	t=<NEWLINE>
-	{
-		header.setValue(value.toString());
-		header.setNewLine(t.image);
-		return header;
-	}
+	})* { header.setValue(value.toString()); }
+	(	t=<NEWLINE> { header.setNewLine(t.image); }
+	|	<EOF>
+	)
+	{ return header; }
 }
 
 String headername() :

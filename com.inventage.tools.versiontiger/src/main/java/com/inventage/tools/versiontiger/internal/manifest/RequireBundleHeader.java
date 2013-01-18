@@ -10,7 +10,7 @@ public class RequireBundleHeader implements ManifestHeader {
 	public static final String NAME = "Require-Bundle";
 
 	private final List<RequireBundle> requireBundles = new ArrayList<RequireBundle>();
-	private String newLine = "\n";
+	private String newLine;
 	
 	@Override
 	public String getName() {
@@ -38,13 +38,15 @@ public class RequireBundleHeader implements ManifestHeader {
 			requireBundles.get(0).print(result);
 			for (int i = 1; i < requireBundles.size(); i++) {
 				result.append(",");
-				result.append(newLine); // FIXME poor mans solution
+				result.append(newLine != null ? newLine : "\n"); // FIXME poor mans solution
 				result.append(" ");
 				requireBundles.get(i).print(result);
 			}
 		}
 		
-		result.append(newLine);
+		if (newLine != null) {
+			result.append(newLine);
+		}
 	}
 
 	public boolean updateReferenceVersion(String id, OsgiVersion oldVersion, OsgiVersion newVersion, VersioningLoggerItem loggerItem) {

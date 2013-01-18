@@ -10,7 +10,7 @@ public class Manifest {
 
 	private final List<ManifestSection> sections = new ArrayList<ManifestSection>();
 	private String newLine;
-	private String lastNewLine;
+	private final StringBuilder lastNewLines = new StringBuilder();
 	
 	public List<ManifestSection> getSections() {
 		return sections;
@@ -28,12 +28,12 @@ public class Manifest {
 		this.newLine = newLine;
 	}
 	
-	public String getLastNewLine() {
-		return lastNewLine;
+	public String getLastNewLines() {
+		return lastNewLines.toString();
 	}
 
-	public void setLastNewLine(String lastNewLine) {
-		this.lastNewLine = lastNewLine;
+	public void appendLastNewLine(String lastNewLine) {
+		lastNewLines.append(lastNewLine);
 	}
 
 	public String print() {
@@ -54,8 +54,8 @@ public class Manifest {
 			}
 		}
 		
-		if (lastNewLine != null) {
-			result.append(lastNewLine);
+		if (lastNewLines != null) {
+			result.append(lastNewLines);
 		}
 	}
 
