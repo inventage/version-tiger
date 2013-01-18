@@ -49,7 +49,7 @@ public class RunCommandFileHandler extends AbstractHandler {
 	private boolean hasUserConfirmed(File commandFile, Shell parent) {
 		return MessageDialog.openConfirm(parent,
 				"Run versioning commands",
-				"Do you really like to execute the versioning commands in " + commandFile + "?");
+				"Do you really like to execute the version update commands in " + commandFile + "?");
 	}
 
 	private void executeCommandsFile(File commandFile, ConsoleLogger logger) throws ExecutionException {
