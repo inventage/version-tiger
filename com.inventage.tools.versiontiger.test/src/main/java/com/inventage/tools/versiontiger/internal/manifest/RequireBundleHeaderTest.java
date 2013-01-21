@@ -44,4 +44,35 @@ public class RequireBundleHeaderTest {
 		assertEquals("Require-Bundle: foo;visibility:=private,\r\n bar\r\n", result.toString());
 	}
 
+	@Test
+	public void shouldPrintWithoutNewLine() throws Exception {
+		// given
+		final StringBuilder result = new StringBuilder();
+		RequireBundleHeader requireBundleHeader = new RequireBundleHeader();
+		RequireBundle requireBundle1 = mock(RequireBundle.class);
+		doAnswer(new Answer<Void>() {
+			@Override
+			public Void answer(InvocationOnMock invocation) throws Throwable {
+				result.append("foo;visibility:=private");
+				return null;
+			}
+		}).when(requireBundle1).print(result);
+		requireBundleHeader.addRequireBundle(requireBundle1);
+		RequireBundle requireBundle2 = mock(RequireBundle.class);
+		doAnswer(new Answer<Void>() {
+			@Override
+			public Void answer(InvocationOnMock invocation) throws Throwable {
+				result.append("bar");
+				return null;
+			}
+		}).when(requireBundle2).print(result);
+		requireBundleHeader.addRequireBundle(requireBundle2);
+		
+		// when
+		requireBundleHeader.print(result);
+		
+		// then
+		assertEquals("Require-Bundle: foo;visibility:=private,\n bar", result.toString());
+	}
+
 }

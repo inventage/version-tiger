@@ -7,7 +7,7 @@ public class FragmentHostHeader implements ManifestHeader {
 	
 	public static final String NAME = "Fragment-Host";
 	private RequireBundle hostBundle;
-	private String newLine = "\n";
+	private String newLine;
 
 	@Override
 	public String getName() {
@@ -31,7 +31,9 @@ public class FragmentHostHeader implements ManifestHeader {
 		result.append(getName());
 		result.append(": ");
 		hostBundle.print(result);
-		result.append(newLine);
+		if (newLine != null) {
+			result.append(newLine);
+		}
 	}
 
 	public boolean updateReferenceVersion(String id, OsgiVersion oldVersion, OsgiVersion newVersion, VersioningLoggerItem loggerItem) {

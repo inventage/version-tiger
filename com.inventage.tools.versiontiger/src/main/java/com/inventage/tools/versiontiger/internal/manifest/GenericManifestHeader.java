@@ -20,7 +20,9 @@ public class GenericManifestHeader implements ManifestHeader {
 		result.append(": ");
 		
 		result.append(getValue());
-		result.append(getNewLine());
+		if (getNewLine() != null) {
+			result.append(getNewLine());
+		}
 	}
 
 	public String getValue() {

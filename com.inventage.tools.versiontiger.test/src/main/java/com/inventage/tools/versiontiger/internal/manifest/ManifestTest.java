@@ -44,13 +44,14 @@ public class ManifestTest {
 		}).when(section2).print(any(StringBuilder.class));
 		manifest.addSection(section2);
 		manifest.setNewLine("\n");
-		manifest.setLastNewLine("\r\n");
+		manifest.appendLastNewLine("\r\n");
+		manifest.appendLastNewLine("\n");
 		
 		// when
 		String result = manifest.print();
 		
 		// then
-		assertEquals("Manifest-Version: 1.0\nFoo1: bar\n\nFoo2: bar\n\r\n", result);
+		assertEquals("Manifest-Version: 1.0\nFoo1: bar\n\nFoo2: bar\n\r\n\n", result);
 	}
 	
 	@Test
