@@ -166,7 +166,6 @@ public enum VersionTigerBatchOperation {
 	}
 	
 	void execute(CommandExecuter commandExecuter, Command command) {
-		
 		VersioningLogger logger = commandExecuter.getLogger();
 		
 		if (!argumentsMatch(command)) {
@@ -174,13 +173,7 @@ public enum VersionTigerBatchOperation {
 			return;
 		}
 		
-		try {
-			replacePropertiesInArguments(commandExecuter, command);
-		}
-		catch (IllegalArgumentException e) {
-			logError(logger, "Unknown variable in your command: " + command.getOriginalLine());
-			return;
-		}
+		replacePropertiesInArguments(commandExecuter, command);
 		
 		internalExecute(commandExecuter, command);
 	};
@@ -226,14 +219,18 @@ public enum VersionTigerBatchOperation {
 		StringBuffer result = new StringBuffer();
 		while (matcher.find()) {
 			String propertyName = matcher.group(1);
-			matcher.appendReplacement(result, evaluateProperty(commandExecuter, propertyName));
+			matcher.appendReplacement(result, escapeGroupReferences(evaluateProperty(commandExecuter, propertyName)));
 		}
 		matcher.appendTail(result);
 
 		return result.toString();
 	}
+	
+	private String escapeGroupReferences(String replacement) {
+		return replacement.replace("$", "\\$");
+	}
 
-	String evaluateProperty(CommandExecuter commandExecuter, String propertyName) {
+	private String evaluateProperty(CommandExecuter commandExecuter, String propertyName) {
 		if (propertyName.startsWith(PROPERTY_NAME_VERSION)) {
 			return getProjectVersion(commandExecuter, propertyName.substring(PROPERTY_NAME_VERSION.length())).toString();
 		} else if (propertyName.startsWith(PROPERTY_NAME_OSGIVERSION)) {
@@ -259,7 +256,7 @@ public enum VersionTigerBatchOperation {
 		return project != null ? project.getProperty(key) : null;
 	}
 	
-	static void printUsage(VersioningLogger logger) {
+	private static void printUsage(VersioningLogger logger) {
 		logMessage(logger, "Usage:");
 		for (VersionTigerBatchOperation op: VersionTigerBatchOperation.values()) {
 			logMessage(logger, "  " + op.usage);
