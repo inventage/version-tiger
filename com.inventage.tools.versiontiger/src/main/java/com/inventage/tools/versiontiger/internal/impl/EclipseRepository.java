@@ -78,7 +78,7 @@ class EclipseRepository extends MavenProjectImpl {
 					versionAttribute.setValue(newVersion.toString());
 					hasModifications = true;
 
-					logSuccess(file + ": " + featureElement.getChildPath() + "#version = " + newVersion, oldVersion, newVersion);
+					logReferenceSuccess(file + ": " + featureElement.getChildPath() + "#version = " + newVersion, oldVersion, newVersion, id);
 				}
 			}
 		}
@@ -105,7 +105,7 @@ class EclipseRepository extends MavenProjectImpl {
 						hasModifications = true;
 
 						versionAttribute.setValue(newVersion.toString());
-						logSuccess(categoryXmlFile + ": " + featureElement.getChildPath() + "#version = " + newVersion, oldVersion, newVersion);
+						logReferenceSuccess(categoryXmlFile + ": " + featureElement.getChildPath() + "#version = " + newVersion, oldVersion, newVersion, id);
 
 						Attribute urlAttribute = featureElement.getAttribute("url");
 						if (urlAttribute != null) {
@@ -118,7 +118,7 @@ class EclipseRepository extends MavenProjectImpl {
 							matcher.appendTail(newUrl);
 
 							urlAttribute.setValue(newUrl.toString());
-							logSuccess(categoryXmlFile + ": " + featureElement.getChildPath() + "#url = " + newUrl, oldVersion, newVersion);
+							logReferenceSuccess(categoryXmlFile + ": " + featureElement.getChildPath() + "#url = " + newUrl, oldVersion, newVersion, id);
 						}
 					}
 				}

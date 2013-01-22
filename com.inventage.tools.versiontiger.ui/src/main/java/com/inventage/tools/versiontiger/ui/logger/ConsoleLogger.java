@@ -67,6 +67,8 @@ public class ConsoleLogger implements VersioningLogger {
 		
 		try {
 			item.writeTo(consoleOutput);
+			consoleOutput.append(ConsoleLogger.LINE_DELIMITER);
+			consoleOutput.flush();
 		}
 		catch (IOException e) {
 			throw new RuntimeException("Unable to write to console.", e);

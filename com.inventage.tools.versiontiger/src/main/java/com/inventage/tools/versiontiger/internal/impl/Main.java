@@ -38,7 +38,7 @@ public class Main {
 
 	private void executeCommandFromArgumentFile(String[] args, CommandExecuter commandExecuter) {
 		if (args.length >= 1) {
-			commandExecuter.execute(new Command("include " + args[0]));
+			commandExecuter.execute(new Command(VersionTigerBatchOperation.INCLUDE.toString() + " " + args[0]));
 		}
 	}
 

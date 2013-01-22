@@ -58,14 +58,14 @@ class EclipsePlugin extends MavenProjectImpl {
 				new FileHandler().writeFileContent(getManifestFile(), manifestContent);
 			}
 		} catch (IllegalStateException e) {
-			logError("Can't parse manifest: " + getManifestFile() + ". " + e.getMessage(), oldOsgiVersion, newOsgiVersion);
+			logReferenceError("Can't parse manifest: " + getManifestFile() + ". " + e.getMessage(), oldOsgiVersion, newOsgiVersion, id);
 		}
 	}
 	
 	private boolean updateRequireBundleReferences(String id, OsgiVersion oldVersion, OsgiVersion newVersion) {
 		Manifest manifest = parseManifest();
 		
-		VersioningLoggerItem loggerItem = getLoggerItem(oldVersion, newVersion);
+		VersioningLoggerItem loggerItem = getLoggerItem(oldVersion, newVersion, id);
 		boolean result = manifest.updateRequireBundleReference(id, oldVersion, newVersion, loggerItem);
 		getLogger().addVersioningLoggerItem(loggerItem);
 		
@@ -76,7 +76,7 @@ class EclipsePlugin extends MavenProjectImpl {
 	private boolean updateFragmentHostReference(String id, OsgiVersion oldVersion, OsgiVersion newVersion) {
 		Manifest manifest = parseManifest();
 		
-		VersioningLoggerItem loggerItem = getLoggerItem(oldVersion, newVersion);
+		VersioningLoggerItem loggerItem = getLoggerItem(oldVersion, newVersion, id);
 		boolean result = manifest.updateFragmentHostReference(id, oldVersion, newVersion, loggerItem);
 		getLogger().addVersioningLoggerItem(loggerItem);
 		
@@ -105,9 +105,10 @@ class EclipsePlugin extends MavenProjectImpl {
 		return new File(metaInfFolder, "MANIFEST.MF");
 	}
 	
-	private VersioningLoggerItem getLoggerItem(OsgiVersion oldVersion, OsgiVersion newVersion) {
+	private VersioningLoggerItem getLoggerItem(OsgiVersion oldVersion, OsgiVersion newVersion, String originalProject) {
 		VersioningLoggerItem loggerItem = getLogger().createVersioningLoggerItem();
 		loggerItem.setProject(this);
+		loggerItem.setOriginalProject(originalProject);
 		loggerItem.setOldVersion(oldVersion);
 		loggerItem.setNewVersion(newVersion);
 		

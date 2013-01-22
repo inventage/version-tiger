@@ -57,6 +57,11 @@ class CommandExecuter {
 	}
 
 	void execute(Command command) {
+		if (!command.isValidOperation()) {
+			VersionTigerBatchOperation.logUnknownCommand(command, logger);
+			return;
+		}
+		
 		command.getOperation().execute(this, command);
 	}
 }

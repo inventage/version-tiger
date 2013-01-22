@@ -27,8 +27,6 @@ import com.inventage.tools.versiontiger.util.FileHandler;
  */
 public enum VersionTigerBatchOperation {
 	
-	
-	
 	PROJECT(1, "project <path>") {
 		@Override
 		void internalExecute(CommandExecuter commandExecuter, Command command) {
@@ -111,7 +109,7 @@ public enum VersionTigerBatchOperation {
 			Collections.sort(projects);
 
 			for (Project project : projects) {
-				logSuccess(commandExecuter.getLogger(), project.id());
+				logMessage(commandExecuter.getLogger(), project.id());
 			}
 		}
 	},
@@ -171,12 +169,7 @@ public enum VersionTigerBatchOperation {
 		
 		VersioningLogger logger = commandExecuter.getLogger();
 		
-		if (!command.isValidOperation()) {
-			logError(logger, "Unknown command: " + command.getOriginalLine());
-			printUsage(commandExecuter.getLogger());
-			return;
-		}
-		else if (!argumentsMatch(command)) {
+		if (!argumentsMatch(command)) {
 			logError(logger, "Wrong number of arguments. Usage: " + usage);
 			return;
 		}
@@ -197,6 +190,14 @@ public enum VersionTigerBatchOperation {
 	
 	private static void logError(VersioningLogger logger, String line) {
 		log(logger, line, VersioningLoggerStatus.ERROR);
+	}
+	
+	public static void logUnknownCommand(Command command, VersioningLogger logger) {
+		logError(logger, "Unknown command: " + command.getOriginalLine() + " -- Use 'help' for a list of commands.");
+	}
+	
+	private static void logMessage(VersioningLogger logger, String line) {
+		log(logger, line, VersioningLoggerStatus.MESSAGE);
 	}
 	
 	private static void log(VersioningLogger logger, String line, VersioningLoggerStatus status) {
@@ -252,10 +253,10 @@ public enum VersionTigerBatchOperation {
 	}
 	
 	static void printUsage(VersioningLogger logger) {
-		logError(logger, "Usage:");
+		logMessage(logger, "Usage:");
 		for (VersionTigerBatchOperation op: VersionTigerBatchOperation.values()) {
-			logError(logger, "  " + op.usage);
+			logMessage(logger, "  " + op.usage);
 		}
-		logError(logger, "Available properties in arguments: ${version:my.artifact.id}, ${osgiVersion:my.artifact.id}");
+		logMessage(logger, "Available properties in arguments: ${version:my.artifact.id}, ${osgiVersion:my.artifact.id}");
 	}
 }

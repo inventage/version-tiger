@@ -155,7 +155,7 @@ class MavenProjectImpl implements MavenProject {
 					versionElement.setText(newVersion.toString());
 					hasModifications = true;
 
-					logSuccess(getPomXmlFile() + ": " + versionElement.getChildPath() + " = " + newVersion, oldVersion, newVersion);
+					logReferenceSuccess(getPomXmlFile() + ": " + versionElement.getChildPath() + " = " + newVersion, oldVersion, newVersion, id);
 				}
 			}
 		}
@@ -175,7 +175,7 @@ class MavenProjectImpl implements MavenProject {
 
 				versionElement.setText(newVersion.toString());
 				hasModifications = true;
-				logSuccess(getPomXmlFile() + ": " + versionElement.getChildPath() + " = " + newVersion, oldVersion, newVersion);
+				logReferenceSuccess(getPomXmlFile() + ": " + versionElement.getChildPath() + " = " + newVersion, oldVersion, newVersion, id);
 			}
 		}
 
@@ -195,22 +195,32 @@ class MavenProjectImpl implements MavenProject {
 	}
 	
 	protected void logSuccess(String message, Version oldVersion, Version newVersion) {
-		log(message, VersioningLoggerStatus.SUCCESS, oldVersion, newVersion);
+		log(message, VersioningLoggerStatus.SUCCESS, oldVersion, newVersion, null);
+	}
+	
+	protected void logReferenceSuccess(String message, Version oldVersion, Version newVersion, String originalProject) {
+		log(message, VersioningLoggerStatus.SUCCESS, oldVersion, newVersion, originalProject);
 	}
 	
 	protected void logWarning(String message, Version oldVersion, Version newVersion) {
-		log(message, VersioningLoggerStatus.WARNING, oldVersion, newVersion);
+		log(message, VersioningLoggerStatus.WARNING, oldVersion, newVersion, null);
 	}
 	
 	protected void logError(String message, Version oldVersion, Version newVersion) {
-		log(message, VersioningLoggerStatus.ERROR, oldVersion, newVersion);
+		log(message, VersioningLoggerStatus.ERROR, oldVersion, newVersion, null);
 	}
 	
-	private void log(String message, VersioningLoggerStatus status, Version oldVersion, Version newVersion) {
+	protected void logReferenceError(String message, Version oldVersion, Version newVersion, String originalProject) {
+		log(message, VersioningLoggerStatus.ERROR, oldVersion, newVersion, originalProject);
+	}
+	
+	private void log(String message, VersioningLoggerStatus status, Version oldVersion, Version newVersion, String originalProject) {
 		VersioningLoggerItem loggerItem = logger.createVersioningLoggerItem();
 		
 		loggerItem.setProject(this);
 		loggerItem.setStatus(status);
+		
+		loggerItem.setOriginalProject(originalProject);
 		
 		loggerItem.setOldVersion(oldVersion);
 		loggerItem.setNewVersion(newVersion);

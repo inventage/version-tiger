@@ -60,7 +60,7 @@ class EclipseApplication extends MavenProjectImpl {
 					versionAttribute.setValue(newVersion.toString());
 					hasModifications = true;
 
-					logSuccess(getProductXmlFile() + ": " + featureElement.getChildPath() + "#version = " + newVersion, oldVersion, newVersion);
+					logReferenceSuccess(getProductXmlFile() + ": " + featureElement.getChildPath() + "#version = " + newVersion, oldVersion, newVersion, id);
 				}
 			}
 		}

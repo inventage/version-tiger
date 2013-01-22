@@ -5,6 +5,7 @@ import java.io.PrintStream;
 public enum VersioningLoggerStatus {
 	
 	SUCCESS(System.out),
+	MESSAGE(System.out),
 	WARNING(System.err),
 	ERROR(System.err);
 	

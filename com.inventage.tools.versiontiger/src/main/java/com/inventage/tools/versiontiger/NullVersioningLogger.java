@@ -17,27 +17,5 @@ public class NullVersioningLogger implements VersioningLogger {
 	}
 
 	
-	public class NullVersioningLoggerItem implements VersioningLoggerItem {
-
-		@Override
-		public void setProject(Project project) {
-		}
-
-		@Override
-		public void setOldVersion(Version oldVersion) {
-		}
-
-		@Override
-		public void setNewVersion(Version newVersion) {
-		}
-
-		@Override
-		public void setStatus(VersioningLoggerStatus versioningLoggerStatus) {
-		}
-
-		@Override
-		public void appendToMessage(String message) {
-		}
-		
-	}
+	public class NullVersioningLoggerItem extends AbstractVersioningLoggerItem {}
 }

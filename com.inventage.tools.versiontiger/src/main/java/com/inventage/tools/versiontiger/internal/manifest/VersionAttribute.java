@@ -37,11 +37,13 @@ public class VersionAttribute implements RequireBundleAttribute {
 	}
 
 	public boolean updateVersionIfOldMatches(OsgiVersion oldVersion, OsgiVersion newVersion, VersioningLoggerItem loggerItem) {
+		boolean result = versionRange.updateVersionIfOldMatches(oldVersion, newVersion, loggerItem);
+		
 		StringBuilder message = new StringBuilder();
 		print(message);
 		loggerItem.appendToMessage(message.toString());
 		
-		return versionRange.updateVersionIfOldMatches(oldVersion, newVersion, loggerItem);
+		return result;
 	}
 
 }

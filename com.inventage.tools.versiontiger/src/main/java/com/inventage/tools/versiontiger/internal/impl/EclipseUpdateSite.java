@@ -44,7 +44,7 @@ class EclipseUpdateSite extends MavenProjectImpl {
 				if (versionAttribute != null && (oldVersion == null || oldVersion.toString().equals(attributeOldVersion))) {
 					versionAttribute.setValue(newVersion.toString());
 					hasModifications = true;
-					logSuccess(getSiteXmlFile() + ": " + featureElement.getChildPath() + "#version = " + newVersion, oldVersion, newVersion);
+					logReferenceSuccess(getSiteXmlFile() + ": " + featureElement.getChildPath() + "#version = " + newVersion, oldVersion, newVersion, id);
 
 					Attribute urlAttribute = featureElement.getAttribute("url");
 					if (urlAttribute != null) {
@@ -57,7 +57,7 @@ class EclipseUpdateSite extends MavenProjectImpl {
 						matcher.appendTail(newUrl);
 
 						urlAttribute.setValue(newUrl.toString());
-						logSuccess(getSiteXmlFile() + ": " + featureElement.getChildPath() + "#url = " + newUrl, oldVersion, newVersion);
+						logReferenceSuccess(getSiteXmlFile() + ": " + featureElement.getChildPath() + "#url = " + newUrl, oldVersion, newVersion, id);
 					}
 				}
 			}

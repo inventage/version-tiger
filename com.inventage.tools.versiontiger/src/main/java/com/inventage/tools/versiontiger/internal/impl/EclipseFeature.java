@@ -71,7 +71,7 @@ class EclipseFeature extends MavenProjectImpl {
 					versionAttribute.setValue(newVersion.toString());
 					hasModifications = true;
 
-					logSuccess(getFeatureXmlFile() + ": " + child.getChildPath() + "#version = " + newVersion, oldVersion, newVersion);
+					logReferenceSuccess(getFeatureXmlFile() + ": " + child.getChildPath() + "#version = " + newVersion, oldVersion, newVersion, id);
 				}
 			}
 		}
