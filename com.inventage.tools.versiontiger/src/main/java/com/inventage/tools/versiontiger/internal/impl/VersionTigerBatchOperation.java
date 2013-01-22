@@ -174,7 +174,14 @@ public enum VersionTigerBatchOperation {
 			return;
 		}
 		
-		replacePropertiesInArguments(commandExecuter, command);
+		try {
+			replacePropertiesInArguments(commandExecuter, command);
+		}
+		catch (IllegalArgumentException e) {
+			logError(logger, "Unknown variable in your command: " + command.getOriginalLine());
+			return;
+		}
+		
 		internalExecute(commandExecuter, command);
 	};
 	
