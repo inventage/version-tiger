@@ -20,15 +20,20 @@ public class Main {
 
 			System.out.println("Reading commands from standard input:");
 			commandExecuter.executeCommands(stdIn);
-		} catch (IOException e) {
-			throw new IllegalStateException("Cannot read commands.", e);
+		} 
+		catch (IllegalStateException e) {
+			System.out.println(e.getMessage());
+		}
+		catch (IOException e) {
+			System.out.println(e.getMessage());
+			
 		} finally {
 			try {
 				stdIn.close();
 			} catch (IOException e) {
 				// nop
 			}
-			System.out.println("Goodbye!");
+			System.out.println("Quitting!");
 		}
 	}
 

@@ -1,5 +1,6 @@
 package com.inventage.tools.versiontiger.internal.impl;
 
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -51,6 +52,19 @@ class ProjectUniverseImpl implements ProjectUniverse {
 		}
 
 		return project;
+	}
+	
+	@Override
+	public Set<Project> addRootProjectPath(String projectRootFilePath) {
+		Set<MavenProject> recursiveProjects = projectFactory.createRecursiveProjectsFromRootFilePath(projectRootFilePath, logger);
+		Set<Project> result = new HashSet<Project>();
+		
+		for (MavenProject project: recursiveProjects) {
+			projects.put(project.id(), project);
+			result.add(project);
+		}
+		
+		return result;
 	}
 
 	@Override

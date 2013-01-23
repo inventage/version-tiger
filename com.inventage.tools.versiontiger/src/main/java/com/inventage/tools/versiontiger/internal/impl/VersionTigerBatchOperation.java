@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,6 +35,18 @@ public enum VersionTigerBatchOperation {
 			if (project != null) {
 				logSuccess(commandExecuter.getLogger(), "Added project: " + project.id());
 			}
+		}
+		
+	},
+	
+	PROJECTROOT(1, "projectRoot <path>") {
+		@Override
+		void internalExecute(CommandExecuter commandExecuter, Command command) {
+			Set<Project> projects = commandExecuter.getUniverse().addRootProjectPath(command.getArgument(0));
+			for (Project p : projects) {
+				logSuccess(commandExecuter.getLogger(), "Added project: " + p.id());
+			}
+			logMessage(commandExecuter.getLogger(), "Summary: Added " + projects.size() + " projects.");
 		}
 		
 	},
