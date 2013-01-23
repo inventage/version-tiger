@@ -86,7 +86,7 @@ class MavenProjectImpl implements MavenProject {
 
 		new FileHandler().writeFileContent(getPomXmlFile(), pomContent);
 
-		logSuccess(getPomXmlFile() + ": product/version = " + newVersion, oldVersion, newVersion);
+		logSuccess(getPomXmlFile() + ": project/version = " + newVersion, oldVersion, newVersion);
 	}
 
 	public void incrementMajorVersionAndSnapshot() {
