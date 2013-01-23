@@ -1,19 +1,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.inventage.tools.versiontiger</groupId>
-    <artifactId>versiontiger.parent</artifactId>
-    <version>1.0.2-SNAPSHOT</version>
-    <packaging>pom</packaging>
+	<groupId>com.inventage.tools.versiontiger</groupId>
+	<artifactId>versiontiger.parent</artifactId>
+	<version>1.0.2-SNAPSHOT</version>
+	<packaging>pom</packaging>
 
-    <name>Version-Tiger - Parent pom</name>
+	<name>Version-Tiger - Parent pom</name>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <tycho.version>0.16.0</tycho.version>
-        <java.version>1.6</java.version>
-    </properties>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<tycho.version>0.16.0</tycho.version>
+		<java.version>1.6</java.version>
+	</properties>
 
 	<dependencyManagement>
 		<dependencies>
@@ -25,114 +25,151 @@
 		</dependencies>
 	</dependencyManagement>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.eclipse.tycho</groupId>
-                <artifactId>tycho-maven-plugin</artifactId>
-                <extensions>true</extensions>
-            </plugin>
-            <plugin>
-                <groupId>org.eclipse.tycho</groupId>
-                <artifactId>tycho-compiler-plugin</artifactId>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.eclipse.tycho</groupId>
-                <artifactId>tycho-versions-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.eclipse.tycho</groupId>
-                <artifactId>tycho-packaging-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.eclipse.tycho</groupId>
-                <artifactId>tycho-source-plugin</artifactId>
-                <version>${tycho.version}</version>
-                <executions>
-                    <execution>
-                        <id>plugin-source</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>plugin-source</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.eclipse.tycho</groupId>
-                    <artifactId>tycho-maven-plugin</artifactId>
-                    <version>${tycho.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.eclipse.tycho</groupId>
-                    <artifactId>tycho-compiler-plugin</artifactId>
-                    <version>${tycho.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.eclipse.tycho</groupId>
-                    <artifactId>tycho-versions-plugin</artifactId>
-                    <version>${tycho.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.eclipse.tycho</groupId>
-                    <artifactId>tycho-packaging-plugin</artifactId>
-                    <version>${tycho.version}</version>
-                </plugin>
-                <plugin>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-maven-plugin</artifactId>
+				<extensions>true</extensions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-compiler-plugin</artifactId>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-versions-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-packaging-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>plugin-source</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>plugin-source</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>target-platform-configuration</artifactId>
+				<configuration>
+					<environments>
+						<environment>
+							<os>win32</os>
+							<ws>win32</ws>
+							<arch>x86</arch>
+						</environment>
+						<environment>
+							<os>win32</os>
+							<ws>win32</ws>
+							<arch>x86_64</arch>
+						</environment>
+						<environment>
+							<os>linux</os>
+							<ws>gtk</ws>
+							<arch>x86_64</arch>
+						</environment>
+						<environment>
+							<os>macosx</os>
+							<ws>cocoa</ws>
+							<arch>x86_64</arch>
+						</environment>
+					</environments>
+				</configuration>
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-maven-plugin</artifactId>
+					<version>${tycho.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-compiler-plugin</artifactId>
+					<version>${tycho.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-versions-plugin</artifactId>
+					<version>${tycho.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-packaging-plugin</artifactId>
+					<version>${tycho.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-source-plugin</artifactId>
+					<version>${tycho.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>target-platform-configuration</artifactId>
+					<version>${tycho.version}</version>
+				</plugin>
+				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>javacc-maven-plugin</artifactId>
 					<version>2.6</version>
-                </plugin>
-                <plugin>
-                	<groupId>org.apache.maven.plugins</groupId>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-assembly-plugin</artifactId>
 					<version>2.2</version>
-                </plugin>
-                <plugin>
+				</plugin>
+				<plugin>
 					<groupId>org.eclipse.tycho.extras</groupId>
 					<artifactId>tycho-p2-extras-plugin</artifactId>
 					<version>0.16.0</version>
-                </plugin>
-                <plugin>
-                	<groupId>org.apache.maven.plugins</groupId>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-antrun-plugin</artifactId>
 					<version>1.7</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
 
-    <repositories>
-    
-        <repository>
-            <id>eclipse-galileo</id>
-            <name>Eclipse.org Galileo Repo</name>
-            <url>http://download.eclipse.org/releases/galileo/</url>
-            <layout>p2</layout>
-        </repository>
-        
-        <repository>
-            <id>orbit</id>
-            <name>Eclipse Orbit R20120526062928</name>
-            <url>http://download.eclipse.org/tools/orbit/downloads/drops/R20120526062928/repository/</url>
-            <layout>p2</layout>
-        </repository>
-        
-        <repository>
-            <id>version-tiger-libs</id>
-            <name>Version-Tiger third party libraries</name>
-            <url>https://raw.github.com/inventage/version-tiger-repos/master/dependencies/</url>
-            <layout>p2</layout>
-        </repository>
-        
-    </repositories>
+	<repositories>
+
+		<repository>
+			<id>eclipse-galileo</id>
+			<name>Eclipse.org Galileo Repo</name>
+			<url>http://download.eclipse.org/releases/galileo/</url>
+			<layout>p2</layout>
+		</repository>
+
+		<repository>
+			<id>orbit</id>
+			<name>Eclipse Orbit R20120526062928</name>
+			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20120526062928/repository/</url>
+			<layout>p2</layout>
+		</repository>
+
+		<repository>
+			<id>version-tiger-libs</id>
+			<name>Version-Tiger third party libraries</name>
+			<url>https://raw.github.com/inventage/version-tiger-repos/master/dependencies/</url>
+			<layout>p2</layout>
+		</repository>
+
+	</repositories>
 
 	<distributionManagement>
 		<repository>
@@ -144,23 +181,23 @@
 			<url>${version-tiger-snapshots.url}</url>
 		</snapshotRepository>
 	</distributionManagement>
-	
-    <profiles>
-    	<profile>
-    		<id>release</id>
-    		<build>
-    			<plugins>
-		            <plugin>
-		                <groupId>org.eclipse.tycho</groupId>
-		                <artifactId>tycho-packaging-plugin</artifactId>
-		                <configuration>
-		                	<strictVersions>false</strictVersions>
-		                	<forceContextQualifier>RELEASE</forceContextQualifier>
-		                </configuration>
-		            </plugin>
-    			</plugins>
-    		</build>
-    	</profile>
-    </profiles>
+
+	<profiles>
+		<profile>
+			<id>release</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>tycho-packaging-plugin</artifactId>
+						<configuration>
+							<strictVersions>false</strictVersions>
+							<forceContextQualifier>RELEASE</forceContextQualifier>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 </project>
