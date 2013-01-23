@@ -109,6 +109,11 @@ public class OsgiVersionImpl implements OsgiVersion {
 	}
 
 	@Override
+	public OsgiVersion withoutQualifier() {
+		return versionFactory.createOsgiVersion(gv.versionString());
+	}
+
+	@Override
 	public Integer major() {
 		return gv.major();
 	}
@@ -140,6 +145,34 @@ public class OsgiVersionImpl implements OsgiVersion {
 	
 	private static int nullToZero(Integer integer) {
 		return integer == null ? 0 : integer;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + gv.hashCode();
+		result = prime * result + ((inputQualifier == null) ? 0 : inputQualifier.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		OsgiVersionImpl other = (OsgiVersionImpl) obj;
+		if (!gv.equals(other.gv))
+			return false;
+		if (inputQualifier == null) {
+			if (other.inputQualifier != null)
+				return false;
+		} else if (!inputQualifier.equals(other.inputQualifier))
+			return false;
+		return true;
 	}
 
 }

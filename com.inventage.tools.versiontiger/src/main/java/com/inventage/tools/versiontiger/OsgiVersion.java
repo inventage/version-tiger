@@ -16,5 +16,7 @@ public interface OsgiVersion extends Version {
 	OsgiVersion releaseVersion();
 
 	OsgiVersion snapshotVersion();
+	
+	OsgiVersion withoutQualifier();
 
 }

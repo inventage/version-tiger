@@ -127,5 +127,33 @@ public class MavenVersionImpl implements MavenVersion {
 	public int compareTo(Version o) {
 		return gv.compareTo(o);
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + gv.hashCode();
+		result = prime * result + ((suffix == null) ? 0 : suffix.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		MavenVersionImpl other = (MavenVersionImpl) obj;
+		if (!gv.equals(other.gv))
+			return false;
+		if (suffix == null) {
+			if (other.suffix != null)
+				return false;
+		} else if (!suffix.equals(other.suffix))
+			return false;
+		return true;
+	}
 	
 }

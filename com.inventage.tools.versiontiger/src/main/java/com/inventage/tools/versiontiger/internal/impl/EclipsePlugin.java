@@ -54,7 +54,7 @@ class EclipsePlugin extends MavenProjectImpl {
 
 		try {
 			if (updateRequireBundleReferences(id, oldOsgiVersion, newOsgiVersion)
-					|| updateFragmentHostReference(id, oldOsgiVersion, newOsgiVersion)) {
+					| updateFragmentHostReference(id, oldOsgiVersion, newOsgiVersion)) {
 				new FileHandler().writeFileContent(getManifestFile(), manifestContent);
 			}
 		} catch (IllegalStateException e) {

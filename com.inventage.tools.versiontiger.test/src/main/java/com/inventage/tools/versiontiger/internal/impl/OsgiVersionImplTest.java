@@ -309,4 +309,29 @@ public class OsgiVersionImplTest {
 		assertEquals("1.2.0.snapshot", result);
 	}
 	
+	@Test
+	public void shouldWithoutQualifier() throws Exception {
+		// given
+		OsgiVersion version = new OsgiVersionImpl("1.2.0.qualifier", new VersionFactory("release", "snapshot"));
+		
+		// when
+		String result = version.withoutQualifier().toString();
+		
+		// then
+		assertEquals("1.2.0", result);
+	}
+
+	@Test
+	public void shouldEquals() throws Exception {
+		// given
+		OsgiVersion version1 = new OsgiVersionImpl("1.2.0.qualifier", new VersionFactory("release", "snapshot"));
+		OsgiVersion version2 = new OsgiVersionImpl("1.2.0.qualifier", new VersionFactory("release", "snapshot"));
+		
+		// when
+		boolean result = version1.equals(version2);
+		
+		// then
+		assertTrue(result);
+	}
+
 }

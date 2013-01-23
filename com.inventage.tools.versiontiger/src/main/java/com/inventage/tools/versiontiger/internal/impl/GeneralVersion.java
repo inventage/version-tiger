@@ -162,4 +162,41 @@ class GeneralVersion {
 		return integer == null ? null : 0;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((bugfix == null) ? 0 : bugfix.hashCode());
+		result = prime * result + major;
+		result = prime * result + ((minor == null) ? 0 : minor.hashCode());
+		result = prime * result + (snapshot ? 1231 : 1237);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GeneralVersion other = (GeneralVersion) obj;
+		if (bugfix == null) {
+			if (other.bugfix != null)
+				return false;
+		} else if (!bugfix.equals(other.bugfix))
+			return false;
+		if (major != other.major)
+			return false;
+		if (minor == null) {
+			if (other.minor != null)
+				return false;
+		} else if (!minor.equals(other.minor))
+			return false;
+		if (snapshot != other.snapshot)
+			return false;
+		return true;
+	}
+
 }

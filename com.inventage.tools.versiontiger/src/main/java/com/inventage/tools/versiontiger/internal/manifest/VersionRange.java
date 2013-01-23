@@ -62,17 +62,22 @@ public class VersionRange {
 
 	public boolean updateVersionIfOldMatches(OsgiVersion oldVersion, OsgiVersion newVersion, VersioningLoggerItem loggerItem) {
 		if (rangeMatches(oldVersion)) {
-			startVersion = newVersion.releaseVersion();
-			startInclusive = true;
-			if (isRange()) {
-				endVersion = startVersion.incrementMajorAndSnapshot().releaseVersion();
-				endInclusive = false;
-			}
+			OsgiVersion oldStartVersion = startVersion;
+			newVersion = newVersion.withoutQualifier();
 			
-			/* We previously set the status to null. We now need to set it to success for the item being logged. We used this to prevent logging if nothing 
-			 * interesting happens. */
-			loggerItem.setStatus(VersioningLoggerStatus.SUCCESS);
-			return true;
+			if (!oldStartVersion.equals(newVersion)) {
+				startVersion = newVersion;
+				startInclusive = true;
+				if (isRange()) {
+					endVersion = startVersion.incrementMajorAndSnapshot().withoutQualifier();
+					endInclusive = false;
+				}
+				
+				/* We previously set the status to null. We now need to set it to success for the item being logged. We used this to prevent logging if nothing 
+				 * interesting happens. */
+				loggerItem.setStatus(VersioningLoggerStatus.SUCCESS);
+				return true;
+			}
 		}
 		else {
 			/* Produce warning if there is matching artifact which has 'wrong' version. */
