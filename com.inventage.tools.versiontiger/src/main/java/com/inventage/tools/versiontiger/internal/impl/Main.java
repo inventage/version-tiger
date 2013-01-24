@@ -22,10 +22,10 @@ public class Main {
 			commandExecuter.executeCommands(stdIn);
 		} 
 		catch (IllegalStateException e) {
-			System.out.println(e.getMessage());
+			System.err.println(e.getMessage());
 		}
 		catch (IOException e) {
-			System.out.println(e.getMessage());
+			System.err.println(e.getMessage());
 			
 		} finally {
 			try {
