@@ -22,11 +22,14 @@ Quick Start
 -
 
 ### 1. Install the plugin in Eclipse
-To do so, open the "Help -> Install new software..." menu and enter our release URL as software site:
+
+Search for "Version Tiger" in your Eclipse Marketplace client and click install.
+
+    https://marketplace.eclipse.org/node/637830
+
+Alternatively, you may install with "Help -> Install new software..." menu and enter our release URL as software site:
 
     https://raw.github.com/inventage/version-tiger-repos/master/releases/
-
-Then, check the plugin and install it.
 
 ### 2. Version your projects
 Start the versioning dialog by right clicking on a Maven/Tycho project and choosing the "Update version..." item.
