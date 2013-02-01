@@ -23,9 +23,8 @@ Quick Start
 
 ### 1. Install the plugin in Eclipse
 
-Search for "Version Tiger" in your Eclipse Marketplace client and click install.
-
-    https://marketplace.eclipse.org/node/637830
+Search for <a href='https://marketplace.eclipse.org/node/637830'>Version Tiger</a> in your Eclipse Marketplace client
+and click install.
 
 Alternatively, you may install with "Help -> Install new software..." menu and enter our release URL as software site:
 
