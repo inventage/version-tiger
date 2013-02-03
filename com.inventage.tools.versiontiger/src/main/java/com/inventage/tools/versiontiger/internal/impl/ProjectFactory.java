@@ -74,6 +74,8 @@ class ProjectFactory {
 			addMavenProjectsUnderRoot(projectPathFile, visitedDirectories, result, logger);
 		}
 		
+		visitedDirectories.clear();
+		
 		return result;
 	}
 	

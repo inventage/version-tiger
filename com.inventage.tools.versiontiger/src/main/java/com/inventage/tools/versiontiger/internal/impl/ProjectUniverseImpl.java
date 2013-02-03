@@ -89,6 +89,11 @@ class ProjectUniverseImpl implements ProjectUniverse {
 		}
 	}
 
+	@Override
+	public void clearProjects() {
+		projects.clear();
+	}
+	
 	public Set<Project> listAllProjects() {
 		Set<Project> result = new LinkedHashSet<Project>();
 

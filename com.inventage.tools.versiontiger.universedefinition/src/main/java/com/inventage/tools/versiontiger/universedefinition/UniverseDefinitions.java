@@ -8,6 +8,7 @@ import com.inventage.tools.versiontiger.VersioningLogger;
 public interface UniverseDefinitions {
 
 	String ALL_WORKSPACE_PROJECTS_UNIVERSE_ID = "allWorkspaceProjectsUniverse";
+	String MAVEN_ROOT_PROJECTS_UNIVERSE_ID = "mavenRootProjectsUniverse";
 
 	Set<ProjectUniverse> getProjectUniverses(VersioningLogger logger);
 }
