@@ -51,6 +51,7 @@ import com.inventage.tools.versiontiger.strategy.ReleaseStrategy;
 import com.inventage.tools.versiontiger.strategy.SetVersionManuallyStrategy;
 import com.inventage.tools.versiontiger.strategy.VersioningStrategy;
 import com.inventage.tools.versiontiger.ui.VersioningUIPlugin;
+import com.inventage.tools.versiontiger.ui.edit.mavenrootdialog.AskForRootFolderOnUpdateValueStrategy;
 import com.inventage.tools.versiontiger.universedefinition.UniverseDefinitions;
 
 public class EditVersionPage extends WizardPage {
@@ -186,7 +187,7 @@ public class EditVersionPage extends WizardPage {
 
 		IObservableValue selectedUniverseDefinition = ViewerProperties.singleSelection().observe(universeDefinitionCombo);
 		IObservableValue universeDefinition = BeansObservables.observeValue(editVersionModel, EditVersionModel.PN_PROJECT_UNIVERSE);
-		dbc.bindValue(selectedUniverseDefinition, universeDefinition);
+		dbc.bindValue(selectedUniverseDefinition, universeDefinition, new AskForRootFolderOnUpdateValueStrategy(getShell()), null);
 
 		ProjectUniverse projectUniverse = findUniverse(projectUniverses, getUniverseId());
 		if (projectUniverse == null) {

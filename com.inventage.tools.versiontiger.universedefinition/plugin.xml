@@ -29,6 +29,9 @@
       <provider
             class="com.inventage.tools.versiontiger.universedefinition.workspaceprojects.AllWorkspaceProjectsUniverseProvider">
       </provider>
+      <provider
+            class="com.inventage.tools.versiontiger.universedefinition.mavenrootprojects.MavenRootProjectsUniverseProvider">
+      </provider>
    </extension>
 
 </plugin>
