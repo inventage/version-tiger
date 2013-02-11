@@ -253,14 +253,22 @@ ManifestSection section() :
 }
 {
 	(
-			LOOKAHEAD(fragmentHostHeader())
+			LOOKAHEAD(fragmentHostHeaderId())
 			header=fragmentHostHeader() { section.addHeader(header); }
-		|	LOOKAHEAD(requireBundleHeader())
+		|	LOOKAHEAD(requireBundleHeaderId())
 			header=requireBundleHeader() { section.addHeader(header); }
 		|	header=header() { section.addHeader(header); }
 	)+
 	{ return section; }
 }
+
+void fragmentHostHeaderId() :
+{
+}
+{
+	<ALPHA_F> <ALPHA_r> <ALPHA_a> <ALPHA_g> <ALPHA_m> <ALPHA_e> <ALPHA_n> <ALPHA_t> <DASH> <ALPHA_H> <ALPHA_o> <ALPHA_s> <ALPHA_t> 
+}
+
 
 FragmentHostHeader fragmentHostHeader() :
 {
@@ -269,7 +277,7 @@ FragmentHostHeader fragmentHostHeader() :
 	Token t;
 }
 {
-	<ALPHA_F> <ALPHA_r> <ALPHA_a> <ALPHA_g> <ALPHA_m> <ALPHA_e> <ALPHA_n> <ALPHA_t> <DASH> <ALPHA_H> <ALPHA_o> <ALPHA_s> <ALPHA_t> 
+	fragmentHostHeaderId() 
 	<COLON>
 	<SPACE>
 	bundle=requireBundle() { header.setHostBundle(bundle); }
@@ -280,6 +288,13 @@ FragmentHostHeader fragmentHostHeader() :
 	{ return header; }
 }
 
+void requireBundleHeaderId() :
+{
+}
+{
+	<ALPHA_R> <ALPHA_e> <ALPHA_q> <ALPHA_u> <ALPHA_i> <ALPHA_r> <ALPHA_e> <DASH> <ALPHA_B> <ALPHA_u> <ALPHA_n> <ALPHA_d> <ALPHA_l> <ALPHA_e>
+}
+
 RequireBundleHeader requireBundleHeader() :
 {
 	RequireBundleHeader header = new RequireBundleHeader();
@@ -288,7 +303,7 @@ RequireBundleHeader requireBundleHeader() :
 	Token t;
 }
 {
-	<ALPHA_R> <ALPHA_e> <ALPHA_q> <ALPHA_u> <ALPHA_i> <ALPHA_r> <ALPHA_e> <DASH> <ALPHA_B> <ALPHA_u> <ALPHA_n> <ALPHA_d> <ALPHA_l> <ALPHA_e> 
+	requireBundleHeaderId() 
 	<COLON>
 	<SPACE>
 	bundle=requireBundle() { header.addRequireBundle(bundle); }
@@ -315,7 +330,7 @@ RequireBundle requireBundle() :
 	(
 		<SEMICOLON>
 		(
-			LOOKAHEAD(versionAttribute())
+			LOOKAHEAD(versionAttributeId())
 			rba=versionAttribute() { result.addRequireBundleAttribute(rba); }
 		|	rba=requireBundleAttribute() { result.addRequireBundleAttribute(rba); }
 		)
@@ -329,7 +344,7 @@ VersionAttribute versionAttribute() :
 	VersionRange vr;
 }
 {
-	<ALPHA_b> <ALPHA_u> <ALPHA_n> <ALPHA_d> <ALPHA_l> <ALPHA_e> <DASH> <ALPHA_v> <ALPHA_e> <ALPHA_r> <ALPHA_s> <ALPHA_i> <ALPHA_o> <ALPHA_n> 
+	versionAttributeId()
 	<EQ>
 	(
 		<QUOTE>
@@ -342,6 +357,13 @@ VersionAttribute versionAttribute() :
 		result.setVersionRange(vr);
 		return result;
 	}
+}
+
+void versionAttributeId() :
+{
+}
+{
+	<ALPHA_b> <ALPHA_u> <ALPHA_n> <ALPHA_d> <ALPHA_l> <ALPHA_e> <DASH> <ALPHA_v> <ALPHA_e> <ALPHA_r> <ALPHA_s> <ALPHA_i> <ALPHA_o> <ALPHA_n>
 }
 
 VersionRange versionRange() :

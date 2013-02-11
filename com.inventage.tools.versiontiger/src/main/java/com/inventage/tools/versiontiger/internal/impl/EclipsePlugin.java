@@ -40,8 +40,8 @@ class EclipsePlugin extends MavenProjectImpl {
 			new FileHandler().writeFileContent(getManifestFile(), manifestContent);
 			
 			logSuccess(getManifestFile() + ": Bundle-Version = " + newVersion, oldVersion, newVersion);
-		} catch (IllegalStateException e) {
-			logError("Can't parse manifest: " + getManifestFile().toString() + ". " + e.getMessage(), oldVersion, newVersion);
+		} catch (Exception e) {
+			logError("Can't set plugin version in manifest: " + getManifestFile().toString() + ". " + e.getMessage(), oldVersion, newVersion);
 		}
 	}
 	
@@ -57,8 +57,8 @@ class EclipsePlugin extends MavenProjectImpl {
 					| updateFragmentHostReference(id, oldOsgiVersion, newOsgiVersion)) {
 				new FileHandler().writeFileContent(getManifestFile(), manifestContent);
 			}
-		} catch (IllegalStateException e) {
-			logReferenceError("Can't parse manifest: " + getManifestFile() + ". " + e.getMessage(), oldOsgiVersion, newOsgiVersion, id);
+		} catch (Exception e) {
+			logReferenceError("Can't update references in manifest: " + getManifestFile() + ". " + e.getMessage(), oldOsgiVersion, newOsgiVersion, id);
 		}
 	}
 	
@@ -89,7 +89,7 @@ class EclipsePlugin extends MavenProjectImpl {
 			return new ManifestParser(getManifestContent(), getVersionFactory()).parse();
 		}
 		catch (IllegalStateException e) {
-			throw new IllegalStateException("Can't parse manifest: " + getManifestFile().toString() + ". " + e.getMessage(), e);
+			throw new IllegalStateException("Can't parse manifest: " + e.getMessage(), e);
 		}
 	}
 
