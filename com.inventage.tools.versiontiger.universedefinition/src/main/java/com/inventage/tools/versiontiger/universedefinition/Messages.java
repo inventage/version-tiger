@@ -17,4 +17,5 @@ public class Messages extends NLS {
 	public static String projectUniverseRemoveButtonTooltip;
 	public static String projectUniverseFileSelectionDialogTitle;
 	public static String allWorkspaceProjectsUniverseName;
+	public static String mavenRootProjectsUniverseName;
 }

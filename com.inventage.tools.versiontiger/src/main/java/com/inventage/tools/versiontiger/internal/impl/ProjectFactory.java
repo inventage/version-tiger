@@ -5,9 +5,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.inventage.tools.versiontiger.MavenProject;
 import com.inventage.tools.versiontiger.VersioningLogger;
+import com.inventage.tools.versiontiger.VersioningLoggerItem;
+import com.inventage.tools.versiontiger.VersioningLoggerStatus;
 import com.inventage.tools.versiontiger.util.FileHandler;
 
 import de.pdark.decentxml.Document;
@@ -51,10 +55,90 @@ class ProjectFactory {
 
 			return createAnyMavenProject(projectFile, logger);
 		} else {
-			System.out.println("Ignoring unknown project type: " + projectFile);
+			logWarning(logger, "Ignoring unknown project type: " + projectFile);
 			return null;
 		}
 	}
+	
+	Set<MavenProject> createRecursiveProjectsFromRootFilePath(String projectPath, VersioningLogger logger) {
+		
+		File projectPathFile = new FileHandler().createFileFromPath(rootPath, projectPath);
+		if (!exists(projectPathFile)) {
+			throw new IllegalStateException("Directory does not exist: " + projectPathFile);
+		}
+		
+		Set<MavenProject> result = new HashSet<MavenProject>();
+		Set<String> visitedDirectories = new HashSet<String>();
+		
+		if (projectPathFile.canExecute() && projectPathFile.canRead()) {
+			addMavenProjectsUnderRoot(projectPathFile, visitedDirectories, result, logger);
+		}
+		
+		visitedDirectories.clear();
+		
+		return result;
+	}
+	
+	private void addMavenProjectsUnderRoot(File rootPathFile, Set<String> visitedDirectories, Set<MavenProject> foundProjects, VersioningLogger logger) {
+		
+		String currentCanonicalPath;
+		try {
+			currentCanonicalPath = rootPathFile.getCanonicalPath();
+		}
+		catch (IOException e) {
+			logFileWarning(logger, rootPathFile.getAbsolutePath(), e);
+			return;
+		}
+		
+		visitedDirectories.add(currentCanonicalPath);
+		
+		try {
+			if (hasPom(rootPathFile)) {
+				foundProjects.add(createProjectFromRootFilePath(currentCanonicalPath, logger));
+				
+				/* Check if this pom file has a packaging and if it is different than 'pom'. If this is the case, return. Otherwise recurse further. */
+				String mavenPackaging = getMavenPackaging(rootPathFile);
+				
+				if (mavenPackaging != null && !"pom".equals(mavenPackaging.toLowerCase())) {
+					return;
+				}
+			}
+		}
+		catch(IllegalStateException e) {
+			// If we can't parse the file, we add a log entry and go on with adding sub elements.
+			logFileWarning(logger, currentCanonicalPath, e);
+		}
+		
+		for (File subElement: rootPathFile.listFiles()) {
+			try {
+				boolean isDirectory = subElement.isDirectory();
+				boolean isVisible = !subElement.isHidden();
+				boolean isReadable = subElement.canExecute() && subElement.canRead();
+				boolean notYetVisited = !visitedDirectories.contains(subElement.getCanonicalPath());
+				
+				if (isDirectory && isVisible && isReadable && notYetVisited) {
+					addMavenProjectsUnderRoot(subElement, visitedDirectories, foundProjects, logger);
+				}
+			}
+			catch (IOException e) {
+				/* If there was a problem with determining the canonical path of one of the directory entries, 
+				 * we give a warning and don't process it further. */
+				logFileWarning(logger, subElement.getAbsolutePath(), e);
+			}
+		}
+	}
+	
+	private void logFileWarning(VersioningLogger logger, String path, Exception e) {
+		logWarning(logger, "Did not add: " + path + " - Message: " + e.getMessage());
+	}
+	
+	private void logWarning(VersioningLogger logger, String message) {
+		VersioningLoggerItem item = logger.createVersioningLoggerItem();
+		item.appendToMessage(message);
+		item.setStatus(VersioningLoggerStatus.WARNING);
+		logger.addVersioningLoggerItem(item);
+	}
+	
 
 	private MavenProject createPluginProject(File projectPath, VersioningLogger logger) {
 		return new EclipsePlugin(projectPath.getAbsolutePath(), logger, versionFactory);
