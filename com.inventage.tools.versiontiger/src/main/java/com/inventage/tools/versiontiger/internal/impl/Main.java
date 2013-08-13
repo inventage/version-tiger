@@ -16,10 +16,13 @@ public class Main {
 	public void executeCommands(String[] args) {
 		try {
 			CommandExecuter commandExecuter = new CommandExecuter(new VersioningImpl(), getCurrentDirectory(), logger);
-			executeCommandFromArgumentFile(args, commandExecuter);
-
-			System.out.println("Reading commands from standard input:");
-			commandExecuter.executeCommands(stdIn);
+			if (args.length == 1)
+				executeCommandFromArgumentFile(args, commandExecuter);
+			else if (args.length == 0) {
+				System.out.println("Reading commands from standard input:");
+				commandExecuter.executeCommands(stdIn);
+			}
+			else System.err.println("Invalid number of arguments provided");
 		} catch (IOException e) {
 			throw new IllegalStateException("Cannot read commands.", e);
 		} finally {
