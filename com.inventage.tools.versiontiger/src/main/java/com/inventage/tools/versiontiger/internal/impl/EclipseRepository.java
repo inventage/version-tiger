@@ -68,24 +68,26 @@ class EclipseRepository extends MavenProjectImpl {
 		String content = new FileHandler().readFileContent(file);
 		Element featuresElement = new XmlHandler().getElement(content, "product/features");
 
-		boolean hasModifications = false;
-		for (Element featureElement : featuresElement.getChildren("feature")) {
-			Attribute idAttribute = featureElement.getAttribute("id");
-			Attribute versionAttribute = featureElement.getAttribute("version");
+		if (null != featuresElement) {
+			boolean hasModifications = false;
+			for (Element featureElement : featuresElement.getChildren("feature")) {
+				Attribute idAttribute = featureElement.getAttribute("id");
+				Attribute versionAttribute = featureElement.getAttribute("version");
 
-			if (idAttribute != null && versionAttribute != null && id.equals(idAttribute.getValue())) {
-				if (oldVersion == null || oldVersion.toString().equals(versionAttribute.getValue())) {
-					versionAttribute.setValue(newVersion.toString());
-					hasModifications = true;
+				if (idAttribute != null && versionAttribute != null && id.equals(idAttribute.getValue())) {
+					if (oldVersion == null || oldVersion.toString().equals(versionAttribute.getValue())) {
+						versionAttribute.setValue(newVersion.toString());
+						hasModifications = true;
 
-					logReferenceSuccess(file + ": " + featureElement.getChildPath() + "#version = " + newVersion, oldVersion, newVersion, id);
+						logReferenceSuccess(file + ": " + featureElement.getChildPath() + "#version = " + newVersion, oldVersion, newVersion, id);
+					}
 				}
 			}
-		}
 
-		if (hasModifications) {
-			content = featuresElement.getDocument().toXML();
-			new FileHandler().writeFileContent(file, content);
+			if (hasModifications) {
+				content = featuresElement.getDocument().toXML();
+				new FileHandler().writeFileContent(file, content);
+			}
 		}
 	}
 
