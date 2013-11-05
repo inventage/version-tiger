@@ -76,7 +76,7 @@ public class ConsoleLogger implements VersioningLogger {
 	}
 
 	private void addTitle(BufferedWriter buffer) throws IOException {
-		buffer.append("Inventage Version Tool Report");
+		buffer.append("Version Tiger");
 		buffer.append(DELIMITER);
 		buffer.append(new SimpleDateFormat().format(new Date()));
 		buffer.append(LINE_DELIMITER);
