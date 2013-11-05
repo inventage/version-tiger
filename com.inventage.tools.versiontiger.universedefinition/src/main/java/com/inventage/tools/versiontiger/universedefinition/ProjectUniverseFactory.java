@@ -1,13 +1,10 @@
 package com.inventage.tools.versiontiger.universedefinition;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.variables.VariablesPlugin;
 
-import com.google.common.collect.Sets;
 import com.inventage.tools.versiontiger.ProjectUniverse;
 import com.inventage.tools.versiontiger.VersioningLogger;
 import com.inventage.tools.versiontiger.util.FileHandler;
@@ -17,42 +14,54 @@ import de.pdark.decentxml.Attribute;
 import de.pdark.decentxml.Element;
 
 public class ProjectUniverseFactory {
+
 	private static final Logger LOGGER = UniverseDefinitionPlugin.getDefault().getLogger();
 
-	private static final String PROJECTUNIVERSE_TAG = "projectuniverse";
-	private static final String NAME_ATTRIBUTE = "name";
-	private static final String PROJECT_TAG = "project";
-	private static final String LOCATION_ATTRIBUTE = "location";
-
-	public ProjectUniverse create(String id, String name, Collection<String> projectLocations, VersioningLogger logger) {
-		ProjectUniverse universe = UniverseDefinitionPlugin.getDefault().getVersioning().createUniverse(id, name, logger);
-		return addProjectLocations(universe, projectLocations);
-	}
+	private static final String TAG_PROJECTUNIVERSE = "projectuniverse";
+	private static final String TAG_PROJECT = "project";
+	private static final String TAG_PROJECT_ROOT = "projectRoot";
+	private static final String TAG_IGNORE = "ignore";
+	private static final String ATTRIBUTE_NAME = "name";
+	private static final String ATTRIBUTE_LOCATION = "location";
+	private static final String ATTRIBUTE_ID = "id";
 
 	public ProjectUniverse create(File file, VersioningLogger logger) {
 		String fileContent = new FileHandler().readFileContent(file);
 
 		String id = file.getAbsolutePath();
-		Element projectuniverseElement = new XmlHandler().getElement(fileContent, PROJECTUNIVERSE_TAG);
-		Attribute nameAttribute = projectuniverseElement.getAttribute(NAME_ATTRIBUTE);
+		Element projectUniverseElement = new XmlHandler().getElement(fileContent, TAG_PROJECTUNIVERSE);
+		Attribute nameAttribute = projectUniverseElement.getAttribute(ATTRIBUTE_NAME);
 		String name = nameAttribute == null ? null : nameAttribute.getValue();
 
-		Set<String> projectLocations = Sets.newHashSet();
-		for (Element projectElement : projectuniverseElement.getChildren(PROJECT_TAG)) {
-			Attribute locationAttribute = projectElement.getAttribute(LOCATION_ATTRIBUTE);
-			if (locationAttribute != null) {
-				projectLocations.add(locationAttribute.getValue());
-			}
-		}
-
-		return create(id, name, projectLocations, logger);
+		ProjectUniverse universe = createEmptyUniverse(id, name, logger);
+		
+		addProjectLocations(universe, projectUniverseElement);
+		addProjectRootLocations(universe, projectUniverseElement);
+		ignoreProjectIds(universe, projectUniverseElement);
+		
+		return universe;
 	}
 
-	private ProjectUniverse addProjectLocations(ProjectUniverse universe, Collection<String> projectLocations) {
-		for (String projectLocation : projectLocations) {
-			universe.addProjectPath(substituteVariables(projectLocation));
+	private ProjectUniverse createEmptyUniverse(String id, String name, VersioningLogger logger) {
+		return UniverseDefinitionPlugin.getDefault().getVersioning().createUniverse(id, name, logger);
+	}
+
+	private void addProjectLocations(ProjectUniverse universe, Element projectUniverseElement) {
+		for (Element projectElement : projectUniverseElement.getChildren(TAG_PROJECT)) {
+			Attribute locationAttribute = projectElement.getAttribute(ATTRIBUTE_LOCATION);
+			if (locationAttribute != null) {
+				universe.addProjectPath(substituteVariables(locationAttribute.getValue()));
+			}
 		}
-		return universe;
+	}
+
+	private void addProjectRootLocations(ProjectUniverse universe, Element projectUniverseElement) {
+		for (Element projectElement : projectUniverseElement.getChildren(TAG_PROJECT_ROOT)) {
+			Attribute locationAttribute = projectElement.getAttribute(ATTRIBUTE_LOCATION);
+			if (locationAttribute != null) {
+				universe.addRootProjectPath(substituteVariables(locationAttribute.getValue()));
+			}
+		}
 	}
 
 	private String substituteVariables(String path) {
@@ -61,7 +70,16 @@ public class ProjectUniverseFactory {
 		} catch (CoreException e) {
 			LOGGER.error("Failed to substitute varibales in ''{0}''", path);
 		}
-		return null;
+		return path;
+	}
+
+	private void ignoreProjectIds(ProjectUniverse universe, Element projectUniverseElement) {
+		for (Element ignoreElement : projectUniverseElement.getChildren(TAG_IGNORE)) {
+			Attribute id = ignoreElement.getAttribute(ATTRIBUTE_ID);
+			if (id != null) {
+				universe.removeProject(id.getValue());
+			}
+		}
 	}
 
 }

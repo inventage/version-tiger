@@ -31,7 +31,7 @@ public class Main {
 			} catch (IOException e) {
 				// nop
 			}
-			System.out.println("Goodbye!");
+			System.out.println("Quitting.");
 		}
 	}
 

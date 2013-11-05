@@ -9,10 +9,12 @@ public interface ProjectUniverse {
 	String name();
 
 	Project addProjectPath(String projectRootFilePath);
+	
+	Set<Project> addRootProjectPath(String projectRootFilePath);
 
 	String idForProjectPath(String projectPath);
 
-	void removeProject(Project versioningProject);
+	void removeProject(String projectId);
 
 	Project getProjectWithId(String projectId);
 

@@ -2,11 +2,15 @@ package com.inventage.tools.versiontiger.ui.edit;
 
 import java.util.Set;
 
+import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.statushandlers.StatusManager;
+
 import com.google.common.collect.Sets;
 import com.inventage.tools.versiontiger.Project;
 import com.inventage.tools.versiontiger.ProjectUniverse;
 import com.inventage.tools.versiontiger.VersioningLogger;
 import com.inventage.tools.versiontiger.strategy.VersioningStrategy;
+import com.inventage.tools.versiontiger.ui.VersioningUIPlugin;
 
 class EditVersionModel extends AbstractPropertyChangeSupport {
 	public static final String PN_PROJECT_UNIVERSE = "projectUniverse"; //$NON-NLS-1$
@@ -44,14 +48,21 @@ class EditVersionModel extends AbstractPropertyChangeSupport {
 	private void updateProjects() {
 		Set<VersioningProject> newVersioningProjects = Sets.newHashSet();
 		for (Project project : projectUniverse.listAllProjects()) {
-			VersioningProject newVersioningProject = new VersioningProject(project);
-			newVersioningProject.setSelected(isSelected(project.id()));
-
-			if (versioningStrategy != null) {
-				newVersioningProject.setNewVersion(versioningStrategy.apply(project.getVersion()));
+			/* If one project fails to create, we want the others being added nevertheless. */
+			try {
+				VersioningProject newVersioningProject = new VersioningProject(project);
+				newVersioningProject.setSelected(isSelected(project.id()));
+	
+				if (versioningStrategy != null) {
+					newVersioningProject.setNewVersion(versioningStrategy.apply(project.getVersion()));
+				}
+				newVersioningProjects.add(newVersioningProject);
 			}
-
-			newVersioningProjects.add(newVersioningProject);
+			catch (IllegalArgumentException e) {
+				StatusManager.getManager().handle(new Status(Status.ERROR, VersioningUIPlugin.PLUGIN_ID,
+						"Was not able to add project: " + project.id() + " in " + project.projectPath(), e),
+						StatusManager.SHOW);
+			}
 		}
 		setProjects(newVersioningProjects);
 	}

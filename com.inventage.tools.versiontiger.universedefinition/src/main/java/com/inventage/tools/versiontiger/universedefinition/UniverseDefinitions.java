@@ -10,4 +10,5 @@ public interface UniverseDefinitions {
 	String ALL_WORKSPACE_PROJECTS_UNIVERSE_ID = "allWorkspaceProjectsUniverse";
 
 	Set<ProjectUniverse> getProjectUniverses(VersioningLogger logger);
+
 }

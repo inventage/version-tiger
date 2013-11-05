@@ -5,7 +5,7 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 
 	static {
-		initializeMessages(Messages.class.getName().toLowerCase(), Messages.class);
+		initializeMessages(Messages.class.getName(), Messages.class);
 	}
 
 	public static String projectUniverseSectionTitle;

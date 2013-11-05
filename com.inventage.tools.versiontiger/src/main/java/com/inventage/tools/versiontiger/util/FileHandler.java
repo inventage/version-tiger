@@ -62,4 +62,12 @@ public class FileHandler {
 		return result;
 	}
 
+	public String getCanonicalPath(File path) {
+		try {
+			return path.getCanonicalPath();
+		} catch (IOException e) {
+			throw new IllegalStateException("Cannot get canonical path for: " + path);
+		}
+	}
+	
 }

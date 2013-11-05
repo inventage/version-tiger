@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,7 +39,24 @@ public enum VersionTigerBatchOperation {
 		}
 		
 	},
-	
+	PROJECTROOT(1, "projectRoot <path>") {
+		@Override
+		void internalExecute(CommandExecuter commandExecuter, Command command) {
+			Set<Project> projects = commandExecuter.getUniverse().addRootProjectPath(command.getArgument(0));
+			for (Project p : new TreeSet<Project>(projects)) {
+				logSuccess(commandExecuter.getLogger(), "Added project: " + p.id());
+			}
+			logMessage(commandExecuter.getLogger(), "Summary: Added " + projects.size() + " projects.");
+		}
+	},
+	IGNOREPROJECT(1, "ignoreProject <my.artifact.id>") {
+		@Override
+		void internalExecute(CommandExecuter commandExecuter, Command command) {
+			String projectId = command.getArgument(0);
+			commandExecuter.getUniverse().removeProject(projectId);
+			logSuccess(commandExecuter.getLogger(), "Ignored project: " + projectId);
+		}
+	},
 	VERSION(2, "version <my.artifact.id-pattern> <1.2.3-SNAPSHOT>") {
 		@Override
 		void internalExecute(CommandExecuter commandExecuter, Command command) {
