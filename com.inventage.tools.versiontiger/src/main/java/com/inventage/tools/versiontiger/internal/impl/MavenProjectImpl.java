@@ -5,6 +5,7 @@ import java.io.File;
 import com.inventage.tools.versiontiger.MavenProject;
 import com.inventage.tools.versiontiger.MavenVersion;
 import com.inventage.tools.versiontiger.Project;
+import com.inventage.tools.versiontiger.ProjectUniverse;
 import com.inventage.tools.versiontiger.Version;
 import com.inventage.tools.versiontiger.VersioningLogger;
 import com.inventage.tools.versiontiger.VersioningLoggerItem;
@@ -72,6 +73,10 @@ class MavenProjectImpl implements MavenProject {
 
 		return version;
 	}
+	
+	public boolean isVersionInheritedFromParent() {
+		return new XmlHandler().readElement(getPomContent(), "project/version") == null;
+	}
 
 	public void setVersion(MavenVersion newVersion) {
 		/* We store the old version for logging purposes. */
@@ -128,17 +133,19 @@ class MavenProjectImpl implements MavenProject {
 		return null;
 	}
 
-	public void updateReferencesFor(String id, MavenVersion oldVersion, MavenVersion newVersion) {
+	public void updateReferencesFor(String id, MavenVersion oldVersion, MavenVersion newVersion, ProjectUniverse projectUniverse) {
 		Element projectElement = new XmlHandler().getElement(getPomContent(), "project");
 		Element dependenciesElement = projectElement.getChild("dependencies");
 		Element dependencyManagementElement = projectElement.getChild("dependencyManagement/dependencies");
 
+		if (oldVersion == null || !oldVersion.equals(newVersion)) {
 			if (updateDependencies(dependenciesElement, id, oldVersion, newVersion) | updateDependencies(dependencyManagementElement, id, oldVersion, newVersion)
-					| updateParent(projectElement, id, oldVersion, newVersion)) {
+					| updateParent(projectElement, id, oldVersion, newVersion, projectUniverse)) {
 	
 				pomContent = projectElement.getDocument().toXML();
 				new FileHandler().writeFileContent(getPomXmlFile(), pomContent);
 			}
+		}
 	}
 
 	private boolean updateDependencies(Element dependenciesElement, String id, MavenVersion oldVersion, MavenVersion newVersion) {
@@ -163,7 +170,7 @@ class MavenProjectImpl implements MavenProject {
 		return hasModifications;
 	}
 
-	private boolean updateParent(Element projectElement, String id, MavenVersion oldVersion, MavenVersion newVersion) {
+	private boolean updateParent(Element projectElement, String id, MavenVersion oldVersion, MavenVersion newVersion, ProjectUniverse projectUniverse) {
 		boolean hasModifications = false;
 
 		Element parentElement = projectElement.getChild("parent");
@@ -176,6 +183,11 @@ class MavenProjectImpl implements MavenProject {
 				versionElement.setText(newVersion.toString());
 				hasModifications = true;
 				logReferenceSuccess(getPomXmlFile() + ": " + versionElement.getChildPath() + " = " + newVersion, oldVersion, newVersion, id);
+				
+				if (isVersionInheritedFromParent()) {
+					// our (inherited) version changed so lets propagate our version change too
+					projectUniverse.updateReferencesFor(id(), oldVersion, newVersion);
+				}
 			}
 		}
 

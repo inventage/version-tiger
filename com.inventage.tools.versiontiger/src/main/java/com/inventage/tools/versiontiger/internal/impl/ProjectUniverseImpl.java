@@ -124,7 +124,7 @@ class ProjectUniverseImpl implements ProjectUniverse {
 	@Override
 	public void updateReferencesFor(String id, MavenVersion oldVersion, MavenVersion newVersion) {
 		for (Project project : listAllProjects()) {
-			project.updateReferencesFor(id, oldVersion, newVersion);
+			project.updateReferencesFor(id, oldVersion, newVersion, this);
 		}
 	}
 

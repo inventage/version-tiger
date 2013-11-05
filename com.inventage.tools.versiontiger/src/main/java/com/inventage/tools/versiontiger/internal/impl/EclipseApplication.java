@@ -4,6 +4,7 @@ import java.io.File;
 
 import com.inventage.tools.versiontiger.MavenVersion;
 import com.inventage.tools.versiontiger.OsgiVersion;
+import com.inventage.tools.versiontiger.ProjectUniverse;
 import com.inventage.tools.versiontiger.VersioningLogger;
 import com.inventage.tools.versiontiger.util.FileHandler;
 import com.inventage.tools.versiontiger.util.XmlHandler;
@@ -41,8 +42,8 @@ class EclipseApplication extends MavenProjectImpl {
 	}
 
 	@Override
-	public void updateReferencesFor(String id, MavenVersion oldVersion, MavenVersion newVersion) {
-		super.updateReferencesFor(id, oldVersion, newVersion);
+	public void updateReferencesFor(String id, MavenVersion oldVersion, MavenVersion newVersion, ProjectUniverse projectUniverse) {
+		super.updateReferencesFor(id, oldVersion, newVersion, projectUniverse);
 
 		updateFeatureReferences(id, asOsgiVersion(oldVersion), asOsgiVersion(newVersion));
 	}

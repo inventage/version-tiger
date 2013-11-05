@@ -55,8 +55,8 @@ class ReferencesUpdater implements Project {
 		setVersion(getVersion().snapshotVersion());
 	}
 
-	public void updateReferencesFor(String id, MavenVersion oldVersion, MavenVersion newVersion) {
-		project.updateReferencesFor(id, oldVersion, newVersion);
+	public void updateReferencesFor(String id, MavenVersion oldVersion, MavenVersion newVersion, ProjectUniverse projectUniverse) {
+		project.updateReferencesFor(id, oldVersion, newVersion, projectUniverse);
 	}
 
 	@Override

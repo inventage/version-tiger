@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 import com.inventage.tools.versiontiger.MavenVersion;
 import com.inventage.tools.versiontiger.OsgiVersion;
+import com.inventage.tools.versiontiger.ProjectUniverse;
 import com.inventage.tools.versiontiger.VersioningLogger;
 import com.inventage.tools.versiontiger.util.FileHandler;
 import com.inventage.tools.versiontiger.util.XmlHandler;
@@ -22,8 +23,8 @@ class EclipseUpdateSite extends MavenProjectImpl {
 	}
 
 	@Override
-	public void updateReferencesFor(String id, MavenVersion oldVersion, MavenVersion newVersion) {
-		super.updateReferencesFor(id, oldVersion, newVersion);
+	public void updateReferencesFor(String id, MavenVersion oldVersion, MavenVersion newVersion, ProjectUniverse projectUniverse) {
+		super.updateReferencesFor(id, oldVersion, newVersion, projectUniverse);
 
 		updateSiteFeatures(id, asOsgiVersion(oldVersion), asOsgiVersion(newVersion));
 	}

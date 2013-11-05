@@ -8,6 +8,6 @@ public interface Project extends Versionable, Comparable<Project>, PropertyHolde
 
 	MavenVersion getVersion();
 
-	void updateReferencesFor(String id, MavenVersion oldVersion, MavenVersion newVersion);
+	void updateReferencesFor(String id, MavenVersion oldVersion, MavenVersion newVersion, ProjectUniverse projectUniverse);
 
 }
