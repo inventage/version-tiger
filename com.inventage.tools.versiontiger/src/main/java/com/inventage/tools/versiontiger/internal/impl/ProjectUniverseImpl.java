@@ -1,5 +1,6 @@
 package com.inventage.tools.versiontiger.internal.impl;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -13,6 +14,7 @@ import com.inventage.tools.versiontiger.Project;
 import com.inventage.tools.versiontiger.ProjectUniverse;
 import com.inventage.tools.versiontiger.Versionable;
 import com.inventage.tools.versiontiger.VersioningLogger;
+import com.inventage.tools.versiontiger.util.FileHandler;
 
 class ProjectUniverseImpl implements ProjectUniverse {
 
@@ -69,8 +71,10 @@ class ProjectUniverseImpl implements ProjectUniverse {
 
 	@Override
 	public String idForProjectPath(String projectPath) {
+	    File canonicalProjectPath = new FileHandler().getCanonicalFile(new File(projectPath));
+	    
 		for (Project project : projects.values()) {
-			if (project.projectPath().equals(projectPath)) {
+			if (canonicalProjectPath.equals(new File(project.projectPath()))) {
 				return project.id();
 			}
 		}

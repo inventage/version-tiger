@@ -49,7 +49,10 @@ public class EditVersionHandler extends AbstractHandler {
 			Iterator<Object> structuredSelectionIterator = ((IStructuredSelection) selection).iterator();
 			while (structuredSelectionIterator.hasNext()) {
 				Object element = structuredSelectionIterator.next();
-				selectedProjects.add((IProject) Platform.getAdapterManager().getAdapter(element, IProject.class));
+				IProject project = (IProject) Platform.getAdapterManager().getAdapter(element, IProject.class);
+				if (project != null) {
+					selectedProjects.add(project);
+				}
 			}
 		}
 

@@ -10,6 +10,7 @@ import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -221,9 +222,12 @@ public class EditVersionPage extends WizardPage {
 		Set<String> projectIds = Sets.newHashSet();
 		if (projectUniverse != null) {
 			for (IProject selectedProject : wizard.getSelectedProjects()) {
-				String projectId = projectUniverse.idForProjectPath(selectedProject.getLocation().toString());
-				if (projectId != null) {
-					projectIds.add(projectId);
+				IPath projectLocation = selectedProject.getLocation();
+				if (projectLocation != null) {
+					String projectId = projectUniverse.idForProjectPath(projectLocation.toOSString());
+					if (projectId != null) {
+						projectIds.add(projectId);
+					}
 				}
 			}
 		}

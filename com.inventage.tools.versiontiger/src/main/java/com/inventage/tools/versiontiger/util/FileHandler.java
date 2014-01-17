@@ -59,14 +59,22 @@ public class FileHandler {
 			result = new File(rootPath, relativeOrAbsolutePath);
 		}
 		
-		return result;
+		return getCanonicalFile(result);
+	}
+	
+	public File getCanonicalFile(File file) {
+		try {
+			return file.getCanonicalFile();
+		} catch (IOException e) {
+			throw new IllegalStateException("Cannot get canonical file for: " + file);
+		}
 	}
 
-	public String getCanonicalPath(File path) {
+	public String getCanonicalPath(File file) {
 		try {
-			return path.getCanonicalPath();
+			return file.getCanonicalPath();
 		} catch (IOException e) {
-			throw new IllegalStateException("Cannot get canonical path for: " + path);
+			throw new IllegalStateException("Cannot get canonical path for: " + file);
 		}
 	}
 	
