@@ -9,13 +9,11 @@ import com.inventage.tools.versiontiger.VersioningLogger;
 
 public class EditVersionWizard extends Wizard {
 
-	private final Collection<IProject> selectedProjects;
 	private EditVersionModel editVersionModel;
 
 	EditVersionWizard(Collection<IProject> selectedProjects, VersioningLogger logger) {
 		setWindowTitle(Messages.editVersionWizardPageTitle);
-		this.selectedProjects = selectedProjects;
-		this.editVersionModel = new EditVersionModel(logger);
+		this.editVersionModel = new EditVersionModel(logger, selectedProjects);
 	}
 
 	@Override
@@ -32,7 +30,4 @@ public class EditVersionWizard extends Wizard {
 		return editVersionModel;
 	}
 
-	Collection<IProject> getSelectedProjects() {
-		return selectedProjects;
-	}
 }

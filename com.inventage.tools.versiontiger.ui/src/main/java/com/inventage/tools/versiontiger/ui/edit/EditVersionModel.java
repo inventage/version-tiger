@@ -1,7 +1,10 @@
 package com.inventage.tools.versiontiger.ui.edit;
 
+import java.util.Collection;
 import java.util.Set;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -20,11 +23,13 @@ class EditVersionModel extends AbstractPropertyChangeSupport {
 	private ProjectUniverse projectUniverse;
 	private final Set<VersioningProject> projects = Sets.newHashSet();
 	private VersioningStrategy versioningStrategy;
+	private final Collection<IProject> selectedProjectsBeforeWizard = Sets.newHashSet();
 	
 	private VersioningLogger logger;
 	
-	public EditVersionModel(VersioningLogger logger) {
+	public EditVersionModel(VersioningLogger logger, Collection<IProject> selectedProjects) {
 		this.logger = logger;
+		this.selectedProjectsBeforeWizard.addAll(selectedProjects);
 	}
 
 	public ProjectUniverse getProjectUniverse() {
@@ -84,6 +89,16 @@ class EditVersionModel extends AbstractPropertyChangeSupport {
 				return project.isSelected();
 			}
 		}
+		
+		for (IProject selectedProject : selectedProjectsBeforeWizard) {
+			IPath projectLocation = selectedProject.getLocation();
+			if (projectLocation != null) {
+				if (projectId.equals(projectUniverse.idForProjectPath(projectLocation.toOSString()))) {
+					return true;
+				}
+			}
+		}
+
 		return false;
 	}
 

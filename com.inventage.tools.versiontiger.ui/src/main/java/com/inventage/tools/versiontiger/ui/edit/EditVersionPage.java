@@ -9,8 +9,6 @@ import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -43,7 +41,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
-import com.google.common.collect.Sets;
 import com.inventage.tools.versiontiger.ProjectUniverse;
 import com.inventage.tools.versiontiger.strategy.IncrementBugfixAndSnapshotStrategy;
 import com.inventage.tools.versiontiger.strategy.IncrementMajorAndSnapshotStrategy;
@@ -197,7 +194,6 @@ public class EditVersionPage extends WizardPage {
 		if (0 < universeDefinitionCombo.getCombo().getItemCount()) {
 			universeDefinitionCombo.setSelection(new StructuredSelection(projectUniverse));
 		}
-		editVersionModel.setProjectSelection(getProjectIds(projectUniverse));
 	}
 
 	private String getUniverseId() {
@@ -215,23 +211,6 @@ public class EditVersionPage extends WizardPage {
 			}
 		}
 		return null;
-	}
-
-	private Set<String> getProjectIds(ProjectUniverse projectUniverse) {
-		EditVersionWizard wizard = (EditVersionWizard) getWizard();
-		Set<String> projectIds = Sets.newHashSet();
-		if (projectUniverse != null) {
-			for (IProject selectedProject : wizard.getSelectedProjects()) {
-				IPath projectLocation = selectedProject.getLocation();
-				if (projectLocation != null) {
-					String projectId = projectUniverse.idForProjectPath(projectLocation.toOSString());
-					if (projectId != null) {
-						projectIds.add(projectId);
-					}
-				}
-			}
-		}
-		return projectIds;
 	}
 
 	private Set<ProjectUniverse> getProjectUniverses() {
