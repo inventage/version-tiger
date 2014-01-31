@@ -43,4 +43,6 @@ It brings up the dialog which lets you select the desired new version in the cho
 Documentation
 -
 
-For exhaustive documentation about the project -- be it for the user or developer -- visit the github wiki page: https://github.com/inventage/version-tiger/wiki.
+For exhaustive documentation about the project -- be it for the user or developer -- visit the [Version Tiger wiki page](https://github.com/inventage/version-tiger/wiki).
+
+See [Release Notes](https://github.com/inventage/version-tiger/wiki/Release-Notes) for new and noteworthy features and bugfixes in latest releases.
