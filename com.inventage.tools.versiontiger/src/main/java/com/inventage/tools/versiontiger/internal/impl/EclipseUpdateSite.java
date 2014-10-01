@@ -30,7 +30,7 @@ class EclipseUpdateSite extends MavenProjectImpl {
 	}
 
 	private OsgiVersion asOsgiVersion(MavenVersion mavenVersion) {
-		return getVersionFactory().createOsgiVersion(mavenVersion);
+		return mavenVersion == null ? null : getVersionFactory().createOsgiVersion(mavenVersion);
 	}
 
 	private void updateSiteFeatures(String id, OsgiVersion oldVersion, OsgiVersion newVersion) {

@@ -31,7 +31,7 @@ class EclipseFeature extends MavenProjectImpl {
 	}
 
 	private OsgiVersion asOsgiVersion(MavenVersion mavenVersion) {
-		return getVersionFactory().createOsgiVersion(mavenVersion);
+		return mavenVersion == null ? null : getVersionFactory().createOsgiVersion(mavenVersion);
 	}
 
 	private void setFeatureVersion(OsgiVersion newVersion, OsgiVersion oldVersion) {

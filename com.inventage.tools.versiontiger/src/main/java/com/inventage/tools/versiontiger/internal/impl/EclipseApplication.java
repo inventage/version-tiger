@@ -30,7 +30,7 @@ class EclipseApplication extends MavenProjectImpl {
 	}
 
 	private OsgiVersion asOsgiVersion(MavenVersion mavenVersion) {
-		return getVersionFactory().createOsgiVersion(mavenVersion);
+		return mavenVersion == null ? null : getVersionFactory().createOsgiVersion(mavenVersion);
 	}
 
 	private void setProductVersion(OsgiVersion newVersion, OsgiVersion oldVersion) {

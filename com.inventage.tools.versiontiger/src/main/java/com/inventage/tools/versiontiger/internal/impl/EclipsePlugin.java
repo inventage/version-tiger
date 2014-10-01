@@ -29,7 +29,7 @@ class EclipsePlugin extends MavenProjectImpl {
 	}
 
 	private OsgiVersion asOsgiVersion(MavenVersion mavenVersion) {
-		return getVersionFactory().createOsgiVersion(mavenVersion);
+		return mavenVersion == null ? null : getVersionFactory().createOsgiVersion(mavenVersion);
 	}
 
 	private void setPluginVersion(OsgiVersion newVersion, OsgiVersion oldVersion) {
