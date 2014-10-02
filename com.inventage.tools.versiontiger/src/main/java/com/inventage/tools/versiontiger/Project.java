@@ -10,4 +10,6 @@ public interface Project extends Versionable, Comparable<Project>, PropertyHolde
 
 	void updateReferencesFor(String id, MavenVersion oldVersion, MavenVersion newVersion, ProjectUniverse projectUniverse);
 
+	boolean isVersionInherited();
+
 }

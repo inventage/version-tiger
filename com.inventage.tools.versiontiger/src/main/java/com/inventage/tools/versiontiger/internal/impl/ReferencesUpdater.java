@@ -3,18 +3,28 @@ package com.inventage.tools.versiontiger.internal.impl;
 import com.inventage.tools.versiontiger.MavenVersion;
 import com.inventage.tools.versiontiger.Project;
 import com.inventage.tools.versiontiger.ProjectUniverse;
+import com.inventage.tools.versiontiger.VersioningLogger;
+import com.inventage.tools.versiontiger.VersioningLoggerItem;
+import com.inventage.tools.versiontiger.VersioningLoggerStatus;
 
 class ReferencesUpdater implements Project {
 
 	private final Project project;
 	private final ProjectUniverse projectUniverse;
+	private final VersioningLogger logger;
 
-	ReferencesUpdater(Project project, ProjectUniverse projectUniverse) {
+	ReferencesUpdater(Project project, ProjectUniverse projectUniverse, VersioningLogger logger) {
 		this.project = project;
 		this.projectUniverse = projectUniverse;
+		this.logger = logger;
 	}
 
 	public void setVersion(MavenVersion newVersion) {
+		if (isVersionInherited()) {
+			logWarning("Cannot set version for project that heirs version from parent.");
+			return;
+		}
+		
 		MavenVersion oldVersion = getVersion();
 
 		project.setVersion(newVersion);
@@ -71,6 +81,21 @@ class ReferencesUpdater implements Project {
 
 	public int compareTo(Project o) {
 		return project.compareTo(o);
+	}
+	
+	@Override
+	public boolean isVersionInherited() {
+		return project.isVersionInherited();
+	}
+
+	private void logWarning(String message) {
+		VersioningLoggerItem loggerItem = logger.createVersioningLoggerItem();
+		
+		loggerItem.setProject(project);
+		loggerItem.setStatus(VersioningLoggerStatus.WARNING);
+		loggerItem.appendToMessage(message);
+		
+		logger.addVersioningLoggerItem(loggerItem);
 	}
 
 }

@@ -92,7 +92,7 @@ class ProjectUniverseImpl implements ProjectUniverse {
 		Set<Project> result = new LinkedHashSet<Project>();
 
 		for (Project project : projects.values()) {
-			result.add(new ReferencesUpdater(project, this));
+			result.add(new ReferencesUpdater(project, this, logger));
 		}
 
 		return result;
@@ -101,7 +101,7 @@ class ProjectUniverseImpl implements ProjectUniverse {
 	@Override
 	public Project getProjectWithId(String projectId) {
 		if (projects.containsKey(projectId)) {
-			return new ReferencesUpdater(projects.get(projectId), this);
+			return new ReferencesUpdater(projects.get(projectId), this, logger);
 		}
 		return null;
 	}

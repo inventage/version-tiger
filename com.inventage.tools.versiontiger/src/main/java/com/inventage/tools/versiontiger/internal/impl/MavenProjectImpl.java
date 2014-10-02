@@ -74,7 +74,8 @@ class MavenProjectImpl implements MavenProject {
 		return version;
 	}
 	
-	public boolean isVersionInheritedFromParent() {
+	@Override
+	public boolean isVersionInherited() {
 		return new XmlHandler().readElement(getPomContent(), "project/version") == null;
 	}
 
@@ -184,7 +185,7 @@ class MavenProjectImpl implements MavenProject {
 				hasModifications = true;
 				logReferenceSuccess(getPomXmlFile() + ": " + versionElement.getChildPath() + " = " + newVersion, oldVersion, newVersion, id);
 				
-				if (isVersionInheritedFromParent()) {
+				if (isVersionInherited()) {
 					// our (inherited) version changed so lets propagate our version change too
 					projectUniverse.updateReferencesFor(id(), oldVersion, newVersion);
 				}
