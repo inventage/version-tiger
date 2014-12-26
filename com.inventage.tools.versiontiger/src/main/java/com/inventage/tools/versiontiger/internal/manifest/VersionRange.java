@@ -61,7 +61,7 @@ public class VersionRange {
 	}
 
 	public boolean updateVersionIfOldMatches(OsgiVersion oldVersion, OsgiVersion newVersion, VersioningLoggerItem loggerItem) {
-		if (rangeMatches(oldVersion)) {
+		if (oldVersion == null || rangeMatches(oldVersion)) {
 			OsgiVersion oldStartVersion = startVersion;
 			newVersion = newVersion.withoutQualifier();
 			
