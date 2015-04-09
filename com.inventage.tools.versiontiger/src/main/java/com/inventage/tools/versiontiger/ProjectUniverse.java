@@ -14,6 +14,8 @@ public interface ProjectUniverse {
 
 	String idForProjectPath(String projectPath);
 
+	Set<Project> removeProjectsInPath(String path);
+	
 	void removeProject(String projectId);
 
 	Project getProjectWithId(String projectId);
