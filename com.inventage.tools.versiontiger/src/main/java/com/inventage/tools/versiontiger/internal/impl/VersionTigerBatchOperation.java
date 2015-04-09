@@ -57,6 +57,14 @@ public enum VersionTigerBatchOperation {
 			logSuccess(commandExecuter.getLogger(), "Ignored project: " + projectId);
 		}
 	},
+	IGNOREPATH(1, "ignorePath <path>") {
+		@Override
+		void internalExecute(CommandExecuter commandExecuter, Command command) {
+			String path = command.getArgument(0);
+			Set<Project> removedProjects = commandExecuter.getUniverse().removeProjectsInPath(path);
+			logSuccess(commandExecuter.getLogger(), "Ignored " + removedProjects.size() + " projects in: " + path);
+		}
+	},
 	VERSION(2, "version <my.artifact.id-pattern> <1.2.3-SNAPSHOT>") {
 		@Override
 		void internalExecute(CommandExecuter commandExecuter, Command command) {

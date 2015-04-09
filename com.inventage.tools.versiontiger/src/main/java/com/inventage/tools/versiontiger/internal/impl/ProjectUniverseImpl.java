@@ -1,6 +1,7 @@
 package com.inventage.tools.versiontiger.internal.impl;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -14,6 +15,8 @@ import com.inventage.tools.versiontiger.Project;
 import com.inventage.tools.versiontiger.ProjectUniverse;
 import com.inventage.tools.versiontiger.Versionable;
 import com.inventage.tools.versiontiger.VersioningLogger;
+import com.inventage.tools.versiontiger.VersioningLoggerItem;
+import com.inventage.tools.versiontiger.VersioningLoggerStatus;
 import com.inventage.tools.versiontiger.util.FileHandler;
 
 class ProjectUniverseImpl implements ProjectUniverse {
@@ -22,7 +25,7 @@ class ProjectUniverseImpl implements ProjectUniverse {
 	private final String id;
 	private final String name;
 	private final ProjectFactory projectFactory;
-	private VersioningLogger logger;
+	private final VersioningLogger logger;
 	
 	ProjectUniverseImpl(String id, ProjectFactory projectFactory, VersioningLogger logger) {
 		this(id, null, projectFactory, logger);
@@ -50,6 +53,15 @@ class ProjectUniverseImpl implements ProjectUniverse {
 		MavenProject project = projectFactory.createProjectFromRootFilePath(projectRootFilePath, logger);
 
 		if (project != null) {
+			if (projects.containsKey(project.id())) {
+				VersioningLoggerItem logItem = logger.createVersioningLoggerItem();
+				logItem.setStatus(VersioningLoggerStatus.WARNING);
+				Project existingProject = projects.get(project.id());
+				logItem.setProject(existingProject);
+				logItem.appendToMessage("Removing project from universe (id conflict): " + existingProject.projectPath());
+				logger.addVersioningLoggerItem(logItem);
+			}
+		
 			projects.put(project.id(), project);
 		}
 
@@ -71,8 +83,8 @@ class ProjectUniverseImpl implements ProjectUniverse {
 
 	@Override
 	public String idForProjectPath(String projectPath) {
-	    File canonicalProjectPath = new FileHandler().getCanonicalFile(new File(projectPath));
-	    
+		File canonicalProjectPath = new FileHandler().getCanonicalFile(new File(projectPath));
+		
 		for (Project project : projects.values()) {
 			if (canonicalProjectPath.equals(new File(project.projectPath()))) {
 				return project.id();
@@ -86,6 +98,28 @@ class ProjectUniverseImpl implements ProjectUniverse {
 		if (projectId != null) {
 			projects.remove(projectId);
 		}
+	}
+	
+	@Override
+	public Set<Project> removeProjectsInPath(String path) {
+		FileHandler fileHandler = new FileHandler();
+		String matcherPath = fileHandler.getCanonicalPath(new File(path));
+		
+		Set<Project> result = new HashSet<Project>();
+		for (Project project : new ArrayList<Project>(projects.values())) {
+			String currentPath = fileHandler.getCanonicalPath(new File(project.projectPath()));
+			if (currentPath.startsWith(matcherPath)) {
+				projects.remove(project.id());
+				result.add(project);
+				
+				VersioningLoggerItem loggerItem = logger.createVersioningLoggerItem();
+				loggerItem.setStatus(VersioningLoggerStatus.SUCCESS);
+				loggerItem.appendToMessage("Removed project: " + project.id());
+				logger.addVersioningLoggerItem(loggerItem);
+			}
+		}
+		
+		return result;
 	}
 
 	public Set<Project> listAllProjects() {
