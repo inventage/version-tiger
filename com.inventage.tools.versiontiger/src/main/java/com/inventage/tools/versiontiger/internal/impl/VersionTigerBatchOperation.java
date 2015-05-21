@@ -6,9 +6,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
@@ -16,6 +18,7 @@ import java.util.regex.Pattern;
 
 import com.inventage.tools.versiontiger.MavenVersion;
 import com.inventage.tools.versiontiger.Project;
+import com.inventage.tools.versiontiger.Version;
 import com.inventage.tools.versiontiger.VersionRangeChangeStrategy;
 import com.inventage.tools.versiontiger.Versionable;
 import com.inventage.tools.versiontiger.VersioningLogger;
@@ -178,6 +181,21 @@ public enum VersionTigerBatchOperation {
 			}
 		}
 	},
+	ENSUREVERSION(1, "ensureVersion 1.3") {
+		@Override
+		void internalExecute(CommandExecuter commandExecuter, Command command) {
+			MavenVersion requiredVersion = commandExecuter.getVersioning().createMavenVersion(command.getArgument(0));
+			
+			Version currentVersion = commandExecuter.getVersioning().createMavenVersion(getVersionTigerVersion());
+			if (currentVersion.isLowerThan(requiredVersion, false)) {
+				logError(commandExecuter.getLogger(), "Versiontiger version too old, required: " + requiredVersion + ", current: " + currentVersion);
+				commandExecuter.quit();
+			}
+			else {
+				logSuccess(commandExecuter.getLogger(), "Version tiger version ok (required: " + requiredVersion + ", current: " + currentVersion + ")");
+			}
+		}
+	},
 	HELP(0, "help") {
 		@Override
 		void internalExecute(CommandExecuter commandExecuter, Command command) {
@@ -295,5 +313,26 @@ public enum VersionTigerBatchOperation {
 			logMessage(logger, "  " + op.usage);
 		}
 		logMessage(logger, "Available properties in arguments: ${version:my.artifact.id}, ${osgiVersion:my.artifact.id}");
+	}
+	
+	private static String getVersionTigerVersion() {
+		InputStream propertiesFileStream = null;
+		try {
+			Properties properties = new Properties();
+			propertiesFileStream = VersionTigerBatchOperation.class.getResourceAsStream(
+					"/META-INF/maven/com.inventage.tools.versiontiger/com.inventage.tools.versiontiger/pom.properties");
+			properties.load(propertiesFileStream);
+			return properties.getProperty("version");
+		} catch (Exception e) {
+			return String.valueOf(Integer.MAX_VALUE);
+		}
+		finally {
+			if (propertiesFileStream != null) {
+				try {
+					propertiesFileStream.close();
+				} catch (IOException e) {
+				}
+			}
+		}
 	}
 }

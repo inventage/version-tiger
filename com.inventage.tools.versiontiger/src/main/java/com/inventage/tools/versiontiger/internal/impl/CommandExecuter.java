@@ -16,6 +16,8 @@ class CommandExecuter {
 	private final String rootPath;
 	private final VersioningLogger logger;
 	
+	private boolean shouldQuit;
+	
 	CommandExecuter(Versioning versioning, String rootPath, VersioningLogger logger) {
 		this.versioning = versioning;
 		this.rootPath = rootPath;
@@ -38,6 +40,10 @@ class CommandExecuter {
 	public VersioningLogger getLogger() {
 		return logger;
 	}
+	
+	public void quit() {
+		this.shouldQuit = true;
+	}
 
 	/**
 	 * Executes the line oriented versioning tool commands provided by the
@@ -47,7 +53,7 @@ class CommandExecuter {
 	 */
 	void executeCommands(BufferedReader commandReader) throws IOException {
 		String line;
-		while ((line = commandReader.readLine()) != null) {
+		while (!shouldQuit && (line = commandReader.readLine()) != null) {
 			
 			Command command = new Command(line);
 			if (!command.isComment()) {
