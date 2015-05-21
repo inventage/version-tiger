@@ -2,15 +2,18 @@ package com.inventage.tools.versiontiger.internal.impl;
 
 import com.inventage.tools.versiontiger.MavenVersion;
 import com.inventage.tools.versiontiger.OsgiVersion;
+import com.inventage.tools.versiontiger.VersionRangeChangeStrategy;
 
 public class VersionFactory {
 	
 	private String osgiReleaseQualifier;
 	private String osgiSnapshotQualifier;
+	private VersionRangeChangeStrategy versionRangeChangeStrategy;
 	
-	public VersionFactory(String osgiReleaseQualifier, String osgiSnapshotQualifier) {
+	public VersionFactory(String osgiReleaseQualifier, String osgiSnapshotQualifier, VersionRangeChangeStrategy versionRangeChangeStrategy) {
 		setOsgiReleaseQualifier(osgiReleaseQualifier);
 		setOsgiSnapshotQualifier(osgiSnapshotQualifier);
+		setVersionRangeChangeStrategy(versionRangeChangeStrategy);
 	}
 
 	public MavenVersion createMavenVersion(String mavenVersion) {
@@ -60,6 +63,17 @@ public class VersionFactory {
 	
 	public String getOsgiSnapshotQualifier() {
 		return osgiSnapshotQualifier;
+	}
+	
+	public void setVersionRangeChangeStrategy(VersionRangeChangeStrategy versionRangeChangeStrategy) {
+		if (versionRangeChangeStrategy == null) {
+			throw new IllegalArgumentException("Version range change strategy must not be null!");
+		}
+		this.versionRangeChangeStrategy = versionRangeChangeStrategy;
+	}
+	
+	public VersionRangeChangeStrategy getVersionRangeChangeStrategy() {
+		return versionRangeChangeStrategy;
 	}
 
 }

@@ -6,12 +6,13 @@ import java.io.IOException;
 import com.inventage.tools.versiontiger.MavenVersion;
 import com.inventage.tools.versiontiger.OsgiVersion;
 import com.inventage.tools.versiontiger.ProjectUniverse;
+import com.inventage.tools.versiontiger.VersionRangeChangeStrategy;
 import com.inventage.tools.versiontiger.Versioning;
 import com.inventage.tools.versiontiger.VersioningLogger;
 
 public class VersioningImpl implements Versioning {
 	
-	private final VersionFactory versionFactory = new VersionFactory(OsgiVersion.OSGI_DEFAULT_RELEASE_SUFFIX, OsgiVersion.OSGI_DEFAULT_SNAPSHOT_SUFFIX);
+	private final VersionFactory versionFactory = new VersionFactory(OsgiVersion.OSGI_DEFAULT_RELEASE_SUFFIX, OsgiVersion.OSGI_DEFAULT_SNAPSHOT_SUFFIX, VersionRangeChangeStrategy.ADAPTIVE);
 	
 	@Override
 	public ProjectUniverse createUniverse(String id, VersioningLogger logger) {
@@ -53,6 +54,11 @@ public class VersioningImpl implements Versioning {
 	@Override
 	public void setOsgiSnapshotQualifier(String osgiSnapshotQualifier) {
 		versionFactory.setOsgiSnapshotQualifier(osgiSnapshotQualifier);
+	}
+	
+	@Override
+	public void setVersionRangeChangeStrategy(VersionRangeChangeStrategy versionRangeChangeStrategy) {
+		versionFactory.setVersionRangeChangeStrategy(versionRangeChangeStrategy);
 	}
 
 }

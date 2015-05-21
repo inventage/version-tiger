@@ -13,6 +13,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import com.inventage.tools.versiontiger.OsgiVersion;
+import com.inventage.tools.versiontiger.VersionRangeChangeStrategy;
 import com.inventage.tools.versiontiger.internal.impl.VersionFactory;
 import com.inventage.tools.versiontiger.internal.manifest.ManifestParser;
 import com.inventage.tools.versiontiger.internal.manifest.Manifest;
@@ -64,7 +65,8 @@ public class ManifestParserTest {
 	
 	@Test
 	public void shouldAccept() throws Exception {
-		Manifest manifest = new ManifestParser(input, new VersionFactory(OsgiVersion.OSGI_DEFAULT_RELEASE_SUFFIX, OsgiVersion.OSGI_DEFAULT_SNAPSHOT_SUFFIX)).manifest();
+		Manifest manifest = new ManifestParser(input, new VersionFactory(OsgiVersion.OSGI_DEFAULT_RELEASE_SUFFIX,
+				OsgiVersion.OSGI_DEFAULT_SNAPSHOT_SUFFIX, VersionRangeChangeStrategy.ADAPTIVE)).manifest();
 		
 		StringBuilder result = new StringBuilder();
 		manifest.print(result);

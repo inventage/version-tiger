@@ -67,7 +67,7 @@ class EclipsePlugin extends MavenProjectImpl {
 		Manifest manifest = parseManifest();
 		
 		VersioningLoggerItem loggerItem = getLoggerItem(oldVersion, newVersion, id);
-		boolean result = manifest.updateRequireBundleReference(id, oldVersion, newVersion, loggerItem);
+		boolean result = manifest.updateRequireBundleReference(id, oldVersion, newVersion, loggerItem, getVersionFactory().getVersionRangeChangeStrategy());
 		getLogger().addVersioningLoggerItem(loggerItem);
 		
 		manifestContent = manifest.print();
@@ -78,7 +78,7 @@ class EclipsePlugin extends MavenProjectImpl {
 		Manifest manifest = parseManifest();
 		
 		VersioningLoggerItem loggerItem = getLoggerItem(oldVersion, newVersion, id);
-		boolean result = manifest.updateFragmentHostReference(id, oldVersion, newVersion, loggerItem);
+		boolean result = manifest.updateFragmentHostReference(id, oldVersion, newVersion, loggerItem, getVersionFactory().getVersionRangeChangeStrategy());
 		getLogger().addVersioningLoggerItem(loggerItem);
 		
 		manifestContent = manifest.print();

@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 
 import com.inventage.tools.versiontiger.MavenVersion;
 import com.inventage.tools.versiontiger.Project;
+import com.inventage.tools.versiontiger.VersionRangeChangeStrategy;
 import com.inventage.tools.versiontiger.Versionable;
 import com.inventage.tools.versiontiger.VersioningLogger;
 import com.inventage.tools.versiontiger.VersioningLoggerItem;
@@ -165,6 +166,11 @@ public enum VersionTigerBatchOperation {
 			else if ("osgi.snapshot.qualifier".equals(key)) {
 				
 				commandExecuter.getVersioning().setOsgiSnapshotQualifier((String) value);
+				logSuccess(logger, "Updated setting: " + key + " " + value);
+			}
+			else if ("dependency.range.change".equals(key)) {
+				
+				commandExecuter.getVersioning().setVersionRangeChangeStrategy(VersionRangeChangeStrategy.create(value));
 				logSuccess(logger, "Updated setting: " + key + " " + value);
 			}
 			else {

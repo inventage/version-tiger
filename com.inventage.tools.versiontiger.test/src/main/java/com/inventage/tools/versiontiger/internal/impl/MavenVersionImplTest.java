@@ -10,11 +10,12 @@ import org.junit.Test;
 import com.inventage.tools.versiontiger.MavenVersion;
 import com.inventage.tools.versiontiger.OsgiVersion;
 import com.inventage.tools.versiontiger.Version;
+import com.inventage.tools.versiontiger.VersionRangeChangeStrategy;
 import com.inventage.tools.versiontiger.internal.impl.MavenVersionImpl;
 
 public class MavenVersionImplTest {
 
-	VersionFactory versionFactory = new VersionFactory(OsgiVersion.OSGI_DEFAULT_RELEASE_SUFFIX, OsgiVersion.OSGI_DEFAULT_SNAPSHOT_SUFFIX);
+	VersionFactory versionFactory = new VersionFactory(OsgiVersion.OSGI_DEFAULT_RELEASE_SUFFIX, OsgiVersion.OSGI_DEFAULT_SNAPSHOT_SUFFIX, VersionRangeChangeStrategy.ADAPTIVE);
 	
 	@Test
 	public void shouldMajor() throws Exception {

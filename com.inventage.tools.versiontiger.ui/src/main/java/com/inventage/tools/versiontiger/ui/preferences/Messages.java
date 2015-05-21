@@ -16,5 +16,16 @@ public class Messages extends NLS {
 	public static String preferencesOsgiQualifierTitleLabel;
 	public static String preferencesOsgiReleaseQualifierLabel;
 	public static String preferencesOsgiSnapshotQualifierLabel;
+	public static String PreferencesPageModel_ADAPTIVE;
+	public static String PreferencesPageModel_BUGFIX;
+	public static String PreferencesPageModel_MAJOR;
+	public static String PreferencesPageModel_MINOR;
+	public static String PreferencesPageModel_NOCHANGE;
+	public static String PreferencesPageModel_STRICT;
+	public static String PreferencesPageModel_UnknownStrategy;
+	public static String PreferencesPageModel_UPPER_TO_BUGFIX;
+	public static String PreferencesPageModel_UPPER_TO_MAJOR;
+	public static String PreferencesPageModel_UPPER_TO_MINOR;
+	public static String VersionTigerPreferencesPage_DependencyGroup;
 	
 }

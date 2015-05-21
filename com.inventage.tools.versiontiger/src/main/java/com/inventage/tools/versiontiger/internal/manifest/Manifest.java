@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.inventage.tools.versiontiger.OsgiVersion;
+import com.inventage.tools.versiontiger.VersionRangeChangeStrategy;
 import com.inventage.tools.versiontiger.VersioningLoggerItem;
 
 public class Manifest {
@@ -67,17 +68,17 @@ public class Manifest {
 	}
 
 	public boolean updateRequireBundleReference(String id, OsgiVersion oldVersion, OsgiVersion newVersion,
-			VersioningLoggerItem loggerItem) {
+			VersioningLoggerItem loggerItem, VersionRangeChangeStrategy versionRangeChangeStrategy) {
 		if (!sections.isEmpty()) {
-			return sections.get(0).updateRequireBundleReference(id, oldVersion, newVersion, loggerItem);
+			return sections.get(0).updateRequireBundleReference(id, oldVersion, newVersion, loggerItem, versionRangeChangeStrategy);
 		}
 		return false;
 	}
 
 	public boolean updateFragmentHostReference(String id, OsgiVersion oldVersion, OsgiVersion newVersion,
-			VersioningLoggerItem loggerItem) {
+			VersioningLoggerItem loggerItem, VersionRangeChangeStrategy versionRangeChangeStrategy) {
 		if (!sections.isEmpty()) {
-			return sections.get(0).updateFragmentHostReference(id, oldVersion, newVersion, loggerItem);
+			return sections.get(0).updateFragmentHostReference(id, oldVersion, newVersion, loggerItem, versionRangeChangeStrategy);
 		}
 		return false;
 	}

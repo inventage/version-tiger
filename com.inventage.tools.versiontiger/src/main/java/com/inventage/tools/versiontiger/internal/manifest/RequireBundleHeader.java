@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.inventage.tools.versiontiger.OsgiVersion;
+import com.inventage.tools.versiontiger.VersionRangeChangeStrategy;
 import com.inventage.tools.versiontiger.VersioningLoggerItem;
 
 public class RequireBundleHeader implements ManifestHeader {
@@ -49,12 +50,13 @@ public class RequireBundleHeader implements ManifestHeader {
 		}
 	}
 
-	public boolean updateReferenceVersion(String id, OsgiVersion oldVersion, OsgiVersion newVersion, VersioningLoggerItem loggerItem) {
+	public boolean updateReferenceVersion(String id, OsgiVersion oldVersion, OsgiVersion newVersion, VersioningLoggerItem loggerItem,
+			VersionRangeChangeStrategy versionRangeChangeStrategy) {
 		for (RequireBundle requireBundle : requireBundles) {
 			if (id.equals(requireBundle.getId())) {
 				loggerItem.appendToMessage(NAME);
 				loggerItem.appendToMessage(": ");
-				return requireBundle.updateVersionIfOldMatches(oldVersion, newVersion, loggerItem);
+				return requireBundle.updateVersionIfOldMatches(oldVersion, newVersion, loggerItem, versionRangeChangeStrategy);
 			}
 		}
 		return false;

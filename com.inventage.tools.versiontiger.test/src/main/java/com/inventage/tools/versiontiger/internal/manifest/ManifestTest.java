@@ -12,12 +12,13 @@ import org.mockito.stubbing.Answer;
 
 import com.inventage.tools.versiontiger.NullVersioningLogger;
 import com.inventage.tools.versiontiger.OsgiVersion;
+import com.inventage.tools.versiontiger.VersionRangeChangeStrategy;
 import com.inventage.tools.versiontiger.internal.impl.OsgiVersionImpl;
 import com.inventage.tools.versiontiger.internal.impl.VersionFactory;
 
 public class ManifestTest {
 	
-	VersionFactory versionFactory = new VersionFactory(OsgiVersion.OSGI_DEFAULT_RELEASE_SUFFIX, OsgiVersion.OSGI_DEFAULT_SNAPSHOT_SUFFIX);
+	VersionFactory versionFactory = new VersionFactory(OsgiVersion.OSGI_DEFAULT_RELEASE_SUFFIX, OsgiVersion.OSGI_DEFAULT_SNAPSHOT_SUFFIX, VersionRangeChangeStrategy.ADAPTIVE);
 	
 	@Test
 	public void shouldPrint() throws Exception {
@@ -60,10 +61,11 @@ public class ManifestTest {
 		String input = "Manifest-Version: 1.0\nRequire-Bundle: foo.bar;bundle-version=\"1.0\"," +
 				"asdf.b.c;bundle-version=\"12.12.23\";visibility:=reexport," +
 				"foo;resolution:=optional\nOther-Header: foo\n\n";
-		Manifest manifest = new ManifestParser(input, new VersionFactory(OsgiVersion.OSGI_DEFAULT_RELEASE_SUFFIX, OsgiVersion.OSGI_DEFAULT_SNAPSHOT_SUFFIX)).manifest();
+		Manifest manifest = new ManifestParser(input, new VersionFactory(OsgiVersion.OSGI_DEFAULT_RELEASE_SUFFIX, OsgiVersion.OSGI_DEFAULT_SNAPSHOT_SUFFIX, VersionRangeChangeStrategy.ADAPTIVE)).manifest();
 		
 		// when
-		boolean result = manifest.updateRequireBundleReference("asdf.b.c", new OsgiVersionImpl("12.12.23", versionFactory), new OsgiVersionImpl("33.1.0.qualifier", versionFactory), new NullVersioningLogger().createVersioningLoggerItem());
+		boolean result = manifest.updateRequireBundleReference("asdf.b.c", new OsgiVersionImpl("12.12.23", versionFactory), new OsgiVersionImpl("33.1.0.qualifier", versionFactory),
+				new NullVersioningLogger().createVersioningLoggerItem(), VersionRangeChangeStrategy.ADAPTIVE);
 		
 		// then
 		assertTrue(result);
@@ -82,10 +84,11 @@ public class ManifestTest {
 				"Manifest-Version: 1.0\n" +
 				"Fragment-Host: " + id + ";bundle-version=\"" + oldVersion + "\";visibility:=reexport\n" +
 				"Other-Header: foo\n\n";
-		Manifest manifest = new ManifestParser(input, new VersionFactory(OsgiVersion.OSGI_DEFAULT_RELEASE_SUFFIX, OsgiVersion.OSGI_DEFAULT_SNAPSHOT_SUFFIX)).manifest();
+		Manifest manifest = new ManifestParser(input, new VersionFactory(OsgiVersion.OSGI_DEFAULT_RELEASE_SUFFIX, OsgiVersion.OSGI_DEFAULT_SNAPSHOT_SUFFIX, VersionRangeChangeStrategy.ADAPTIVE)).manifest();
 		
 		// when
-		boolean result = manifest.updateFragmentHostReference(id, new OsgiVersionImpl(oldVersion, versionFactory), new OsgiVersionImpl(newVersion + ".qualifier", versionFactory), new NullVersioningLogger().createVersioningLoggerItem());
+		boolean result = manifest.updateFragmentHostReference(id, new OsgiVersionImpl(oldVersion, versionFactory), new OsgiVersionImpl(newVersion + ".qualifier", versionFactory),
+				new NullVersioningLogger().createVersioningLoggerItem(), VersionRangeChangeStrategy.ADAPTIVE);
 		
 		// then
 		assertTrue(result);

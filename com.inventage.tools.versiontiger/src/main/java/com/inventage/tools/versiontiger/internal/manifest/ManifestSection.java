@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.inventage.tools.versiontiger.OsgiVersion;
+import com.inventage.tools.versiontiger.VersionRangeChangeStrategy;
 import com.inventage.tools.versiontiger.VersioningLoggerItem;
 
 public class ManifestSection {
@@ -39,18 +40,20 @@ public class ManifestSection {
 		return null;
 	}
 
-	public boolean updateRequireBundleReference(String id, OsgiVersion oldVersion, OsgiVersion newVersion, VersioningLoggerItem loggerItem) {
+	public boolean updateRequireBundleReference(String id, OsgiVersion oldVersion, OsgiVersion newVersion, VersioningLoggerItem loggerItem,
+			VersionRangeChangeStrategy versionRangeChangeStrategy) {
 		RequireBundleHeader header = (RequireBundleHeader) getAttributeHeaderFor(RequireBundleHeader.NAME);
 		if (header != null) {
-			return header.updateReferenceVersion(id, oldVersion, newVersion, loggerItem);
+			return header.updateReferenceVersion(id, oldVersion, newVersion, loggerItem, versionRangeChangeStrategy);
 		}
 		return false;
 	}
 
-	public boolean updateFragmentHostReference(String id, OsgiVersion oldVersion, OsgiVersion newVersion, VersioningLoggerItem loggerItem) {
+	public boolean updateFragmentHostReference(String id, OsgiVersion oldVersion, OsgiVersion newVersion, VersioningLoggerItem loggerItem,
+			VersionRangeChangeStrategy versionRangeChangeStrategy) {
 		FragmentHostHeader header = (FragmentHostHeader) getAttributeHeaderFor(FragmentHostHeader.NAME);
 		if (header != null) {
-			return header.updateReferenceVersion(id, oldVersion, newVersion, loggerItem);
+			return header.updateReferenceVersion(id, oldVersion, newVersion, loggerItem, versionRangeChangeStrategy);
 		}
 		return false;
 	}

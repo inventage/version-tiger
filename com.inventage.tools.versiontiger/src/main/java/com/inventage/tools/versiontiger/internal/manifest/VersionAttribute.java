@@ -1,6 +1,7 @@
 package com.inventage.tools.versiontiger.internal.manifest;
 
 import com.inventage.tools.versiontiger.OsgiVersion;
+import com.inventage.tools.versiontiger.VersionRangeChangeStrategy;
 import com.inventage.tools.versiontiger.VersioningLoggerItem;
 
 public class VersionAttribute implements RequireBundleAttribute {
@@ -36,8 +37,8 @@ public class VersionAttribute implements RequireBundleAttribute {
 		}
 	}
 
-	public boolean updateVersionIfOldMatches(OsgiVersion oldVersion, OsgiVersion newVersion, VersioningLoggerItem loggerItem) {
-		boolean result = versionRange.updateVersionIfOldMatches(oldVersion, newVersion, loggerItem);
+	public boolean updateVersionIfOldMatches(OsgiVersion oldVersion, OsgiVersion newVersion, VersioningLoggerItem loggerItem, VersionRangeChangeStrategy versionRangeChangeStrategy) {
+		boolean result = versionRange.updateVersionIfOldMatches(oldVersion, newVersion, loggerItem, versionRangeChangeStrategy);
 		
 		StringBuilder message = new StringBuilder();
 		print(message);

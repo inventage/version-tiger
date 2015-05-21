@@ -1,6 +1,7 @@
 package com.inventage.tools.versiontiger.internal.manifest;
 
 import com.inventage.tools.versiontiger.OsgiVersion;
+import com.inventage.tools.versiontiger.VersionRangeChangeStrategy;
 import com.inventage.tools.versiontiger.VersioningLoggerItem;
 
 public class FragmentHostHeader implements ManifestHeader {
@@ -36,11 +37,11 @@ public class FragmentHostHeader implements ManifestHeader {
 		}
 	}
 
-	public boolean updateReferenceVersion(String id, OsgiVersion oldVersion, OsgiVersion newVersion, VersioningLoggerItem loggerItem) {
+	public boolean updateReferenceVersion(String id, OsgiVersion oldVersion, OsgiVersion newVersion, VersioningLoggerItem loggerItem, VersionRangeChangeStrategy versionRangeChangeStrategy) {
 		if (id.equals(hostBundle.getId())) {
 			loggerItem.appendToMessage(NAME);
 			loggerItem.appendToMessage(": ");
-			return hostBundle.updateVersionIfOldMatches(oldVersion, newVersion, loggerItem);
+			return hostBundle.updateVersionIfOldMatches(oldVersion, newVersion, loggerItem, versionRangeChangeStrategy);
 		}
 		return false;
 	}

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.inventage.tools.versiontiger.OsgiVersion;
+import com.inventage.tools.versiontiger.VersionRangeChangeStrategy;
 import com.inventage.tools.versiontiger.VersioningLoggerItem;
 
 public class RequireBundle {
@@ -41,10 +42,11 @@ public class RequireBundle {
 		return null;
 	}
 
-	public boolean updateVersionIfOldMatches(OsgiVersion oldVersion, OsgiVersion newVersion, VersioningLoggerItem loggerItem) {
+	public boolean updateVersionIfOldMatches(OsgiVersion oldVersion, OsgiVersion newVersion, VersioningLoggerItem loggerItem,
+			VersionRangeChangeStrategy versionRangeChangeStrategy) {
 		VersionAttribute versionAttribute = findVersionAttribute();
 		if (versionAttribute != null) {
-			return versionAttribute.updateVersionIfOldMatches(oldVersion, newVersion, loggerItem);
+			return versionAttribute.updateVersionIfOldMatches(oldVersion, newVersion, loggerItem, versionRangeChangeStrategy);
 		}
 		
 		return false;

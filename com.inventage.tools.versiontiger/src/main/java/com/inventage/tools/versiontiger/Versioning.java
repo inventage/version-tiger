@@ -20,4 +20,7 @@ public interface Versioning {
 	void setOsgiReleaseQualifier(String osgiReleaseQualifier);
 	
 	void setOsgiSnapshotQualifier(String osgiSnapshotQualifier);
+
+	void setVersionRangeChangeStrategy(VersionRangeChangeStrategy versionRangeChangeStrategy);
+
 }

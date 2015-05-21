@@ -10,13 +10,14 @@ import org.junit.Test;
 
 import com.inventage.tools.versiontiger.MavenVersion;
 import com.inventage.tools.versiontiger.OsgiVersion;
+import com.inventage.tools.versiontiger.VersionRangeChangeStrategy;
 import com.inventage.tools.versiontiger.internal.impl.MavenVersionImpl;
 import com.inventage.tools.versiontiger.internal.impl.OsgiVersionImpl;
 import com.inventage.tools.versiontiger.internal.impl.VersionFactory;
 
 public class VersionFactoryTest {
 	
-	VersionFactory versionFactory = new VersionFactory(OsgiVersion.OSGI_DEFAULT_RELEASE_SUFFIX, OsgiVersion.OSGI_DEFAULT_SNAPSHOT_SUFFIX);
+	VersionFactory versionFactory = new VersionFactory(OsgiVersion.OSGI_DEFAULT_RELEASE_SUFFIX, OsgiVersion.OSGI_DEFAULT_SNAPSHOT_SUFFIX, VersionRangeChangeStrategy.ADAPTIVE);
 	
 	@Test
 	public void shouldCreateMavenVersionFromString() throws Exception {
@@ -24,7 +25,7 @@ public class VersionFactoryTest {
 		String mavenVersion = "1.2.3-RC3-SNAPSHOT";
 		
 		// when
-		MavenVersion result = new VersionFactory(OSGI_DEFAULT_RELEASE_SUFFIX, OSGI_DEFAULT_SNAPSHOT_SUFFIX).createMavenVersion(mavenVersion);
+		MavenVersion result = new VersionFactory(OSGI_DEFAULT_RELEASE_SUFFIX, OSGI_DEFAULT_SNAPSHOT_SUFFIX, VersionRangeChangeStrategy.ADAPTIVE).createMavenVersion(mavenVersion);
 		
 		// then
 		assertNotNull(result);
@@ -38,7 +39,7 @@ public class VersionFactoryTest {
 		String mavenVersion = "1.2.3.qualifier";
 		
 		// when
-		OsgiVersion result = new VersionFactory(OSGI_DEFAULT_RELEASE_SUFFIX, OSGI_DEFAULT_SNAPSHOT_SUFFIX).createOsgiVersion(mavenVersion);
+		OsgiVersion result = new VersionFactory(OSGI_DEFAULT_RELEASE_SUFFIX, OSGI_DEFAULT_SNAPSHOT_SUFFIX, VersionRangeChangeStrategy.ADAPTIVE).createOsgiVersion(mavenVersion);
 		
 		// then
 		assertNotNull(result);
@@ -52,7 +53,7 @@ public class VersionFactoryTest {
 		MavenVersion osgiVersion = new MavenVersionImpl("1.2.3-RC3-SNAPSHOT", versionFactory);
 		
 		// when
-		OsgiVersion result = new VersionFactory(OSGI_DEFAULT_RELEASE_SUFFIX, OSGI_DEFAULT_SNAPSHOT_SUFFIX).createOsgiVersion(osgiVersion);
+		OsgiVersion result = new VersionFactory(OSGI_DEFAULT_RELEASE_SUFFIX, OSGI_DEFAULT_SNAPSHOT_SUFFIX, VersionRangeChangeStrategy.ADAPTIVE).createOsgiVersion(osgiVersion);
 		
 		// then
 		assertNotNull(result);
@@ -66,7 +67,7 @@ public class VersionFactoryTest {
 		MavenVersion mavenVersion = new MavenVersionImpl("1.2.3-BLA", versionFactory);
 		
 		// when
-		OsgiVersion result = new VersionFactory(OSGI_DEFAULT_RELEASE_SUFFIX, OSGI_DEFAULT_SNAPSHOT_SUFFIX).createOsgiVersion(mavenVersion);
+		OsgiVersion result = new VersionFactory(OSGI_DEFAULT_RELEASE_SUFFIX, OSGI_DEFAULT_SNAPSHOT_SUFFIX, VersionRangeChangeStrategy.ADAPTIVE).createOsgiVersion(mavenVersion);
 		
 		// then
 		assertNotNull(result);
@@ -80,7 +81,7 @@ public class VersionFactoryTest {
 		MavenVersion mavenVersion = new MavenVersionImpl("1.2.3", versionFactory);
 		
 		// when
-		OsgiVersion result = new VersionFactory(OSGI_DEFAULT_RELEASE_SUFFIX, OSGI_DEFAULT_SNAPSHOT_SUFFIX).createOsgiVersion(mavenVersion);
+		OsgiVersion result = new VersionFactory(OSGI_DEFAULT_RELEASE_SUFFIX, OSGI_DEFAULT_SNAPSHOT_SUFFIX, VersionRangeChangeStrategy.ADAPTIVE).createOsgiVersion(mavenVersion);
 		
 		// then
 		assertNotNull(result);

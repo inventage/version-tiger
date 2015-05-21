@@ -13,6 +13,7 @@ import static org.mockito.Mockito.when;
 import org.junit.Test;
 
 import com.inventage.tools.versiontiger.OsgiVersion;
+import com.inventage.tools.versiontiger.VersionRangeChangeStrategy;
 import com.inventage.tools.versiontiger.VersioningLoggerItem;
 import com.inventage.tools.versiontiger.VersioningLoggerStatus;
 
@@ -113,7 +114,7 @@ public class VersionRangeTest {
 		versionRange.setEndVersion(endVersion);
 		
 		// when
-		boolean result = versionRange.updateVersionIfOldMatches(oldVersion, newVersion, loggerItem);
+		boolean result = versionRange.updateVersionIfOldMatches(oldVersion, newVersion, loggerItem, VersionRangeChangeStrategy.ADAPTIVE);
 		
 		// then
 		assertFalse(result);
@@ -138,7 +139,7 @@ public class VersionRangeTest {
 		versionRange.setEndVersion(endVersion);
 		
 		// when
-		boolean result = versionRange.updateVersionIfOldMatches(oldVersion, newVersion, loggerItem);
+		boolean result = versionRange.updateVersionIfOldMatches(oldVersion, newVersion, loggerItem, VersionRangeChangeStrategy.NO_CHANGE);
 		
 		// then
 		assertFalse(result);
@@ -148,7 +149,7 @@ public class VersionRangeTest {
 	}
 
 	@Test
-	public void shouldUpdateVersionIfOldMatchesAndWithChange() throws Exception {
+	public void shouldUpdateVersionIfOldMatchesAndWithStrict() throws Exception {
 		// given
 		VersionRange versionRange = new VersionRange();
 		OsgiVersion oldVersion = mock(OsgiVersion.class);
@@ -156,25 +157,19 @@ public class VersionRangeTest {
 		VersioningLoggerItem loggerItem = mock(VersioningLoggerItem.class);
 		OsgiVersion startVersion = mock(OsgiVersion.class);
 		when(startVersion.isLowerThan(oldVersion, true)).thenReturn(true);
-		OsgiVersion newVersionWQ = mock(OsgiVersion.class);
-		when(newVersion.withoutQualifier()).thenReturn(newVersionWQ);
-		OsgiVersion newVersionInc = mock(OsgiVersion.class);
-		when(newVersionWQ.incrementMajorAndSnapshot()).thenReturn(newVersionInc);
-		OsgiVersion newVersionIncWQ = mock(OsgiVersion.class);
-		when(newVersionInc.withoutQualifier()).thenReturn(newVersionIncWQ);
 		versionRange.setStartVersion(startVersion);
 		OsgiVersion endVersion = mock(OsgiVersion.class);
 		when(oldVersion.isLowerThan(endVersion, false)).thenReturn(true);
 		versionRange.setEndVersion(endVersion);
 		
 		// when
-		boolean result = versionRange.updateVersionIfOldMatches(oldVersion, newVersion, loggerItem);
+		boolean result = versionRange.updateVersionIfOldMatches(oldVersion, newVersion, loggerItem, VersionRangeChangeStrategy.STRICT);
 		
 		// then
 		assertTrue(result);
 		verify(loggerItem).setStatus(VersioningLoggerStatus.SUCCESS);
-		assertSame(newVersionWQ, versionRange.getStartVersion());
-		assertSame(newVersionIncWQ, versionRange.getEndVersion());
+		assertSame(newVersion, versionRange.getStartVersion());
+		assertSame(newVersion, versionRange.getEndVersion());
 	}
 
 }
