@@ -294,6 +294,12 @@ public enum VersionTigerBatchOperation {
 			String value = getProjectProperty(commandExecuter, projectId, key);
 			return value != null ? value : "";
 		}
+		else {
+			String environmentValue = System.getenv(propertyName);
+			if (environmentValue != null) {
+				return environmentValue;
+			}
+		}
 
 		return "${" + propertyName + "}";
 	}
