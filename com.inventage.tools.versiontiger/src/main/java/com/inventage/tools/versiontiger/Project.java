@@ -12,4 +12,6 @@ public interface Project extends Versionable, Comparable<Project>, PropertyHolde
 
 	boolean isVersionInherited();
 
+	boolean exists();
+
 }

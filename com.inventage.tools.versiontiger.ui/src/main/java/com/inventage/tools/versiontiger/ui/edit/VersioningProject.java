@@ -50,11 +50,16 @@ class VersioningProject extends AbstractPropertyChangeSupport implements Compara
 	}
 
 	public void setSelected(boolean selected) {
-		if (this.selected != selected) {
+		if (this.selected != selected && !isInexisting()) {
 			MavenVersion oldVersion = getNewVersion();
 			this.selected = selected;
 			firePropertyChange(PN_SELECTED, !this.selected, this.selected);
 			firePropertyChange(PN_NEW_VERSION, oldVersion, getNewVersion());
 		}
 	}
+	
+	public boolean isInexisting() {
+		return !project.exists();
+	}
+
 }

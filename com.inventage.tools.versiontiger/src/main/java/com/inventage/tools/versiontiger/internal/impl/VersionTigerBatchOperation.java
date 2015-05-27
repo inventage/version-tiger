@@ -37,7 +37,7 @@ public enum VersionTigerBatchOperation {
 		@Override
 		void internalExecute(CommandExecuter commandExecuter, Command command) {
 			Project project = commandExecuter.getUniverse().addProjectPath(command.getArgument(0));
-			if (project != null) {
+			if (project != null && project.exists()) {
 				logSuccess(commandExecuter.getLogger(), "Added project: " + project.id());
 			}
 		}
@@ -148,6 +148,11 @@ public enum VersionTigerBatchOperation {
 		@Override
 		void internalExecute(CommandExecuter commandExecuter, Command command) {
 			Project project = commandExecuter.getUniverse().getProjectWithId(command.getArgument(0));
+			if (project == null) {
+				logError(commandExecuter.getLogger(), "Project not found: " + command.getArgument(0));
+				return;
+			}
+			
 			project.setProperty(command.getArgument(1), command.getArgument(2));
 		}
 	},
@@ -224,9 +229,14 @@ public enum VersionTigerBatchOperation {
 			return;
 		}
 		
-		replacePropertiesInArguments(commandExecuter, command);
+		try {
+			replacePropertiesInArguments(commandExecuter, command);
 		
-		internalExecute(commandExecuter, command);
+			internalExecute(commandExecuter, command);
+		}
+		catch (Exception e) {
+			logError(commandExecuter.getLogger(), "Cannot execute command (" + command.getOriginalLine() + "). Reason: " + e.getMessage());
+		}
 	};
 	
 	private boolean argumentsMatch(Command command) {
@@ -305,7 +315,11 @@ public enum VersionTigerBatchOperation {
 	}
 
 	private MavenVersion getProjectVersion(CommandExecuter commandExecuter, String projectId) {
-		return commandExecuter.getUniverse().getProjectWithId(projectId).getVersion();
+		Project project = commandExecuter.getUniverse().getProjectWithId(projectId);
+		if (project == null) {
+			throw new IllegalStateException("Unknown project: " + projectId);
+		}
+		return project.getVersion();
 	}
 
 	private String getProjectProperty(CommandExecuter commandExecuter, String projectId, String key) {

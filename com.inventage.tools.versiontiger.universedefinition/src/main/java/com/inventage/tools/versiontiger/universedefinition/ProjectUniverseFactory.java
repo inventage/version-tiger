@@ -5,6 +5,7 @@ import java.io.File;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.variables.VariablesPlugin;
 
+import com.inventage.tools.versiontiger.Project;
 import com.inventage.tools.versiontiger.ProjectUniverse;
 import com.inventage.tools.versiontiger.VersioningLogger;
 import com.inventage.tools.versiontiger.util.FileHandler;
@@ -50,7 +51,10 @@ public class ProjectUniverseFactory {
 		for (Element projectElement : projectUniverseElement.getChildren(TAG_PROJECT)) {
 			Attribute locationAttribute = projectElement.getAttribute(ATTRIBUTE_LOCATION);
 			if (locationAttribute != null) {
-				universe.addProjectPath(substituteVariables(locationAttribute.getValue()));
+				Project project = universe.createProjectFromPath(substituteVariables(locationAttribute.getValue()));
+				if (project != null) {
+					universe.addProject(project);
+				}
 			}
 		}
 	}
@@ -59,7 +63,13 @@ public class ProjectUniverseFactory {
 		for (Element projectElement : projectUniverseElement.getChildren(TAG_PROJECT_ROOT)) {
 			Attribute locationAttribute = projectElement.getAttribute(ATTRIBUTE_LOCATION);
 			if (locationAttribute != null) {
-				universe.addRootProjectPath(substituteVariables(locationAttribute.getValue()));
+				String directoryPath = substituteVariables(locationAttribute.getValue());
+				try {
+					universe.addRootProjectPath(directoryPath);
+				}
+				catch (IllegalStateException e) {
+					universe.addProject(universe.createProjectFromPath(directoryPath));
+				}
 			}
 		}
 	}

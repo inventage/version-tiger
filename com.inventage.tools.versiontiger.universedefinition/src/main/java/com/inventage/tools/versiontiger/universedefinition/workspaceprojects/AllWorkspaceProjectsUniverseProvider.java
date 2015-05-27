@@ -22,7 +22,7 @@ public class AllWorkspaceProjectsUniverseProvider implements ProjectUniverseProv
 
 	@Override
 	public Object create() throws CoreException {
-		return new AllWorkspaceProjectsUniverseProvider();
+		return this;
 	}
 
 	@Override

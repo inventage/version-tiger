@@ -98,4 +98,8 @@ class ReferencesUpdater implements Project {
 		logger.addVersioningLoggerItem(loggerItem);
 	}
 
+	@Override
+	public boolean exists() {
+		return project.exists();
+	}
 }

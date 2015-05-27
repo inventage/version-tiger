@@ -144,4 +144,13 @@ class EditVersionModel extends AbstractPropertyChangeSupport {
 	public VersioningLogger getLogger() {
 		return logger;
 	}
+
+	public boolean isInexistingProject(String projectId) {
+		for (VersioningProject project : projects) {
+			if (project.getProjectId().equals(projectId)) {
+				return project.isInexisting();
+			}
+		}
+		return true;
+	}
 }

@@ -8,6 +8,10 @@ public interface ProjectUniverse {
 
 	String name();
 
+	Project createProjectFromPath(String projectRootFilePath);
+	
+	void addProject(Project project);
+	
 	Project addProjectPath(String projectRootFilePath);
 	
 	Set<Project> addRootProjectPath(String projectRootFilePath);

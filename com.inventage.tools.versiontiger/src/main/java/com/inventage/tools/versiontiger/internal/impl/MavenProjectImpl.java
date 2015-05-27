@@ -248,4 +248,8 @@ class MavenProjectImpl implements MavenProject {
 		return "MavenProjectImpl [projectPath=" + projectPath + ", id=" + id + ", version=" + version + "]";
 	}
 
+	@Override
+	public boolean exists() {
+		return true;
+	}
 }

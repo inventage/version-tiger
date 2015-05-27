@@ -9,7 +9,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
-import com.inventage.tools.versiontiger.MavenProject;
 import com.inventage.tools.versiontiger.MavenVersion;
 import com.inventage.tools.versiontiger.Project;
 import com.inventage.tools.versiontiger.ProjectUniverse;
@@ -49,10 +48,22 @@ class ProjectUniverseImpl implements ProjectUniverse {
 	}
 
 	@Override
-	public Project addProjectPath(String projectRootFilePath) {
-		MavenProject project = projectFactory.createProjectFromRootFilePath(projectRootFilePath, logger);
-
+	public Project createProjectFromPath(String projectRootFilePath) {
+		return projectFactory.createProjectFromRootFilePath(projectRootFilePath, logger);
+	}
+	
+	@Override
+	public void addProject(Project project) {
 		if (project != null) {
+			projects.put(project.id(), project);
+		}
+	}
+	
+	@Override
+	public Project addProjectPath(String projectRootFilePath) {
+		Project project = projectFactory.createProjectFromRootFilePath(projectRootFilePath, logger);
+
+		if (project != null && project.exists()) {
 			if (projects.containsKey(project.id())) {
 				VersioningLoggerItem logItem = logger.createVersioningLoggerItem();
 				logItem.setStatus(VersioningLoggerStatus.WARNING);
@@ -70,10 +81,10 @@ class ProjectUniverseImpl implements ProjectUniverse {
 	
 	@Override
 	public Set<Project> addRootProjectPath(String projectRootFilePath) {
-		Set<MavenProject> recursiveProjects = projectFactory.createRecursiveProjectsFromRootFilePath(projectRootFilePath, logger);
+		Set<Project> recursiveProjects = projectFactory.createRecursiveProjectsFromRootFilePath(projectRootFilePath, logger);
 		Set<Project> result = new HashSet<Project>();
 		
-		for (MavenProject project: recursiveProjects) {
+		for (Project project: recursiveProjects) {
 			projects.put(project.id(), project);
 			result.add(project);
 		}

@@ -7,13 +7,18 @@ import java.util.Set;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.IBeanValueProperty;
+import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.property.Properties;
+import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
+import org.eclipse.jface.databinding.viewers.ObservableSetContentProvider;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
-import org.eclipse.jface.databinding.viewers.ViewerSupport;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -28,11 +33,13 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
@@ -277,8 +284,13 @@ public class EditVersionPage extends WizardPage {
 
 	private void bindProjectPreviewTable() {
 		IObservableSet observableVersioningProjects = BeansObservables.observeSet(editVersionModel, EditVersionModel.PN_PROJECTS);
-		ViewerSupport.bind(projectPreviewTable, observableVersioningProjects,
-				BeanProperties.values(new String[] { VersioningProject.PN_PROJECT_ID, VersioningProject.PN_OLD_VERSION, VersioningProject.PN_NEW_VERSION }));
+		IBeanValueProperty[] labelProperties = BeanProperties.values(new String[] { VersioningProject.PN_PROJECT_ID, VersioningProject.PN_OLD_VERSION, VersioningProject.PN_NEW_VERSION });
+		
+		ObservableSetContentProvider contentProvider = new ObservableSetContentProvider();
+		projectPreviewTable.setContentProvider(contentProvider);
+		projectPreviewTable.setLabelProvider(new TableLabelProvider(projectPreviewTable.getTable().getDisplay(), Properties.observeEach(contentProvider.getKnownElements(), labelProperties)));
+		projectPreviewTable.setInput(observableVersioningProjects);
+		
 		projectPreviewTable.setCheckStateProvider(new ObservableCheckStateProvider<CheckboxTableViewer>(projectPreviewTable, observableVersioningProjects,
 				BeanProperties.value(VersioningProject.PN_SELECTED)));
 	}
@@ -369,7 +381,7 @@ public class EditVersionPage extends WizardPage {
 		}
 	}
 
-	private final class ProjectUniverseLabelProvider extends LabelProvider {
+	private class ProjectUniverseLabelProvider extends LabelProvider {
 		@Override
 		public String getText(Object element) {
 			ProjectUniverse universe = getProjectUniverse(element);
@@ -380,6 +392,29 @@ public class EditVersionPage extends WizardPage {
 			if (element instanceof ProjectUniverse) {
 				return (ProjectUniverse) element;
 			}
+			return null;
+		}
+	}
+	
+	private class TableLabelProvider extends ObservableMapLabelProvider implements IColorProvider {
+		private final Display display;
+
+		TableLabelProvider(Display display, IObservableMap[] observableMaps) {
+			super(observableMaps);
+			this.display = display;
+		}
+		
+		@Override
+		public Color getForeground(Object element) {
+			String projectId = getColumnText(element, 0);
+			if (projectId != null && editVersionModel.isInexistingProject(projectId)) {
+				return display.getSystemColor(SWT.COLOR_RED);
+			}
+			return null;
+		}
+
+		@Override
+		public Color getBackground(Object element) {
 			return null;
 		}
 	}

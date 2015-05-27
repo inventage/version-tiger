@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.inventage.tools.versiontiger.MavenProject;
+import com.inventage.tools.versiontiger.Project;
 import com.inventage.tools.versiontiger.VersioningLogger;
 import com.inventage.tools.versiontiger.VersioningLoggerItem;
 import com.inventage.tools.versiontiger.VersioningLoggerStatus;
@@ -23,11 +24,12 @@ class ProjectFactory {
 		this.versionFactory = versionFactory;
 	}
 
-	MavenProject createProjectFromRootFilePath(String projectPath, VersioningLogger logger) {
+	Project createProjectFromRootFilePath(String projectPath, VersioningLogger logger) {
 		
 		File projectFile = new FileHandler().createFileFromPath(rootPath, projectPath);
 		if (!projectFile.exists()) {
-			throw new IllegalStateException("Project does not exist: " + projectFile);
+			logWarning(logger, "Project does not exist: " + projectFile);
+			return createInexistingProject(projectFile, logger);
 		}
 
 		if (hasPom(projectFile)) {
@@ -52,13 +54,13 @@ class ProjectFactory {
 		}
 	}
 	
-	Set<MavenProject> createRecursiveProjectsFromRootFilePath(String projectPath, VersioningLogger logger) {
+	Set<Project> createRecursiveProjectsFromRootFilePath(String projectPath, VersioningLogger logger) {
 		File projectPathFile = new FileHandler().createFileFromPath(rootPath, projectPath);
 		if (!projectPathFile.exists() || !projectPathFile.isDirectory()) {
 			throw new IllegalStateException("Directory does not exist: " + projectPathFile);
 		}
 		
-		Set<MavenProject> result = new HashSet<MavenProject>();
+		Set<Project> result = new HashSet<Project>();
 		Set<String> visitedDirectories = new HashSet<String>();
 		
 		if (projectPathFile.canExecute() && projectPathFile.canRead()) {
@@ -68,18 +70,20 @@ class ProjectFactory {
 		return result;
 	}
 	
-	private void addMavenProjectsUnderRoot(File rootPathFile, Set<String> visitedDirectories, Set<MavenProject> foundProjects, VersioningLogger logger) {
+	private void addMavenProjectsUnderRoot(File rootPathFile, Set<String> visitedDirectories, Set<Project> foundProjects, VersioningLogger logger) {
 		String currentCanonicalPath = new FileHandler().getCanonicalPath(rootPathFile);
 		
 		visitedDirectories.add(currentCanonicalPath);
 		
 		try {
 			if (hasPom(rootPathFile)) {
-				MavenProject project = createProjectFromRootFilePath(currentCanonicalPath, logger);
-				foundProjects.add(project);
+				Project project = createProjectFromRootFilePath(currentCanonicalPath, logger);
+				if (project instanceof MavenProject) {
+					foundProjects.add(project);
 				
-				if (cannotHaveSubProjects(rootPathFile)) {
-					return;
+					if (cannotHaveSubProjects(rootPathFile)) {
+						return;
+					}
 				}
 			}
 		}
@@ -95,7 +99,7 @@ class ProjectFactory {
 		return !getMavenPackaging(rootPathFile).toLowerCase().equals("pom");
 	}
 
-	private void addSubProjects(File rootPathFile, Set<String> visitedDirectories, Set<MavenProject> foundProjects, VersioningLogger logger) {
+	private void addSubProjects(File rootPathFile, Set<String> visitedDirectories, Set<Project> foundProjects, VersioningLogger logger) {
 		for (File subElement: rootPathFile.listFiles()) {
 			boolean isDirectory = subElement.isDirectory();
 			boolean isVisible = !subElement.isHidden();
@@ -128,7 +132,6 @@ class ProjectFactory {
 		logger.addVersioningLoggerItem(item);
 	}
 	
-
 	private MavenProject createPluginProject(File projectPath, VersioningLogger logger) {
 		return new EclipsePlugin(projectPath.getAbsolutePath(), logger, versionFactory);
 	}
@@ -151,6 +154,10 @@ class ProjectFactory {
 
 	private MavenProject createAnyMavenProject(File projectPath, VersioningLogger logger) {
 		return new MavenProjectImpl(projectPath.getAbsolutePath(), logger, versionFactory);
+	}
+	
+	private Project createInexistingProject(File projectPath, VersioningLogger logger) {
+		return new InexistingProject(projectPath.getAbsolutePath(), logger, versionFactory);
 	}
 	
 	private boolean hasPom(File projectPath) {

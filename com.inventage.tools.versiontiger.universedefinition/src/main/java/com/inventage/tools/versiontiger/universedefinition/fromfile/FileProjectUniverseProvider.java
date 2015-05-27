@@ -16,7 +16,7 @@ public class FileProjectUniverseProvider implements ProjectUniverseProvider {
 
 	@Override
 	public Object create() throws CoreException {
-		return new FileProjectUniverseProvider();
+		return this;
 	}
 
 	@Override
