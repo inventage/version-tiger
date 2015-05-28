@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Version-Tiger - UI
 Bundle-SymbolicName: com.inventage.tools.versiontiger.ui;singleton:=true
 Bundle-Activator: com.inventage.tools.versiontiger.ui.VersioningUIPlugin
-Bundle-Version: 1.3.0.qualifier
+Bundle-Version: 1.3.1.qualifier
 Bundle-Vendor: Inventage
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.core.commands;bundle-version="3.5.0",
@@ -16,8 +16,8 @@ Require-Bundle: org.eclipse.core.commands;bundle-version="3.5.0",
  org.eclipse.osgi;bundle-version="3.5.1",
  org.eclipse.ui;bundle-version="3.5.1",
  org.eclipse.ui.console;bundle-version="3.4.0",
- com.inventage.tools.versiontiger;bundle-version="[1.3.0,2.0.0)",
- com.inventage.tools.versiontiger.universedefinition;bundle-version="[1.3.0,2.0.0)",
+ com.inventage.tools.versiontiger;bundle-version="[1.3.1,1.3.2)",
+ com.inventage.tools.versiontiger.universedefinition;bundle-version="[1.3.1,1.3.2)",
  com.google.guava;bundle-version=10
 Bundle-Localization: plugin
 Bundle-ActivationPolicy: lazy
