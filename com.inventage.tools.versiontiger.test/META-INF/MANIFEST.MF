@@ -2,9 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Version-Tiger - Tests
 Bundle-SymbolicName: com.inventage.tools.versiontiger.test;singleton:=true
-Bundle-Version: 1.3.1.qualifier
+Bundle-Version: 1.3.2.qualifier
 Bundle-Vendor: Inventage
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Fragment-Host: com.inventage.tools.versiontiger;bundle-version="[1.3.1,1.3.2)"
+Fragment-Host: com.inventage.tools.versiontiger;bundle-version="[1.3.2,2.0.0)"
 Require-Bundle: org.junit;bundle-version="4.8.1",
  org.mockito.mockito-all;bundle-version="1.9.5"
