@@ -21,7 +21,9 @@ public class ProjectUniverseFactory {
 	private static final String TAG_PROJECTUNIVERSE = "projectuniverse";
 	private static final String TAG_PROJECT = "project";
 	private static final String TAG_PROJECT_ROOT = "projectRoot";
-	private static final String TAG_IGNORE = "ignore";
+	private static final String TAG_IGNORE = "ignore"; // deprecated, use ignoreProject
+	private static final String TAG_IGNORE_PROJECT = "ignoreProject";
+	private static final String TAG_IGNORE_PATH = "ignorePath";
 	private static final String ATTRIBUTE_NAME = "name";
 	private static final String ATTRIBUTE_LOCATION = "location";
 	private static final String ATTRIBUTE_ID = "id";
@@ -38,7 +40,7 @@ public class ProjectUniverseFactory {
 		
 		addProjectLocations(universe, projectUniverseElement);
 		addProjectRootLocations(universe, projectUniverseElement);
-		ignoreProjectIds(universe, projectUniverseElement);
+		ignoreProjectIdsAndPaths(universe, projectUniverseElement);
 		
 		return universe;
 	}
@@ -83,12 +85,30 @@ public class ProjectUniverseFactory {
 		return path;
 	}
 
-	private void ignoreProjectIds(ProjectUniverse universe, Element projectUniverseElement) {
-		for (Element ignoreElement : projectUniverseElement.getChildren(TAG_IGNORE)) {
-			Attribute id = ignoreElement.getAttribute(ATTRIBUTE_ID);
-			if (id != null) {
-				universe.removeProject(id.getValue());
-			}
+	private void ignoreProjectIdsAndPaths(ProjectUniverse universe, Element projectUniverseElement) {
+		for (Element ignoreElement : projectUniverseElement.getChildren(TAG_IGNORE)) { // deprecated, use ignoreProject
+			ignoreProject(universe, ignoreElement);
+		}
+		for (Element ignoreElement : projectUniverseElement.getChildren(TAG_IGNORE_PROJECT)) {
+			ignoreProject(universe, ignoreElement);
+		}
+		for (Element ignoreElement : projectUniverseElement.getChildren(TAG_IGNORE_PATH)) {
+			ignorePath(universe, ignoreElement);
+		}
+	}
+
+	private void ignoreProject(ProjectUniverse universe, Element ignoreElement) {
+		Attribute id = ignoreElement.getAttribute(ATTRIBUTE_ID);
+		if (id != null) {
+			universe.removeProject(id.getValue());
+		}
+	}
+	
+	private void ignorePath(ProjectUniverse universe, Element ignoreElement) {
+		Attribute location = ignoreElement.getAttribute(ATTRIBUTE_LOCATION);
+		if (location != null) {
+			String directoryPath = substituteVariables(location.getValue());
+			universe.removeProjectsInPath(directoryPath);
 		}
 	}
 
