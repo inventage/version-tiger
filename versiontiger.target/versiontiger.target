@@ -18,7 +18,7 @@
 		<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 			<unit id="org.mockito.mockito-all" version="1.9.5"/>
 			<unit id="de.pdark.decentxml" version="1.4.0"/> 
-			<repository location="https://raw.github.com/inventage/version-tiger-repos/master/dependencies/"/>
+			<repository location="http://raw.github.com/inventage/version-tiger-repos/master/dependencies/"/>
 		</location>
 		
 	</locations>

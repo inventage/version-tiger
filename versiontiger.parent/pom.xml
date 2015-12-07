@@ -175,7 +175,7 @@
 		<repository>
 			<id>version-tiger-libs</id>
 			<name>Version-Tiger third party libraries</name>
-			<url>https://raw.github.com/inventage/version-tiger-repos/master/dependencies/</url>
+			<url>http://raw.github.com/inventage/version-tiger-repos/master/dependencies/</url>
 			<layout>p2</layout>
 		</repository>
 
