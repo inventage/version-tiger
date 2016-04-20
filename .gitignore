@@ -4,3 +4,4 @@ com.inventage.tools.versiontiger.gui/target
 com.inventage.tools.versiontiger.ui/target
 com.inventage.tools.versiontiger.universedefinition/target
 versiontiger.repository/target
+versiontiger-maven-plugin/target

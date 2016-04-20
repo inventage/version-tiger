@@ -23,6 +23,8 @@
         <module>../com.inventage.tools.versiontiger.universedefinition</module>
         <module>../com.inventage.tools.versiontiger.gui</module>
         <module>../versiontiger.repository</module>
+        
+        <module>../versiontiger-maven-plugin</module>
     </modules>
 
 </project>
