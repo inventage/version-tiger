@@ -13,6 +13,8 @@
 	<packaging>eclipse-repository</packaging>
 
 	<name>Version-Tiger - Repository</name>
+	<description>Version-Tiger repository.</description>
+	
 	<build>
 		<plugins>
 			<plugin>

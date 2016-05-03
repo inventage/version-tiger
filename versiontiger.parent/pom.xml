@@ -8,10 +8,34 @@
 	<packaging>pom</packaging>
 
 	<name>Version-Tiger - Parent pom</name>
+	<description>Parent pom for Version-Tiger maven plugin.</description>
+	<url>https://github.com/inventage/version-tiger/wiki</url>
+
+	<licenses>
+		<license>
+			<name>The BSD 2-Clause License</name>
+			<url>https://opensource.org/licenses/BSD-2-Clause</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Beat Strasser</name>
+			<email>beat.strasser@inventage.com</email>
+			<organization>Inventage AG</organization>
+			<organizationUrl>www.inventage.com</organizationUrl>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:git@github.com:inventage/version-tiger.git</connection>
+		<developerConnection>scm:git:git@github.com:inventage/version-tiger.git</developerConnection>
+		<url>git@github.com:inventage/version-tiger.git</url>
+	</scm>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<tycho.version>0.19.0</tycho.version>
+		<tycho.version>0.25.0</tycho.version>
 		<java.version>1.6</java.version>
 	</properties>
 
@@ -65,6 +89,13 @@
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>target-platform-configuration</artifactId>
 				<configuration>
+					<target>
+						<artifact>
+							<groupId>com.inventage.tools.versiontiger</groupId>
+							<artifactId>versiontiger.targetplatform</artifactId>
+							<version>${project.version}</version>
+						</artifact>
+					</target>
 					<environments>
 						<environment>
 							<os>win32</os>
@@ -98,6 +129,43 @@
 						</environment>
 					</environments>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>1.6.7</version>
+				<extensions>true</extensions>
+				<configuration>
+					<serverId>maven-central-oss-staging</serverId>
+					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+					<autoReleaseAfterClose>false</autoReleaseAfterClose>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.3</version>
+				<executions>
+					<execution>
+						<id>attach-javadoc</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 		<pluginManagement>
@@ -156,39 +224,14 @@
 		</pluginManagement>
 	</build>
 
-	<repositories>
-
-		<repository>
-			<id>eclipse-galileo</id>
-			<name>Eclipse.org Galileo Repo</name>
-			<url>http://download.eclipse.org/releases/galileo/</url>
-			<layout>p2</layout>
-		</repository>
-
-		<repository>
-			<id>orbit</id>
-			<name>Eclipse Orbit R20120526062928</name>
-			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20120526062928/repository/</url>
-			<layout>p2</layout>
-		</repository>
-
-		<repository>
-			<id>version-tiger-libs</id>
-			<name>Version-Tiger third party libraries</name>
-			<url>https://raw.github.com/inventage/version-tiger-repos/master/dependencies/</url>
-			<layout>p2</layout>
-		</repository>
-
-	</repositories>
-
 	<distributionManagement>
 		<repository>
-			<id>${version-tiger-releases.id}</id>
-			<url>${version-tiger-releases.url}</url>
+			<id>maven-central-oss-staging</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
 		</repository>
 		<snapshotRepository>
-			<id>${version-tiger-snapshots.id}</id>
-			<url>${version-tiger-snapshots.url}</url>
+			<id>maven-central-oss-staging</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
 
@@ -204,6 +247,27 @@
 							<strictVersions>false</strictVersions>
 							<forceContextQualifier>RELEASE</forceContextQualifier>
 						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>signature</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.5</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>

@@ -10,9 +10,10 @@
 	</parent>
 	
 	<artifactId>versiontiger-maven-plugin</artifactId>
-	<version>1.3.2-SNAPSHOT</version>
 	<packaging>maven-plugin</packaging>
+	
 	<name>Version-Tiger - Maven Plugin</name>
+	<description>Version-Tiger maven plugin.</description>
 	
 	<properties>
 		<mavenplugin.version>1.3.2-SNAPSHOT</mavenplugin.version>

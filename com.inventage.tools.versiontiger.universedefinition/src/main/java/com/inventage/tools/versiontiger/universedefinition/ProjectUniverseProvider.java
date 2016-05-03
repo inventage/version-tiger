@@ -13,7 +13,7 @@ import com.inventage.tools.versiontiger.VersioningLogger;
 public interface ProjectUniverseProvider extends IExecutableExtensionFactory {
 
 	/**
-	 * @return the {@link ProjectUniverseModel}s of this
+	 * @return the ProjectUniverseModel of this
 	 *         {@link ProjectUniverseProvider}.
 	 */
 	Set<ProjectUniverse> getProjectUniverses(VersioningLogger logger);
