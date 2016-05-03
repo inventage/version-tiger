@@ -10,9 +10,12 @@
 	</parent>
 
 	<artifactId>versiontiger.repository</artifactId>
+	<version>1.3.2-SNAPSHOT</version>
 	<packaging>eclipse-repository</packaging>
 
 	<name>Version-Tiger - Repository</name>
+	<description>Version-Tiger repository.</description>
+	
 	<build>
 		<plugins>
 			<plugin>
