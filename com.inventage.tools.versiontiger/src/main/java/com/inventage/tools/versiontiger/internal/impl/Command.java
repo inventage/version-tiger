@@ -74,11 +74,14 @@ public class Command {
 		
 		/* The arguments are separated by each other with a space. One may use quotation marks as argument limiters. */
 		Scanner scanner = new Scanner(argumentString);
-
-		String arg;
-		while ((arg = scanner.findInLine(ARGUMENT_PATTERN)) != null) {
-			/* We're removing any quotation marks. */
-			arguments.add(arg.replace("\"", "").replace("\'", ""));
+		try {
+			String arg;
+			while ((arg = scanner.findInLine(ARGUMENT_PATTERN)) != null) {
+				/* We're removing any quotation marks. */
+				arguments.add(arg.replace("\"", "").replace("\'", ""));
+			}
+		} finally {
+			scanner.close();
 		}
 	}
 	
