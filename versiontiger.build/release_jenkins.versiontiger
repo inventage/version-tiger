@@ -1,0 +1,12 @@
+## ${BUILD_NUMBER}-${GIT_REVISION}
+
+# Including the universe
+include projects.versiontiger
+
+# Releasing all artifacts
+release versiontiger.build
+setting osgi.release.qualifier ${BUILD_NUMBER}-${GIT_REVISION}
+version .* ${version:versiontiger.build}-${BUILD_NUMBER}-${GIT_REVISION}
+property versiontiger.parent targetplatform.version ${version:versiontiger.build}
+property versiontiger-maven-plugin versiontiger.version ${version:versiontiger.build}
+

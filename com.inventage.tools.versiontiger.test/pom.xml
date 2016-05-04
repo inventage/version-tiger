@@ -12,6 +12,7 @@
 
 	<artifactId>com.inventage.tools.versiontiger.test</artifactId>
 	<packaging>eclipse-test-plugin</packaging>
+	<version>1.3.2-SNAPSHOT</version>
 	
 	<name>Version-Tiger - Tests</name>
 	<description>Version-Tiger Tests.</description>
