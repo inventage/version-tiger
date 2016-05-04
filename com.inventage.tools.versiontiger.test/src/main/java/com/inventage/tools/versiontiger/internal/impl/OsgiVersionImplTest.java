@@ -251,11 +251,14 @@ public class OsgiVersionImplTest {
 		assertFalse(new OsgiVersionImpl("1.2.3.qualifier", versionFactory).isLowerThan(new OsgiVersionImpl("1.2.2.qualifier", versionFactory), true));
 		assertFalse(new OsgiVersionImpl("1.2.3.qualifier", versionFactory).isLowerThan(new OsgiVersionImpl("1.1.3.qualifier", versionFactory), true));
 		assertFalse(new OsgiVersionImpl("1.2.3.qualifier", versionFactory).isLowerThan(new OsgiVersionImpl("0.2.3.qualifier", versionFactory), true));
-		assertTrue(new OsgiVersionImpl("1.2.3.qualifier", versionFactory).isLowerThan(new OsgiVersionImpl("1.2.3.OTHER", versionFactory), true));
 		assertTrue(new OsgiVersionImpl("1.2.3", versionFactory).isLowerThan(new OsgiVersionImpl("1.2.3", versionFactory), true));
 		assertFalse(new OsgiVersionImpl("1.2.3", versionFactory).isLowerThan(new OsgiVersionImpl("1.2.3", versionFactory), false));
-		assertFalse(new OsgiVersionImpl("1.2.3", versionFactory).isLowerThan(new OsgiVersionImpl("1.2.3.qualifier", versionFactory), false));
 		assertTrue(new OsgiVersionImpl("1.2.3", versionFactory).isLowerThan(new OsgiVersionImpl("1.2.3.qualifier", versionFactory), true));
+		assertTrue(new OsgiVersionImpl("1.2.3.100", versionFactory).isLowerThan(new OsgiVersionImpl("1.2.3.2", versionFactory), false));
+		assertTrue(new OsgiVersionImpl("1.2.3.201605041617", versionFactory).isLowerThan(new OsgiVersionImpl("1.2.3.201605042000", versionFactory), false));
+		assertFalse(new OsgiVersionImpl("1.2.3.qualifier", versionFactory).isLowerThan(new OsgiVersionImpl("1.2.3", versionFactory), true));
+		assertTrue(new OsgiVersionImpl("1.2.3", versionFactory).isLowerThan(new OsgiVersionImpl("1.2.3.qualifier", versionFactory), false));
+		assertTrue(new OsgiVersionImpl("1.2.3.BLOP", versionFactory).isLowerThan(new OsgiVersionImpl("1.2.3.OTHER", versionFactory), false));
 	}
 
 	@Test

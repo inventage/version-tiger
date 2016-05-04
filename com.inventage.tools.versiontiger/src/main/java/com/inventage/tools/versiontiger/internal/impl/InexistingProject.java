@@ -92,7 +92,7 @@ public class InexistingProject implements Project {
 
 	@Override
 	public MavenVersion getVersion() {
-		return versionFactory.createMavenVersion(0, 0, 0, null, true);
+		return versionFactory.createMavenVersion(0, 0, 0, null, null, true);
 	}
 
 	@Override

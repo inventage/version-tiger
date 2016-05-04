@@ -3,7 +3,9 @@ package com.inventage.tools.versiontiger;
 public interface MavenVersion extends Version {
 
 	String suffix();
-	
+
+	String suffixDelimiter();
+
 	MavenVersion incrementMajorAndSnapshot();
 
 	MavenVersion incrementMinorAndSnapshot();

@@ -294,13 +294,11 @@ public class MavenVersionImplTest {
 	@Test
 	public void shouldDenyInvalidMavenVersions() {
 		// given
-		String versionWithTooManySubversions = "1.2.3.4-SNAPSHOT";
 		String versionWithInvalidQualifier = "1.2.3-ä";
 
 		// when
 		boolean allValid = true;
 		try {
-			new MavenVersionImpl(versionWithTooManySubversions, versionFactory);
 			new MavenVersionImpl(versionWithInvalidQualifier, versionFactory);
 		} catch (IllegalArgumentException e) {
 			allValid = false;
@@ -325,6 +323,10 @@ public class MavenVersionImplTest {
 		assertFalse(new MavenVersionImpl("1.2.3", versionFactory).isLowerThan(new MavenVersionImpl("1.2.3", versionFactory), false));
 		assertFalse(new MavenVersionImpl("1.2.3", versionFactory).isLowerThan(new MavenVersionImpl("1.2.3-SNAPSHOT", versionFactory), false));
 		assertTrue(new MavenVersionImpl("1.2.3", versionFactory).isLowerThan(new MavenVersionImpl("1.2.3-SNAPSHOT", versionFactory), true));
+		assertTrue(new MavenVersionImpl("1.2.3.2", versionFactory).isLowerThan(new MavenVersionImpl("1.2.3.10", versionFactory), false));
+		assertTrue(new MavenVersionImpl("1.2.3.100", versionFactory).isLowerThan(new MavenVersionImpl("1.2.3.125", versionFactory), false));
+		assertTrue(new MavenVersionImpl("1.2.3.ASDF", versionFactory).isLowerThan(new MavenVersionImpl("1.2.3.BLOP", versionFactory), false));
+		assertEquals(0, new MavenVersionImpl("1.2.3.ASDF", versionFactory).compareTo(new MavenVersionImpl("1.2.3.ASDF", versionFactory)));
 	}
 
 }

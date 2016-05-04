@@ -20,8 +20,8 @@ public class VersionFactory {
 		return new MavenVersionImpl(mavenVersion, this);
 	}
 	
-	public MavenVersion createMavenVersion(Integer major, Integer minor, Integer bugfix, String suffix, boolean snapshot) {
-		return new MavenVersionImpl(major, minor, bugfix, suffix, snapshot, this);
+	public MavenVersion createMavenVersion(Integer major, Integer minor, Integer bugfix, String suffix, String suffixDelimiter, boolean snapshot) {
+		return new MavenVersionImpl(major, minor, bugfix, suffix, suffixDelimiter, snapshot, this);
 	}
 	
 	public OsgiVersion createOsgiVersion(String osgiVersion) {

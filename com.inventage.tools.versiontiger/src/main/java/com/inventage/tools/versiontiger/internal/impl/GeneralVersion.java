@@ -12,7 +12,7 @@ import com.inventage.tools.versiontiger.Version;
  * 
  * @author Beat Strasser
  */
-class GeneralVersion {
+class GeneralVersion implements Version {
 
 	private static final Pattern VERSION_PATTERN = Pattern.compile("^(\\d+)(\\.(\\d+)(\\.(\\d+))?)?$");
 	private static final String VERSION_DELIMITER = ".";
@@ -79,19 +79,19 @@ class GeneralVersion {
 		this.snapshot = snapshot;
 	}
 
-	Integer major() {
+	public Integer major() {
 		return major;
 	}
 
-	Integer minor() {
+	public Integer minor() {
 		return minor;
 	}
 
-	Integer bugfix() {
+	public Integer bugfix() {
 		return bugfix;
 	}
-	
-	boolean isSnapshot() {
+
+	public boolean isSnapshot() {
 		return snapshot;
 	}
 	
@@ -116,7 +116,7 @@ class GeneralVersion {
 		return versionString() + ", snapshot=" + snapshot;
 	}
 
-	boolean isLowerThan(Version other, boolean inclusive) {
+	public boolean isLowerThan(Version other, boolean inclusive) {
 		if (nullToZero(major()) == nullToZero(other.major())) {
 			if (nullToZero(minor()) == nullToZero(other.minor())) {
 				if (nullToZero(bugfix()) == nullToZero(other.bugfix())) {
@@ -129,7 +129,7 @@ class GeneralVersion {
 		return nullToZero(major()) < nullToZero(other.major());
 	}
 
-	int compareTo(Version o) {
+	public int compareTo(Version o) {
 		if (major != nullToZero(o.major())) {
 			return major().compareTo(nullToZero(o.major()));
 		}
@@ -142,16 +142,24 @@ class GeneralVersion {
 		return 0;
 	}
 	
-	GeneralVersion incrementMajorAndSnapshot() {
+	public GeneralVersion incrementMajorAndSnapshot() {
 		return new GeneralVersion(major + 1, numbersToZero(minor()), numbersToZero(bugfix()), true);
 	}
 
-	GeneralVersion incrementMinorAndSnapshot() {
+	public GeneralVersion incrementMinorAndSnapshot() {
 		return new GeneralVersion(major(), nullToZero(minor()) + 1, numbersToZero(bugfix()), true);
 	}
 
-	GeneralVersion incrementBugfixAndSnapshot() {
+	public GeneralVersion incrementBugfixAndSnapshot() {
 		return new GeneralVersion(major(), nullToZero(minor()), nullToZero(bugfix()) + 1, true);
+	}
+
+	public Version snapshotVersion() {
+		return snapshot ? this : new GeneralVersion(major, minor, bugfix, true);
+	}
+
+	public Version releaseVersion() {
+		return snapshot ? new GeneralVersion(major, minor, bugfix, false) : this;
 	}
 
 	private static int nullToZero(Integer integer) {

@@ -135,12 +135,24 @@ public class OsgiVersionImpl implements OsgiVersion {
 
 	@Override
 	public boolean isLowerThan(Version other, boolean inclusive) {
-		return gv.isLowerThan(other, inclusive);
+		int comparison = compareTo(other);
+		return inclusive ? comparison <= 0 : comparison < 0;
 	}
 
 	@Override
 	public int compareTo(Version o) {
-		return gv.compareTo(o);
+		int gvCompare = gv.compareTo(o);
+		if (o instanceof OsgiVersion && gvCompare == 0) {
+			String otherQualifier = ((OsgiVersion) o).qualifier();
+			if (qualifier() == null) {
+				return (otherQualifier != null) ? -1 : 0;
+			}
+			else if (otherQualifier == null) {
+				return 1;
+			}
+			return qualifier().compareTo(otherQualifier);
+		}
+		return gvCompare;
 	}
 	
 	private static int nullToZero(Integer integer) {

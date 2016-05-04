@@ -8,14 +8,15 @@ import com.inventage.tools.versiontiger.Version;
 
 public class MavenVersionImpl implements MavenVersion {
 	
-	private static final Pattern VERSION_PATTERN = Pattern.compile("^(\\d+(\\.\\d+){0,2})(-([\\w\\-\\_]+))?$");
-	private static final String MAVEN_SUFFIX_DELIMITER = "-";
+	private static final Pattern VERSION_PATTERN = Pattern.compile("^(\\d+(\\.\\d+){0,2})(([\\-\\.])([\\w\\-\\_]+))?$");
+	private static final String MAVEN_SNAPSHOT_DELIMITER = "-";
 	private static final String MAVEN_SNAPSHOT_SUFFIX = "SNAPSHOT";
 	
 	private final VersionFactory versionFactory;
 	
 	private final GeneralVersion gv;
 	private final String suffix;
+	private final String suffixDelimiter;
 	
 	public MavenVersionImpl(String version, VersionFactory versionFactory) {
 		this.versionFactory = versionFactory;
@@ -24,7 +25,8 @@ public class MavenVersionImpl implements MavenVersion {
 			throw new IllegalArgumentException("Invalid maven version: " + version);
 		}
 		
-		String inputSuffix = matcher.group(4);
+		String inputSuffix = matcher.group(5);
+		suffixDelimiter = matcher.group(4);
 		
 		if (inputSuffix != null && inputSuffix.toLowerCase().endsWith(MAVEN_SNAPSHOT_SUFFIX.toLowerCase())) {
 			if (MAVEN_SNAPSHOT_SUFFIX.length() < inputSuffix.length()) {
@@ -39,28 +41,37 @@ public class MavenVersionImpl implements MavenVersion {
 		}
 	}
 	
-	public MavenVersionImpl(Integer major, Integer minor, Integer bugfix, String suffix, boolean snapshot, VersionFactory versionFactory) {
+	public MavenVersionImpl(Integer major, Integer minor, Integer bugfix, String suffix, String suffixDelimiter, boolean snapshot, VersionFactory versionFactory) {
 		this.versionFactory = versionFactory;
 		gv = new GeneralVersion(major, minor, bugfix, snapshot);
 		this.suffix = suffix;
+		this.suffixDelimiter = suffixDelimiter;
+		if (suffix != null && suffixDelimiter == null || suffixDelimiter != null && suffixDelimiter.length() != 1) {
+			throw new IllegalArgumentException("Illegal suffix delimiter");
+		}
 	}
 	
 	@Override
 	public String suffix() {
 		return suffix;
 	}
-	
+
+	@Override
+	public String suffixDelimiter() {
+		return suffixDelimiter;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder version = new StringBuilder(gv.versionString());
 		
 		if (suffix != null && !suffix.isEmpty()) {
-			version.append(MAVEN_SUFFIX_DELIMITER);
+			version.append(suffixDelimiter);
 			version.append(suffix);
 		}
 
 		if (gv.isSnapshot()) {
-			version.append(MAVEN_SUFFIX_DELIMITER);
+			version.append(MAVEN_SNAPSHOT_DELIMITER);
 			version.append(MAVEN_SNAPSHOT_SUFFIX);
 		}
 
@@ -71,31 +82,31 @@ public class MavenVersionImpl implements MavenVersion {
 	public MavenVersion incrementMajorAndSnapshot() {
 		GeneralVersion inc = gv.incrementMajorAndSnapshot();
 		
-		return versionFactory.createMavenVersion(inc.major(), inc.minor(), inc.bugfix(), suffix, inc.isSnapshot());
+		return versionFactory.createMavenVersion(inc.major(), inc.minor(), inc.bugfix(), suffix, suffixDelimiter, inc.isSnapshot());
 	}
 
 	@Override
 	public MavenVersion incrementMinorAndSnapshot() {
 		GeneralVersion inc = gv.incrementMinorAndSnapshot();
 		
-		return versionFactory.createMavenVersion(inc.major(), inc.minor(), inc.bugfix(), suffix, inc.isSnapshot());
+		return versionFactory.createMavenVersion(inc.major(), inc.minor(), inc.bugfix(), suffix, suffixDelimiter, inc.isSnapshot());
 	}
 
 	@Override
 	public MavenVersion incrementBugfixAndSnapshot() {
 		GeneralVersion inc = gv.incrementBugfixAndSnapshot();
 		
-		return versionFactory.createMavenVersion(inc.major(), inc.minor(), inc.bugfix(), suffix, inc.isSnapshot());
+		return versionFactory.createMavenVersion(inc.major(), inc.minor(), inc.bugfix(), suffix, suffixDelimiter, inc.isSnapshot());
 	}
 
 	@Override
 	public MavenVersion releaseVersion() {
-		return gv.isSnapshot() ? versionFactory.createMavenVersion(gv.major(), gv.minor(), gv.bugfix(), suffix, false) : this;
+		return gv.isSnapshot() ? versionFactory.createMavenVersion(gv.major(), gv.minor(), gv.bugfix(), suffix, suffixDelimiter, false) : this;
 	}
 
 	@Override
 	public MavenVersion snapshotVersion() {
-		return gv.isSnapshot() ? this : versionFactory.createMavenVersion(gv.major(), gv.minor(), gv.bugfix(), suffix, true);
+		return gv.isSnapshot() ? this : versionFactory.createMavenVersion(gv.major(), gv.minor(), gv.bugfix(), suffix, suffixDelimiter, true);
 	}
 
 	@Override
@@ -120,12 +131,43 @@ public class MavenVersionImpl implements MavenVersion {
 
 	@Override
 	public boolean isLowerThan(Version other, boolean inclusive) {
-		return gv.isLowerThan(other, inclusive);
+		int comparison = compareTo(other);
+		return inclusive ? comparison <= 0 : comparison < 0;
 	}
 
 	@Override
 	public int compareTo(Version o) {
-		return gv.compareTo(o);
+		int gvCompare = gv.compareTo(o);
+		if (o instanceof MavenVersion && gvCompare == 0) {
+			String otherSuffix = ((MavenVersion) o).suffix();
+			
+			Long suffixNumber = extractNumber(suffix);
+			Long otherSuffixNumber = extractNumber(otherSuffix);
+			if (suffixNumber != null && otherSuffixNumber != null) {
+				return suffixNumber.compareTo(otherSuffixNumber);
+			}
+			
+			if (suffix == null) {
+				return (otherSuffix != null) ? -1 : 0;
+			}
+			else if (otherSuffix == null) {
+				return 1;
+			}
+			return suffix.compareTo(otherSuffix);
+		}
+		return gvCompare;
+	}
+
+	private Long extractNumber(String str) {
+		if (str == null || str.isEmpty()) {
+			return 0L;
+		}
+		try {
+			return Long.parseLong(str);
+		}
+		catch (NumberFormatException e) {
+			return null;
+		}
 	}
 
 	@Override
@@ -134,6 +176,7 @@ public class MavenVersionImpl implements MavenVersion {
 		int result = 1;
 		result = prime * result + gv.hashCode();
 		result = prime * result + ((suffix == null) ? 0 : suffix.hashCode());
+		result = prime * result + ((suffixDelimiter == null) ? 0 : suffixDelimiter.hashCode());
 		return result;
 	}
 
@@ -152,6 +195,11 @@ public class MavenVersionImpl implements MavenVersion {
 			if (other.suffix != null)
 				return false;
 		} else if (!suffix.equals(other.suffix))
+			return false;
+		if (suffixDelimiter == null) {
+			if (other.suffixDelimiter != null)
+				return false;
+		} else if (!suffixDelimiter.equals(other.suffixDelimiter))
 			return false;
 		return true;
 	}
