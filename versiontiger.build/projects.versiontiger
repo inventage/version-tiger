@@ -1,0 +1,11 @@
+project .
+project ../com.inventage.tools.versiontiger
+project ../com.inventage.tools.versiontiger.gui
+project ../com.inventage.tools.versiontiger.ui
+project ../com.inventage.tools.versiontiger.universedefinition
+project ../com.inventage.tools.versiontiger.test
+project ../versiontiger.parent
+project ../versiontiger.repository
+project ../versiontiger.targetplatform
+project ../versiontiger-maven-plugin
+

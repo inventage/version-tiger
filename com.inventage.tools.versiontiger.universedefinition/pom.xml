@@ -12,6 +12,7 @@
 
 	<artifactId>com.inventage.tools.versiontiger.universedefinition</artifactId>
 	<packaging>eclipse-plugin</packaging>
+	<version>1.3.2-SNAPSHOT</version>
 	
 	<name>Version-Tiger - Universe Definition</name>
 	<description>Version-Tiger universe definition.</description>

@@ -12,6 +12,7 @@
 
 	<artifactId>com.inventage.tools.versiontiger.gui</artifactId>
 	<packaging>eclipse-feature</packaging>
+	<version>1.3.2-SNAPSHOT</version>
 	
 	<name>Version-Tiger - UI Feature</name>
 	<description>Version-Tiger UI-Feature.</description>

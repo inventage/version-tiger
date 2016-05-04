@@ -10,6 +10,7 @@
     
     <artifactId>versiontiger.build</artifactId>
     <packaging>pom</packaging>
+    <version>1.3.2-SNAPSHOT</version>
 
     <name>Version-Tiger - Build reactor</name>
 	<description>The build POM for Version-Tiger.</description>
