@@ -61,6 +61,10 @@ class EclipseRepository extends MavenProjectImpl {
 		for (File productFile : getProductXmlFiles()) {
 			updateProductReferences(productFile, id, oldOsgiVersion, newOsgiVersion, "product/features", "feature");
 			updateProductReferences(productFile, id, oldOsgiVersion, newOsgiVersion, "product/plugins", "plugin");
+			
+			if (id().equals(id)) {
+				setProductVersion(newOsgiVersion, oldOsgiVersion, productFile);
+			}
 		}
 
 		updateCategoryFeatureReferences(getCategoryXmlFile(), id, oldOsgiVersion, newOsgiVersion);

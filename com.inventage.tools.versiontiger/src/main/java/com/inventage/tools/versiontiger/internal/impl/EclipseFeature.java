@@ -35,29 +35,44 @@ class EclipseFeature extends MavenProjectImpl {
 	}
 
 	private void setFeatureVersion(OsgiVersion newVersion, OsgiVersion oldVersion) {
-		featureContent = new XmlHandler().writeAttribute(getFeatureXmlContent(), "feature", "version", newVersion.toString());
+		updateFeatureVersion(id(), oldVersion, newVersion);
 
 		new FileHandler().writeFileContent(getFeatureXmlFile(), featureContent);
-
-		logSuccess(getFeatureXmlFile() + ": feature#version = " + newVersion, oldVersion, newVersion);
 	}
 
 	@Override
 	public void updateReferencesFor(String id, MavenVersion oldVersion, MavenVersion newVersion, ProjectUniverse projectUniverse) {
 		super.updateReferencesFor(id, oldVersion, newVersion, projectUniverse);
 
-		updateFeatureXmlReferencesFor(id, asOsgiVersion(oldVersion), asOsgiVersion(newVersion));
+		OsgiVersion oldOsgiVersion = asOsgiVersion(oldVersion);
+		OsgiVersion newOsgiVersion = asOsgiVersion(newVersion);
+		
+		if (updateFeatureXmlReferencesFor(id, oldOsgiVersion, newOsgiVersion)
+				| updateFeatureVersion(id, oldOsgiVersion, newOsgiVersion)) {
+			new FileHandler().writeFileContent(getFeatureXmlFile(), featureContent);
+		}
+	}
+	
+	private boolean updateFeatureVersion(String id, OsgiVersion oldVersion, OsgiVersion newVersion) {
+		if (id().equals(id)) {
+			featureContent = new XmlHandler().writeAttribute(getFeatureXmlContent(), "feature", "version", newVersion.toString());
+
+			logSuccess(getFeatureXmlFile() + ": feature#version = " + newVersion, oldVersion, newVersion);
+			return true;
+		}
+		return false;
 	}
 
-	private void updateFeatureXmlReferencesFor(String id, OsgiVersion oldVersion, OsgiVersion newVersion) {
+	private boolean updateFeatureXmlReferencesFor(String id, OsgiVersion oldVersion, OsgiVersion newVersion) {
 		Element featureElement = new XmlHandler().getElement(getFeatureXmlContent(), "feature");
 
 		if (updatePluginReferences(featureElement, "plugin", id, oldVersion, newVersion)
 				| updatePluginReferences(featureElement, "includes", id, oldVersion, newVersion)) {
 
 			featureContent = featureElement.getDocument().toXML();
-			new FileHandler().writeFileContent(getFeatureXmlFile(), featureContent);
+			return true;
 		}
+		return false;
 	}
 
 	private boolean updatePluginReferences(Element featureElement, String elementName, String id, OsgiVersion oldVersion, OsgiVersion newVersion) {

@@ -34,13 +34,9 @@ class EclipsePlugin extends MavenProjectImpl {
 
 	private void setPluginVersion(OsgiVersion newVersion, OsgiVersion oldVersion) {
 		try {
-			Manifest manifest = parseManifest();
-			manifest.setBundleVersion(newVersion.toString());
-			manifestContent = manifest.print();
+			updatePluginVersion(id(), oldVersion, newVersion);
 			
 			new FileHandler().writeFileContent(getManifestFile(), manifestContent);
-			
-			logSuccess(getManifestFile() + ": Bundle-Version = " + newVersion, oldVersion, newVersion);
 		} catch (Exception e) {
 			logError("Can't set plugin version in manifest: " + getManifestFile().toString() + ". " + e.getMessage(), oldVersion, newVersion);
 		}
@@ -55,12 +51,26 @@ class EclipsePlugin extends MavenProjectImpl {
 
 		try {
 			if (updateRequireBundleReferences(id, oldOsgiVersion, newOsgiVersion)
-					| updateFragmentHostReference(id, oldOsgiVersion, newOsgiVersion)) {
+					| updateFragmentHostReference(id, oldOsgiVersion, newOsgiVersion)
+					| updatePluginVersion(id, oldOsgiVersion, newOsgiVersion)) {
 				new FileHandler().writeFileContent(getManifestFile(), manifestContent);
 			}
 		} catch (Exception e) {
 			logReferenceError("Can't update references in manifest: " + getManifestFile() + ". " + e.getMessage(), oldOsgiVersion, newOsgiVersion, id);
 		}
+	}
+	
+	private boolean updatePluginVersion(String id, OsgiVersion oldVersion, OsgiVersion newVersion) {
+		if (id().equals(id)) {
+			Manifest manifest = parseManifest();
+			manifest.setBundleVersion(newVersion.toString());
+			manifestContent = manifest.print();
+			
+			logSuccess(getManifestFile() + ": Bundle-Version = " + newVersion, oldVersion, newVersion);
+			
+			return true;
+		}
+		return false;
 	}
 	
 	private boolean updateRequireBundleReferences(String id, OsgiVersion oldVersion, OsgiVersion newVersion) {

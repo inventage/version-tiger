@@ -34,21 +34,34 @@ class EclipseApplication extends MavenProjectImpl {
 	}
 
 	private void setProductVersion(OsgiVersion newVersion, OsgiVersion oldVersion) {
-		productContent = new XmlHandler().writeAttribute(getProductXmlContent(), "product", "version", newVersion.toString());
+		updateProductVersion(id(), oldVersion, newVersion);
 
 		new FileHandler().writeFileContent(getProductXmlFile(), productContent);
-
-		logSuccess(getProductXmlFile() + ": product#version = " + newVersion, oldVersion, newVersion);
 	}
 
 	@Override
 	public void updateReferencesFor(String id, MavenVersion oldVersion, MavenVersion newVersion, ProjectUniverse projectUniverse) {
 		super.updateReferencesFor(id, oldVersion, newVersion, projectUniverse);
 
-		updateFeatureReferences(id, asOsgiVersion(oldVersion), asOsgiVersion(newVersion));
+		OsgiVersion oldOsgiVersion = asOsgiVersion(oldVersion);
+		OsgiVersion newOsgiVersion = asOsgiVersion(newVersion);
+		
+		if (updateFeatureReferences(id, oldOsgiVersion, newOsgiVersion) | updateProductVersion(id, newOsgiVersion, oldOsgiVersion)) {
+			new FileHandler().writeFileContent(getProductXmlFile(), productContent);
+		}
+	}
+	
+	private boolean updateProductVersion(String id, OsgiVersion oldVersion, OsgiVersion newVersion) {
+		if (id().equals(id)) {
+			productContent = new XmlHandler().writeAttribute(getProductXmlContent(), "product", "version", newVersion.toString());
+			
+			logSuccess(getProductXmlFile() + ": product#version = " + newVersion, oldVersion, newVersion);
+			return true;
+		}
+		return false;
 	}
 
-	private void updateFeatureReferences(String id, OsgiVersion oldVersion, OsgiVersion newVersion) {
+	private boolean updateFeatureReferences(String id, OsgiVersion oldVersion, OsgiVersion newVersion) {
 		Element featuresElement = new XmlHandler().getElement(getProductXmlContent(), "product/features");
 
 		boolean hasModifications = false;
@@ -65,11 +78,11 @@ class EclipseApplication extends MavenProjectImpl {
 				}
 			}
 		}
-
+		
 		if (hasModifications) {
 			productContent = featuresElement.getDocument().toXML();
-			new FileHandler().writeFileContent(getProductXmlFile(), productContent);
 		}
+		return hasModifications;
 	}
 
 	private String getProductXmlContent() {
