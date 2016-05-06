@@ -15,10 +15,6 @@
 	<name>Version-Tiger - Maven Plugin</name>
 	<description>Version-Tiger maven plugin.</description>
 	
-	<properties>
-		<mavenplugin.version>1.3.2-SNAPSHOT</mavenplugin.version>
-	</properties>
-	
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.maven</groupId>
