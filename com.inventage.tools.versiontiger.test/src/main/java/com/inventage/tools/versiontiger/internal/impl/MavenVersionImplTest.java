@@ -1,5 +1,9 @@
 package com.inventage.tools.versiontiger.internal.impl;
 
+import static com.inventage.tools.versiontiger.MavenToOsgiVersionMappingStrategy.OSGI_QUALIFIER_FOR_SNAPSHOT_DISTINCTION;
+import static com.inventage.tools.versiontiger.OsgiVersion.OSGI_DEFAULT_RELEASE_SUFFIX;
+import static com.inventage.tools.versiontiger.OsgiVersion.OSGI_DEFAULT_SNAPSHOT_SUFFIX;
+import static com.inventage.tools.versiontiger.VersionRangeChangeStrategy.ADAPTIVE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -8,14 +12,11 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.inventage.tools.versiontiger.MavenVersion;
-import com.inventage.tools.versiontiger.OsgiVersion;
 import com.inventage.tools.versiontiger.Version;
-import com.inventage.tools.versiontiger.VersionRangeChangeStrategy;
-import com.inventage.tools.versiontiger.internal.impl.MavenVersionImpl;
 
 public class MavenVersionImplTest {
 
-	VersionFactory versionFactory = new VersionFactory(OsgiVersion.OSGI_DEFAULT_RELEASE_SUFFIX, OsgiVersion.OSGI_DEFAULT_SNAPSHOT_SUFFIX, VersionRangeChangeStrategy.ADAPTIVE);
+	VersionFactory versionFactory = new VersionFactory(OSGI_DEFAULT_RELEASE_SUFFIX, OSGI_DEFAULT_SNAPSHOT_SUFFIX, ADAPTIVE, OSGI_QUALIFIER_FOR_SNAPSHOT_DISTINCTION);
 	
 	@Test
 	public void shouldMajor() throws Exception {

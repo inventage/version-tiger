@@ -1,5 +1,9 @@
 package com.inventage.tools.versiontiger.internal.manifest;
 
+import static com.inventage.tools.versiontiger.MavenToOsgiVersionMappingStrategy.OSGI_QUALIFIER_FOR_SNAPSHOT_DISTINCTION;
+import static com.inventage.tools.versiontiger.OsgiVersion.OSGI_DEFAULT_RELEASE_SUFFIX;
+import static com.inventage.tools.versiontiger.OsgiVersion.OSGI_DEFAULT_SNAPSHOT_SUFFIX;
+import static com.inventage.tools.versiontiger.VersionRangeChangeStrategy.ADAPTIVE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -11,14 +15,13 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import com.inventage.tools.versiontiger.NullVersioningLogger;
-import com.inventage.tools.versiontiger.OsgiVersion;
 import com.inventage.tools.versiontiger.VersionRangeChangeStrategy;
 import com.inventage.tools.versiontiger.internal.impl.OsgiVersionImpl;
 import com.inventage.tools.versiontiger.internal.impl.VersionFactory;
 
 public class ManifestTest {
 	
-	VersionFactory versionFactory = new VersionFactory(OsgiVersion.OSGI_DEFAULT_RELEASE_SUFFIX, OsgiVersion.OSGI_DEFAULT_SNAPSHOT_SUFFIX, VersionRangeChangeStrategy.ADAPTIVE);
+	VersionFactory versionFactory = new VersionFactory(OSGI_DEFAULT_RELEASE_SUFFIX, OSGI_DEFAULT_SNAPSHOT_SUFFIX, ADAPTIVE, OSGI_QUALIFIER_FOR_SNAPSHOT_DISTINCTION);
 	
 	@Test
 	public void shouldPrint() throws Exception {
@@ -61,7 +64,7 @@ public class ManifestTest {
 		String input = "Manifest-Version: 1.0\nRequire-Bundle: foo.bar;bundle-version=\"1.0\"," +
 				"asdf.b.c;bundle-version=\"12.12.23\";visibility:=reexport," +
 				"foo;resolution:=optional\nOther-Header: foo\n\n";
-		Manifest manifest = new ManifestParser(input, new VersionFactory(OsgiVersion.OSGI_DEFAULT_RELEASE_SUFFIX, OsgiVersion.OSGI_DEFAULT_SNAPSHOT_SUFFIX, VersionRangeChangeStrategy.ADAPTIVE)).manifest();
+		Manifest manifest = new ManifestParser(input, new VersionFactory(OSGI_DEFAULT_RELEASE_SUFFIX, OSGI_DEFAULT_SNAPSHOT_SUFFIX, ADAPTIVE, OSGI_QUALIFIER_FOR_SNAPSHOT_DISTINCTION)).manifest();
 		
 		// when
 		boolean result = manifest.updateRequireBundleReference("asdf.b.c", new OsgiVersionImpl("12.12.23", versionFactory), new OsgiVersionImpl("33.1.0.qualifier", versionFactory),
@@ -84,7 +87,7 @@ public class ManifestTest {
 				"Manifest-Version: 1.0\n" +
 				"Fragment-Host: " + id + ";bundle-version=\"" + oldVersion + "\";visibility:=reexport\n" +
 				"Other-Header: foo\n\n";
-		Manifest manifest = new ManifestParser(input, new VersionFactory(OsgiVersion.OSGI_DEFAULT_RELEASE_SUFFIX, OsgiVersion.OSGI_DEFAULT_SNAPSHOT_SUFFIX, VersionRangeChangeStrategy.ADAPTIVE)).manifest();
+		Manifest manifest = new ManifestParser(input, new VersionFactory(OSGI_DEFAULT_RELEASE_SUFFIX, OSGI_DEFAULT_SNAPSHOT_SUFFIX, ADAPTIVE, OSGI_QUALIFIER_FOR_SNAPSHOT_DISTINCTION)).manifest();
 		
 		// when
 		boolean result = manifest.updateFragmentHostReference(id, new OsgiVersionImpl(oldVersion, versionFactory), new OsgiVersionImpl(newVersion + ".qualifier", versionFactory),

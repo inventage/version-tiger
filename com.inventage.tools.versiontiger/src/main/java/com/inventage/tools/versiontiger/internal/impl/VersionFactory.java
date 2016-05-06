@@ -1,5 +1,6 @@
 package com.inventage.tools.versiontiger.internal.impl;
 
+import com.inventage.tools.versiontiger.MavenToOsgiVersionMappingStrategy;
 import com.inventage.tools.versiontiger.MavenVersion;
 import com.inventage.tools.versiontiger.OsgiVersion;
 import com.inventage.tools.versiontiger.VersionRangeChangeStrategy;
@@ -9,11 +10,14 @@ public class VersionFactory {
 	private String osgiReleaseQualifier;
 	private String osgiSnapshotQualifier;
 	private VersionRangeChangeStrategy versionRangeChangeStrategy;
+	private MavenToOsgiVersionMappingStrategy mavenToOsgiVersionMappingStrategy;
 	
-	public VersionFactory(String osgiReleaseQualifier, String osgiSnapshotQualifier, VersionRangeChangeStrategy versionRangeChangeStrategy) {
+	public VersionFactory(String osgiReleaseQualifier, String osgiSnapshotQualifier,
+			VersionRangeChangeStrategy versionRangeChangeStrategy, MavenToOsgiVersionMappingStrategy mavenToOsgiVersionMappingStrategy) {
 		setOsgiReleaseQualifier(osgiReleaseQualifier);
 		setOsgiSnapshotQualifier(osgiSnapshotQualifier);
 		setVersionRangeChangeStrategy(versionRangeChangeStrategy);
+		setMavenToOsgiVersionMappingStrategy(mavenToOsgiVersionMappingStrategy);
 	}
 
 	public MavenVersion createMavenVersion(String mavenVersion) {
@@ -28,19 +32,12 @@ public class VersionFactory {
 		return new OsgiVersionImpl(osgiVersion, this);
 	}
 	
-	public OsgiVersion createOsgiVersion(MavenVersion mavenVersion) {
-		
-		return new OsgiVersionImpl(
-			mavenVersion.major(),
-			mavenVersion.minor(),
-			mavenVersion.bugfix(),
-			mavenVersion.isSnapshot(),
-			this
-		);
+	public OsgiVersion createOsgiVersion(Integer major, Integer minor, Integer bugfix, String qualifier) {
+		return new OsgiVersionImpl(major, minor, bugfix, qualifier, this);
 	}
 	
-	public OsgiVersion createOsgiVersion(Integer major, Integer minor, Integer bugfix, boolean snapshot) {
-		return new OsgiVersionImpl(major, minor, bugfix, snapshot, this);
+	public OsgiVersion createOsgiVersion(MavenVersion mavenVersion) {
+		return getMavenToOsgiVersionMappingStrategy().createOsgiFromMaven(mavenVersion, this);
 	}
 	
 	public void setOsgiReleaseQualifier(String osgiReleaseQualifier) {
@@ -74,6 +71,17 @@ public class VersionFactory {
 	
 	public VersionRangeChangeStrategy getVersionRangeChangeStrategy() {
 		return versionRangeChangeStrategy;
+	}
+
+	public void setMavenToOsgiVersionMappingStrategy(MavenToOsgiVersionMappingStrategy mavenToOsgiVersionMappingStrategy) {
+		if (mavenToOsgiVersionMappingStrategy == null) {
+			throw new IllegalArgumentException("Maven to OSGi version mapping strategy must not be null!");
+		}
+		this.mavenToOsgiVersionMappingStrategy = mavenToOsgiVersionMappingStrategy;
+	}
+	
+	public MavenToOsgiVersionMappingStrategy getMavenToOsgiVersionMappingStrategy() {
+		return mavenToOsgiVersionMappingStrategy;
 	}
 
 }

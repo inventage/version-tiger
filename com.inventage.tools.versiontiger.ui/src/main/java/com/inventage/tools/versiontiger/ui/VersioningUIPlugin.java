@@ -4,6 +4,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
+import com.inventage.tools.versiontiger.MavenToOsgiVersionMappingStrategy;
 import com.inventage.tools.versiontiger.VersionRangeChangeStrategy;
 import com.inventage.tools.versiontiger.Versioning;
 import com.inventage.tools.versiontiger.ui.preferences.PreferencesStoreUtil;
@@ -37,6 +38,7 @@ public class VersioningUIPlugin extends AbstractUIPlugin {
 		
 		/* On first start, we update the versioning settings. They also get updated on every preferences update. */
 		PreferencesStoreUtil store = new PreferencesStoreUtil(getPreferenceStore());
+		versioning.setMavenToOsgiVersionMappingStrategy(MavenToOsgiVersionMappingStrategy.create(store.loadMavenToOsgiVersionMappingStrategy()));
 		versioning.setOsgiReleaseQualifier(store.loadReleaseQualifier());
 		versioning.setOsgiSnapshotQualifier(store.loadSnapshotQualifier());
 		versioning.setVersionRangeChangeStrategy(VersionRangeChangeStrategy.create(store.loadVersionRangeChangeStrategy()));

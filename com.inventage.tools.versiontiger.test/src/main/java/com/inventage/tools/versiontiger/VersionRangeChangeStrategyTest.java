@@ -1,5 +1,6 @@
 package com.inventage.tools.versiontiger;
 
+import static com.inventage.tools.versiontiger.MavenToOsgiVersionMappingStrategy.OSGI_QUALIFIER_FOR_SNAPSHOT_DISTINCTION;
 import static com.inventage.tools.versiontiger.VersionRangeChangeStrategy.ADAPTIVE;
 import static com.inventage.tools.versiontiger.VersionRangeChangeStrategy.NO_CHANGE;
 import static com.inventage.tools.versiontiger.VersionRangeChangeStrategy.STRICT;
@@ -19,7 +20,7 @@ import com.inventage.tools.versiontiger.internal.manifest.VersionRange;
 
 public class VersionRangeChangeStrategyTest {
 
-	private VersionFactory versionFactory = new VersionFactory("RELEASE", "qualifier", VersionRangeChangeStrategy.ADAPTIVE);
+	private VersionFactory versionFactory = new VersionFactory("RELEASE", "qualifier", ADAPTIVE, OSGI_QUALIFIER_FOR_SNAPSHOT_DISTINCTION);
 
 	private OsgiVersion version(String version) {
 		return new OsgiVersionImpl(version, versionFactory);

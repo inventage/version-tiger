@@ -26,6 +26,8 @@ public class Messages extends NLS {
 	public static String PreferencesPageModel_UPPER_TO_BUGFIX;
 	public static String PreferencesPageModel_UPPER_TO_MAJOR;
 	public static String PreferencesPageModel_UPPER_TO_MINOR;
+	public static String PreferencesPageModel_VERSION_MAPPING_SNAPSHOT_DISTINCTION;
+	public static String PreferencesPageModel_VERSION_MAPPING_SUFFIX_TO_QUALIFIER;
 	public static String VersionTigerPreferencesPage_DependencyGroup;
 	
 }

@@ -1,5 +1,9 @@
 package com.inventage.tools.versiontiger.internal.manifest;
 
+import static com.inventage.tools.versiontiger.MavenToOsgiVersionMappingStrategy.OSGI_QUALIFIER_FOR_SNAPSHOT_DISTINCTION;
+import static com.inventage.tools.versiontiger.OsgiVersion.OSGI_DEFAULT_RELEASE_SUFFIX;
+import static com.inventage.tools.versiontiger.OsgiVersion.OSGI_DEFAULT_SNAPSHOT_SUFFIX;
+import static com.inventage.tools.versiontiger.VersionRangeChangeStrategy.ADAPTIVE;
 import static org.junit.Assert.assertEquals;
 
 import java.io.BufferedReader;
@@ -12,11 +16,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import com.inventage.tools.versiontiger.OsgiVersion;
-import com.inventage.tools.versiontiger.VersionRangeChangeStrategy;
 import com.inventage.tools.versiontiger.internal.impl.VersionFactory;
-import com.inventage.tools.versiontiger.internal.manifest.ManifestParser;
-import com.inventage.tools.versiontiger.internal.manifest.Manifest;
 import com.inventage.tools.versiontiger.util.FileHandler;
 
 @RunWith(Parameterized.class)
@@ -65,8 +65,8 @@ public class ManifestParserTest {
 	
 	@Test
 	public void shouldAccept() throws Exception {
-		Manifest manifest = new ManifestParser(input, new VersionFactory(OsgiVersion.OSGI_DEFAULT_RELEASE_SUFFIX,
-				OsgiVersion.OSGI_DEFAULT_SNAPSHOT_SUFFIX, VersionRangeChangeStrategy.ADAPTIVE)).manifest();
+		Manifest manifest = new ManifestParser(input, new VersionFactory(OSGI_DEFAULT_RELEASE_SUFFIX,
+				OSGI_DEFAULT_SNAPSHOT_SUFFIX, ADAPTIVE, OSGI_QUALIFIER_FOR_SNAPSHOT_DISTINCTION)).manifest();
 		
 		StringBuilder result = new StringBuilder();
 		manifest.print(result);

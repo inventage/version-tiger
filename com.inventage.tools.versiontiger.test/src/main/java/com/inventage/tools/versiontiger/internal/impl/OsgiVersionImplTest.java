@@ -1,5 +1,9 @@
 package com.inventage.tools.versiontiger.internal.impl;
 
+import static com.inventage.tools.versiontiger.MavenToOsgiVersionMappingStrategy.OSGI_QUALIFIER_FOR_SNAPSHOT_DISTINCTION;
+import static com.inventage.tools.versiontiger.OsgiVersion.OSGI_DEFAULT_RELEASE_SUFFIX;
+import static com.inventage.tools.versiontiger.OsgiVersion.OSGI_DEFAULT_SNAPSHOT_SUFFIX;
+import static com.inventage.tools.versiontiger.VersionRangeChangeStrategy.ADAPTIVE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -9,11 +13,10 @@ import org.junit.Test;
 
 import com.inventage.tools.versiontiger.OsgiVersion;
 import com.inventage.tools.versiontiger.Version;
-import com.inventage.tools.versiontiger.VersionRangeChangeStrategy;
 
 public class OsgiVersionImplTest {
 	
-	VersionFactory versionFactory = new VersionFactory(OsgiVersion.OSGI_DEFAULT_RELEASE_SUFFIX, OsgiVersion.OSGI_DEFAULT_SNAPSHOT_SUFFIX, VersionRangeChangeStrategy.ADAPTIVE);
+	VersionFactory versionFactory = new VersionFactory(OSGI_DEFAULT_RELEASE_SUFFIX, OSGI_DEFAULT_SNAPSHOT_SUFFIX, ADAPTIVE, OSGI_QUALIFIER_FOR_SNAPSHOT_DISTINCTION);
 
 	@Test
 	public void shouldMajor() throws Exception {
@@ -265,7 +268,7 @@ public class OsgiVersionImplTest {
 	public void shouldUseCustomQualifier() {
 		
 		// given
-		OsgiVersionImpl version = new OsgiVersionImpl("1.2.1", new VersionFactory("release", "qualifier", VersionRangeChangeStrategy.ADAPTIVE));
+		OsgiVersionImpl version = new OsgiVersionImpl("1.2.1", new VersionFactory("release", "qualifier", ADAPTIVE, OSGI_QUALIFIER_FOR_SNAPSHOT_DISTINCTION));
 		
 		// when
 		String result = version.toString();
@@ -278,7 +281,7 @@ public class OsgiVersionImplTest {
 	public void shouldUseCustomReleaseQualifier() {
 		
 		// given
-		OsgiVersionImpl version = new OsgiVersionImpl("1.2.0", new VersionFactory("release", "qualifier", VersionRangeChangeStrategy.ADAPTIVE));
+		OsgiVersionImpl version = new OsgiVersionImpl("1.2.0", new VersionFactory("release", "qualifier", ADAPTIVE, OSGI_QUALIFIER_FOR_SNAPSHOT_DISTINCTION));
 		
 		// when
 		String result = version.releaseVersion().toString();
@@ -304,7 +307,7 @@ public class OsgiVersionImplTest {
 	public void shouldUseCustomSnapshotQualifier() {
 		
 		// given
-		OsgiVersionImpl version = new OsgiVersionImpl("1.2", new VersionFactory("release", "snapshot", VersionRangeChangeStrategy.ADAPTIVE));
+		OsgiVersionImpl version = new OsgiVersionImpl("1.2", new VersionFactory("release", "snapshot", ADAPTIVE, OSGI_QUALIFIER_FOR_SNAPSHOT_DISTINCTION));
 		
 		// when
 		String result = version.snapshotVersion().toString();
@@ -316,7 +319,7 @@ public class OsgiVersionImplTest {
 	@Test
 	public void shouldWithoutQualifier() throws Exception {
 		// given
-		OsgiVersion version = new OsgiVersionImpl("1.2.0.qualifier", new VersionFactory("release", "snapshot", VersionRangeChangeStrategy.ADAPTIVE));
+		OsgiVersion version = new OsgiVersionImpl("1.2.0.qualifier", new VersionFactory("release", "snapshot", ADAPTIVE, OSGI_QUALIFIER_FOR_SNAPSHOT_DISTINCTION));
 		
 		// when
 		String result = version.withoutQualifier().toString();
@@ -328,8 +331,8 @@ public class OsgiVersionImplTest {
 	@Test
 	public void shouldEquals() throws Exception {
 		// given
-		OsgiVersion version1 = new OsgiVersionImpl("1.2.0.qualifier", new VersionFactory("release", "snapshot", VersionRangeChangeStrategy.ADAPTIVE));
-		OsgiVersion version2 = new OsgiVersionImpl("1.2.0.qualifier", new VersionFactory("release", "snapshot", VersionRangeChangeStrategy.ADAPTIVE));
+		OsgiVersion version1 = new OsgiVersionImpl("1.2.0.qualifier", new VersionFactory("release", "snapshot", ADAPTIVE, OSGI_QUALIFIER_FOR_SNAPSHOT_DISTINCTION));
+		OsgiVersion version2 = new OsgiVersionImpl("1.2.0.qualifier", new VersionFactory("release", "snapshot", ADAPTIVE, OSGI_QUALIFIER_FOR_SNAPSHOT_DISTINCTION));
 		
 		// when
 		boolean result = version1.equals(version2);

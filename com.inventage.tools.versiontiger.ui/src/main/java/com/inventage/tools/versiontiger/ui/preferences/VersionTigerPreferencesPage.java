@@ -2,6 +2,8 @@ package com.inventage.tools.versiontiger.ui.preferences;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
@@ -27,6 +29,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
+import com.inventage.tools.versiontiger.MavenToOsgiVersionMappingStrategy;
 import com.inventage.tools.versiontiger.OsgiVersion;
 import com.inventage.tools.versiontiger.VersionRangeChangeStrategy;
 import com.inventage.tools.versiontiger.Versioning;
@@ -36,6 +39,8 @@ public class VersionTigerPreferencesPage extends PreferencePage implements IWork
 
 	public static String PLUGIN_ID = "VersionTigerPreferencesPage"; //$NON-NLS-1$
 	
+	private final List<Control> customQualifiersControls = new ArrayList<Control>();
+	
 	private PreferencesPageModel model;
 	private DataBindingContext dataBindingContext = new DataBindingContext();
 	
@@ -44,6 +49,20 @@ public class VersionTigerPreferencesPage extends PreferencePage implements IWork
 	public void init(IWorkbench workbench) {
 		model = new PreferencesPageModel(new PreferencesStoreUtil(getPreferenceStore()));
 		model.load();
+
+		model.addPropertyChangeListener(PreferencesPageModel.PN_MAVEN_TO_OSGI_VERSION_MAPPING_STRATEGY, new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				updateCustomQualifierControlsEnablement();
+			}
+		});
+	}
+	
+	private void updateCustomQualifierControlsEnablement() {
+		boolean enabled = model.getMavenToOsgiVersionMappingStrategy().useCustomQualifiers();
+		for (Control control : customQualifiersControls) {
+			control.setEnabled(enabled);
+		}
 	}
 	
 	@Override
@@ -55,6 +74,8 @@ public class VersionTigerPreferencesPage extends PreferencePage implements IWork
 
 		createVersionRangeChangeStrategy(container);
 		
+		updateCustomQualifierControlsEnablement();
+		
 		new CustomPreferencePageSupport(this, dataBindingContext);
 		return container;
 	}
@@ -65,6 +86,8 @@ public class VersionTigerPreferencesPage extends PreferencePage implements IWork
 		osgiQualifierGroup.setLayout(new GridLayout(1, false));
 		osgiQualifierGroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 
+		createMavenToOsgiVersionMappingStrategy(osgiQualifierGroup);
+		
 		OsgiQualifierValidator validator = new OsgiQualifierValidator();
 		UpdateValueStrategy strategy = new UpdateValueStrategy();
 		strategy.setBeforeSetValidator(validator);
@@ -74,28 +97,66 @@ public class VersionTigerPreferencesPage extends PreferencePage implements IWork
 		createOsgiSnapshotQualifier(strategy, osgiQualifierGroup);
 	}
 
+	private void createMavenToOsgiVersionMappingStrategy(final Group group) {
+		ComboViewer mavenToOsgiVersionMapping = new ComboViewer(group);
+		mavenToOsgiVersionMapping.setContentProvider(new ArrayContentProvider());
+		mavenToOsgiVersionMapping.setLabelProvider(new LabelProvider() {
+			@Override
+			public String getText(Object element) {
+				return ((MavenToOsgiVersionMappingStrategy) element).getKey();
+			}
+		});
+		mavenToOsgiVersionMapping.setComparator(new ViewerComparator());
+		mavenToOsgiVersionMapping.setInput(MavenToOsgiVersionMappingStrategy.values());
+		
+		IObservableValue versionMappingTargetObservable = ViewerProperties.singleSelection().observe(mavenToOsgiVersionMapping);
+		IObservableValue versionMappingModelObservable = BeansObservables.observeValue(model, PreferencesPageModel.PN_MAVEN_TO_OSGI_VERSION_MAPPING_STRATEGY);
+		dataBindingContext.bindValue(versionMappingTargetObservable, versionMappingModelObservable, null, null);
+		
+		Label description = new Label(group, SWT.WRAP);
+		GridDataFactory.fillDefaults().grab(true, true).hint(150, SWT.DEFAULT).applyTo(description);
+		
+		IObservableValue descriptionTargetObservable = WidgetProperties.text().observe(description);
+		IObservableValue descriptionModelObservable = BeansObservables.observeValue(model, PreferencesPageModel.PN_MAVEN_TO_OSGI_VERSION_MAPPING_STRATEGY_DESCRIPTION);
+		dataBindingContext.bindValue(descriptionTargetObservable, descriptionModelObservable, null, null);
+		
+		model.addPropertyChangeListener(PreferencesPageModel.PN_MAVEN_TO_OSGI_VERSION_MAPPING_STRATEGY_DESCRIPTION, new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				group.getParent().layout();
+			}
+		});
+	}
+
 	private void createOsgiReleaseQualifier(UpdateValueStrategy strategy, Group osgiQualifierGroup) {
 		Label customOsgiReleaseQualifierLabel = new Label(osgiQualifierGroup, SWT.CHECK);
 		customOsgiReleaseQualifierLabel.setText(Messages.preferencesOsgiReleaseQualifierLabel);
+		GridDataFactory.fillDefaults().indent(0, 20).applyTo(customOsgiReleaseQualifierLabel);
 		
-		final Text customOsgiReleaseQualifier = new Text(osgiQualifierGroup, SWT.BORDER | SWT.FILL);
-		customOsgiReleaseQualifier.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+		Text customOsgiReleaseQualifier = new Text(osgiQualifierGroup, SWT.BORDER | SWT.FILL);
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.TOP).grab(true, false).applyTo(customOsgiReleaseQualifier);
 		
 		IObservableValue releaseText = WidgetProperties.text(SWT.Modify).observe(customOsgiReleaseQualifier);
 		IObservableValue releaseModel = BeansObservables.observeValue(model, PreferencesPageModel.PN_OSGI_RELEASE_QUALIFIER);
 		dataBindingContext.bindValue(releaseText, releaseModel, strategy, null);
+		
+		customQualifiersControls.add(customOsgiReleaseQualifierLabel);
+		customQualifiersControls.add(customOsgiReleaseQualifier);
 	}
 
 	private void createOsgiSnapshotQualifier(UpdateValueStrategy strategy, Group osgiQualifierGroup) {
 		Label customOsgiSnapshotQualifierLabel = new Label(osgiQualifierGroup, SWT.CHECK);
 		customOsgiSnapshotQualifierLabel.setText(Messages.preferencesOsgiSnapshotQualifierLabel);
 		
-		final Text customOsgiSnapshotQualifier = new Text(osgiQualifierGroup, SWT.BORDER);
-		customOsgiSnapshotQualifier.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+		Text customOsgiSnapshotQualifier = new Text(osgiQualifierGroup, SWT.BORDER);
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.TOP).grab(true, false).applyTo(customOsgiSnapshotQualifier);
 		
 		IObservableValue snapshotText = WidgetProperties.text(SWT.Modify).observe(customOsgiSnapshotQualifier);
 		IObservableValue snapshotModel = BeansObservables.observeValue(model, PreferencesPageModel.PN_OSGI_SNAPSHOT_QUALIFIER);
 		dataBindingContext.bindValue(snapshotText, snapshotModel, strategy, null);
+		
+		customQualifiersControls.add(customOsgiSnapshotQualifierLabel);
+		customQualifiersControls.add(customOsgiSnapshotQualifier);
 	}
 
 	private void createVersionRangeChangeStrategy(final Composite container) {

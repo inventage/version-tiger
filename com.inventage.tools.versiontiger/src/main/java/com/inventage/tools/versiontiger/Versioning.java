@@ -22,5 +22,7 @@ public interface Versioning {
 	void setOsgiSnapshotQualifier(String osgiSnapshotQualifier);
 
 	void setVersionRangeChangeStrategy(VersionRangeChangeStrategy versionRangeChangeStrategy);
+	
+	void setMavenToOsgiVersionMappingStrategy(MavenToOsgiVersionMappingStrategy mavenToOsgiVersionMappingStrategy);
 
 }

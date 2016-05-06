@@ -16,6 +16,7 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.inventage.tools.versiontiger.MavenToOsgiVersionMappingStrategy;
 import com.inventage.tools.versiontiger.MavenVersion;
 import com.inventage.tools.versiontiger.Project;
 import com.inventage.tools.versiontiger.Version;
@@ -166,7 +167,12 @@ public enum VersionTigerBatchOperation {
 			String value = command.getArgument(1);
 			
 			/* Perform operations according to configuration. */
-			if ("osgi.release.qualifier".equals(key)) {
+			if ("osgi.version.mapping".equals(key)) {
+				
+				commandExecuter.getVersioning().setMavenToOsgiVersionMappingStrategy(MavenToOsgiVersionMappingStrategy.create(value));
+				logSuccess(logger, "Updated setting: " + key + " " + value);
+			}
+			else if ("osgi.release.qualifier".equals(key)) {
 				
 				commandExecuter.getVersioning().setOsgiReleaseQualifier((String) value);
 				logSuccess(logger, "Updated setting: " + key + " " + value);

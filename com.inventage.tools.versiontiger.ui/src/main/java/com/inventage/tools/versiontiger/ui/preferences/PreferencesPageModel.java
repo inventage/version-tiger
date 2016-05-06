@@ -1,5 +1,6 @@
 package com.inventage.tools.versiontiger.ui.preferences;
 
+import com.inventage.tools.versiontiger.MavenToOsgiVersionMappingStrategy;
 import com.inventage.tools.versiontiger.VersionRangeChangeStrategy;
 
 public class PreferencesPageModel extends AbstractPropertyChangeSupport {
@@ -8,11 +9,15 @@ public class PreferencesPageModel extends AbstractPropertyChangeSupport {
 	public static final String PN_OSGI_SNAPSHOT_QUALIFIER = "osgiSnapshotQualifier"; //$NON-NLS-1$
 	public static final String PN_VERSION_RANGE_CHANGE_STRATEGY = "versionRangeChangeStrategy"; //$NON-NLS-1$
 	public static final String PN_VERSION_RANGE_CHANGE_STRATEGY_DESCRIPTION = "versionRangeChangeStrategyDescription"; //$NON-NLS-1$
+	public static final String PN_MAVEN_TO_OSGI_VERSION_MAPPING_STRATEGY = "mavenToOsgiVersionMappingStrategy"; //$NON-NLS-1$
+	public static final String PN_MAVEN_TO_OSGI_VERSION_MAPPING_STRATEGY_DESCRIPTION = "mavenToOsgiVersionMappingStrategyDescription"; //$NON-NLS-1$
 	
 	private String osgiReleaseQualifier = ""; //$NON-NLS-1$
 	private String osgiSnapshotQualifier = ""; //$NON-NLS-1$
 	private VersionRangeChangeStrategy versionRangeChangeStrategy = VersionRangeChangeStrategy.ADAPTIVE;
 	private String versionRangeChangeStrategyDescription = createStrategyDescription(versionRangeChangeStrategy);
+	private MavenToOsgiVersionMappingStrategy mavenToOsgiVersionMappingStrategy = MavenToOsgiVersionMappingStrategy.OSGI_QUALIFIER_FOR_SNAPSHOT_DISTINCTION;
+	private String mavenToOsgiVersionMappingStrategyDescription = createStrategyDescription(mavenToOsgiVersionMappingStrategy);
 	
 	private PreferencesStoreUtil store;
 	
@@ -82,15 +87,52 @@ public class PreferencesPageModel extends AbstractPropertyChangeSupport {
 		firePropertyChange(PN_VERSION_RANGE_CHANGE_STRATEGY_DESCRIPTION, oldValue, versionRangeChangeStrategyDescription);
 	}
 	
+	public void setMavenToOsgiVersionMappingStrategy(MavenToOsgiVersionMappingStrategy mavenToOsgiVersionMappingStrategy) {
+		MavenToOsgiVersionMappingStrategy oldValue = this.mavenToOsgiVersionMappingStrategy;
+		
+		this.mavenToOsgiVersionMappingStrategy = mavenToOsgiVersionMappingStrategy;
+		
+		setMavenToOsgiVersionMappingStrategyDescription(createStrategyDescription(mavenToOsgiVersionMappingStrategy));
+		firePropertyChange(PN_MAVEN_TO_OSGI_VERSION_MAPPING_STRATEGY, oldValue, mavenToOsgiVersionMappingStrategy);
+	}
+	
+	public MavenToOsgiVersionMappingStrategy getMavenToOsgiVersionMappingStrategy() {
+		return mavenToOsgiVersionMappingStrategy;
+	}
+	
+	private String createStrategyDescription(MavenToOsgiVersionMappingStrategy mavenToOsgiVersionMappingStrategy) {
+		switch (mavenToOsgiVersionMappingStrategy) {
+		case MAVEN_SUFFIX_TO_OSGI_QUALIFIER:
+			return Messages.PreferencesPageModel_VERSION_MAPPING_SUFFIX_TO_QUALIFIER;
+		case OSGI_QUALIFIER_FOR_SNAPSHOT_DISTINCTION:
+			return Messages.PreferencesPageModel_VERSION_MAPPING_SNAPSHOT_DISTINCTION;
+		}
+		return Messages.PreferencesPageModel_UnknownStrategy;
+	}
+	
+	public String getMavenToOsgiVersionMappingStrategyDescription() {
+		return mavenToOsgiVersionMappingStrategyDescription;
+	}
+	
+	public void setMavenToOsgiVersionMappingStrategyDescription(String mavenToOsgiVersionMappingStrategyDescription) {
+		String oldValue = this.mavenToOsgiVersionMappingStrategyDescription;
+		
+		this.mavenToOsgiVersionMappingStrategyDescription = mavenToOsgiVersionMappingStrategyDescription;
+		
+		firePropertyChange(PN_MAVEN_TO_OSGI_VERSION_MAPPING_STRATEGY_DESCRIPTION, oldValue, this.mavenToOsgiVersionMappingStrategyDescription);
+	}
+	
 	public void load() {
 		osgiReleaseQualifier = store.loadReleaseQualifier();
 		osgiSnapshotQualifier = store.loadSnapshotQualifier();
-		versionRangeChangeStrategy = VersionRangeChangeStrategy.create(store.loadVersionRangeChangeStrategy());
+		setVersionRangeChangeStrategy(VersionRangeChangeStrategy.create(store.loadVersionRangeChangeStrategy()));
+		setMavenToOsgiVersionMappingStrategy(MavenToOsgiVersionMappingStrategy.create(store.loadMavenToOsgiVersionMappingStrategy()));
 	}
 	
 	public void save() {
 		store.saveReleaseQualifier(osgiReleaseQualifier);
 		store.saveSnapshotQualifier(osgiSnapshotQualifier);
 		store.saveVersionRangeChangeStrategy(versionRangeChangeStrategy.getKey());
+		store.saveMavenToOsgiVersionMappingStrategy(mavenToOsgiVersionMappingStrategy.getKey());
 	}
 }
