@@ -36,7 +36,7 @@ public class OsgiVersionImpl implements OsgiVersion {
 		this.versionFactory = versionFactory;
 		this.qualifier = qualifier == null ? "" : qualifier;
 		
-		boolean paddingNecessary = !qualifier.isEmpty();
+		boolean paddingNecessary = !this.qualifier.isEmpty();
 		
 		if (minor == null && paddingNecessary) {
 			minor = 0;
