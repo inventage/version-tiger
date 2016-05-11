@@ -110,6 +110,11 @@ class MavenProjectImpl implements MavenProject {
 	public void useReleaseVersion() {
 		setVersion(getVersion().releaseVersion());
 	}
+	
+	@Override
+	public void useReleaseVersionWithSuffix(String newSuffix) {
+		setVersion(getVersion().releaseVersionWithSuffix(newSuffix));
+	}
 
 	public void useSnapshotVersion() {
 		setVersion(getVersion().snapshotVersion());

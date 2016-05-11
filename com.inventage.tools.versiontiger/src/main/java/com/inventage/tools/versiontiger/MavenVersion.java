@@ -16,4 +16,6 @@ public interface MavenVersion extends Version {
 
 	MavenVersion snapshotVersion();
 
+	MavenVersion releaseVersionWithSuffix(String suffix);
+	
 }

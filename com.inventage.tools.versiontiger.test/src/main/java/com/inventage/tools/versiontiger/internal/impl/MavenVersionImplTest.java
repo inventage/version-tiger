@@ -211,6 +211,66 @@ public class MavenVersionImplTest {
 	}
 
 	@Test
+	public void shouldReleaseWithSuffixWithDefaultDelimiter() throws Exception {
+		// given
+		MavenVersionImpl version = new MavenVersionImpl("1.2", versionFactory);
+
+		// when
+		Version result = version.releaseVersionWithSuffix("20160910-1130");
+
+		// then
+		assertEquals("1.2.0.20160910-1130", result.toString());
+	}
+
+	@Test
+	public void shouldReleaseAndReplaceSuffix() throws Exception {
+		// given
+		MavenVersionImpl version = new MavenVersionImpl("1.2.0-123-SNAPSHOT", versionFactory);
+
+		// when
+		Version result = version.releaseVersionWithSuffix("20160910-1130");
+
+		// then
+		assertEquals("1.2.0-20160910-1130", result.toString());
+	}
+
+	@Test
+	public void shouldReleaseWithSuffixAndDelimiter() throws Exception {
+		// given
+		MavenVersionImpl version = new MavenVersionImpl("1.2", versionFactory);
+
+		// when
+		Version result = version.releaseVersionWithSuffix("-20160910-1130");
+
+		// then
+		assertEquals("1.2.0-20160910-1130", result.toString());
+	}
+
+	@Test
+	public void shouldReleaseWithSuffixAndDefaultDelimiter() throws Exception {
+		// given
+		MavenVersionImpl version = new MavenVersionImpl("1.2.0-123", versionFactory);
+
+		// when
+		Version result = version.releaseVersionWithSuffix(".20160910-1130");
+
+		// then
+		assertEquals("1.2.0.20160910-1130", result.toString());
+	}
+
+	@Test
+	public void shouldReleaseAndClearSuffix() throws Exception {
+		// given
+		MavenVersionImpl version = new MavenVersionImpl("1.2.0-123", versionFactory);
+
+		// when
+		Version result = version.releaseVersionWithSuffix("-");
+
+		// then
+		assertEquals("1.2.0", result.toString());
+	}
+
+	@Test
 	public void shouldAcceptExtendedQualifiersForMaven() {
 
 		// given

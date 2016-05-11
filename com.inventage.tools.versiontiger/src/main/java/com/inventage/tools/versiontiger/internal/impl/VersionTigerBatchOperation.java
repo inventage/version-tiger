@@ -112,6 +112,13 @@ public enum VersionTigerBatchOperation {
 			versionable.useSnapshotVersion();
 		}
 	},
+	RELEASEWITHSUFFIX(2, "releaseWithSuffix <my.artifact.id-pattern> <suffix>") {
+		@Override
+		void internalExecute(CommandExecuter commandExecuter, Command command) {
+			Versionable versionable = commandExecuter.getUniverse().getAllProjectsWithMatchingIdPattern(command.getArgument(0));
+			versionable.useReleaseVersionWithSuffix(command.getArgument(1));
+		}
+	},
 	UPDATEREFERENCES(2, "updateReferences <my.artifact.id> <1.2.3-SNAPSHOT>") {
 		@Override
 		void internalExecute(CommandExecuter commandExecuter, Command command) {
@@ -242,6 +249,7 @@ public enum VersionTigerBatchOperation {
 		}
 		catch (Exception e) {
 			logError(commandExecuter.getLogger(), "Cannot execute command (" + command.getOriginalLine() + "). Reason: " + e.getMessage());
+			e.printStackTrace(System.err);
 		}
 	};
 	

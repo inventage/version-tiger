@@ -8,8 +8,10 @@ import com.inventage.tools.versiontiger.Version;
 
 public class MavenVersionImpl implements MavenVersion {
 	
+	private static final Pattern SUFFIX_PATTERN = Pattern.compile("([.-])?([a-zA-Z0-9-]*)");
 	private static final Pattern VERSION_PATTERN = Pattern.compile("^(\\d+(\\.\\d+){0,2})(([\\-\\.])([\\w\\-\\_]+))?$");
 	private static final String MAVEN_SNAPSHOT_DELIMITER = "-";
+	private static final String MAVEN_SUFFIX_DELIMITER_DEFAULT = ".";
 	private static final String MAVEN_SNAPSHOT_SUFFIX = "SNAPSHOT";
 	
 	private final VersionFactory versionFactory;
@@ -26,7 +28,6 @@ public class MavenVersionImpl implements MavenVersion {
 		}
 		
 		String inputSuffix = matcher.group(5);
-		suffixDelimiter = matcher.group(4);
 		
 		if (inputSuffix != null && inputSuffix.toLowerCase().endsWith(MAVEN_SNAPSHOT_SUFFIX.toLowerCase())) {
 			if (MAVEN_SNAPSHOT_SUFFIX.length() < inputSuffix.length()) {
@@ -36,19 +37,28 @@ public class MavenVersionImpl implements MavenVersion {
 			}
 			gv = new GeneralVersion(matcher.group(1), true);
 		} else {
-			suffix = inputSuffix;
+			suffix = emptyToNull(inputSuffix);
 			gv = new GeneralVersion(matcher.group(1), false);
 		}
+		
+		suffixDelimiter = suffix != null ? matcher.group(4) : null;
 	}
 	
 	public MavenVersionImpl(Integer major, Integer minor, Integer bugfix, String suffix, String suffixDelimiter, boolean snapshot, VersionFactory versionFactory) {
 		this.versionFactory = versionFactory;
-		gv = new GeneralVersion(major, minor, bugfix, snapshot);
-		this.suffix = suffix;
-		this.suffixDelimiter = suffixDelimiter;
-		if (suffix != null && suffixDelimiter == null || suffixDelimiter != null && suffixDelimiter.length() != 1) {
+		if (((suffix == null) != (suffixDelimiter == null)) || (suffixDelimiter != null && suffixDelimiter.length() != 1)) {
 			throw new IllegalArgumentException("Illegal suffix delimiter");
 		}
+		if (suffix != null && (minor == null || bugfix == null)) {
+			throw new IllegalArgumentException("Minor and bugfix must not be null when suffix defined.");
+		}
+		gv = new GeneralVersion(major, minor, bugfix, snapshot);
+		this.suffix = emptyToNull(suffix);
+		this.suffixDelimiter = emptyToNull(suffixDelimiter);
+	}
+	
+	private static String emptyToNull(String str) {
+		return str != null && !str.isEmpty() ? str : null;
 	}
 	
 	@Override
@@ -65,7 +75,7 @@ public class MavenVersionImpl implements MavenVersion {
 	public String toString() {
 		StringBuilder version = new StringBuilder(gv.versionString());
 		
-		if (suffix != null && !suffix.isEmpty()) {
+		if (suffix != null) {
 			version.append(suffixDelimiter);
 			version.append(suffix);
 		}
@@ -108,7 +118,31 @@ public class MavenVersionImpl implements MavenVersion {
 	public MavenVersion snapshotVersion() {
 		return gv.isSnapshot() ? this : versionFactory.createMavenVersion(gv.major(), gv.minor(), gv.bugfix(), suffix, suffixDelimiter, true);
 	}
+	
+	@Override
+	public MavenVersion releaseVersionWithSuffix(String newSuffixAndDelimiter) {
+		String newDelimiter = null;
+		String newSuffix = null;
 
+		if (newSuffixAndDelimiter != null) {
+			Matcher matcher = SUFFIX_PATTERN.matcher(newSuffixAndDelimiter);
+			
+			if (!matcher.matches()) {
+				throw new IllegalArgumentException("Invalid suffix: " + newSuffixAndDelimiter);
+			}
+			newDelimiter = emptyToNull(matcher.group(1));
+			newSuffix = emptyToNull(matcher.group(2));
+		}
+		
+		if (newDelimiter == null && newSuffix != null) {
+			newDelimiter = suffix != null ? this.suffixDelimiter : MAVEN_SUFFIX_DELIMITER_DEFAULT;
+		}
+		return versionFactory.createMavenVersion(gv.major(),
+				newSuffix != null && gv.minor() == null ? 0 : gv.minor(),
+				newSuffix != null && gv.bugfix() == null ? 0 : gv.bugfix(),
+				newSuffix, newSuffix != null ? newDelimiter : null, false);
+	}
+	
 	@Override
 	public Integer major() {
 		return gv.major();

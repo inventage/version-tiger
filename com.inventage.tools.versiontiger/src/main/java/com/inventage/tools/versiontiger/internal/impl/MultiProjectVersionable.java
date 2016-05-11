@@ -50,4 +50,10 @@ class MultiProjectVersionable implements Versionable {
 		}
 	}
 
+	@Override
+	public void useReleaseVersionWithSuffix(String newSuffix) {
+		for (Project project : projects) {
+			project.useReleaseVersionWithSuffix(newSuffix);
+		}
+	}
 }

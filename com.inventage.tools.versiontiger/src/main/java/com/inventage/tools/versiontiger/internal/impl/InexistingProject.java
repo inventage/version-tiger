@@ -58,6 +58,11 @@ public class InexistingProject implements Project {
 	public void useSnapshotVersion() {
 		logWarning(null);
 	}
+	
+	@Override
+	public void useReleaseVersionWithSuffix(String newSuffix) {
+		logWarning(null);
+	}
 
 	@Override
 	public int compareTo(Project o) {
