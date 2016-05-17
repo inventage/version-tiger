@@ -12,6 +12,7 @@
 	</parent>
 	
 	<artifactId>versiontiger.targetplatform</artifactId>
+	<version>1.4.0-SNAPSHOT</version>
 	<packaging>eclipse-target-definition</packaging>
 	
 	<name>Version-Tiger - Targetplatform</name>

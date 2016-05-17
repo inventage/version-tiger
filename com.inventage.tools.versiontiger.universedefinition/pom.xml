@@ -11,6 +11,7 @@
 	</parent>
 
 	<artifactId>com.inventage.tools.versiontiger.universedefinition</artifactId>
+	<version>1.4.0-SNAPSHOT</version>
 	<packaging>eclipse-plugin</packaging>
 	
 	<name>Version-Tiger - Universe Definition</name>

@@ -1,0 +1,9 @@
+## ${TIMESTAMP}-${BUILD_NUMBER}
+
+# Including the universe
+include projects.versiontiger
+
+# Releasing all artifacts
+releaseWithSuffix versiontiger.build ${TIMESTAMP}
+setting osgi.release.qualifier ${TIMESTAMP}-${BUILD_NUMBER}
+version .* ${version:versiontiger.build}-${BUILD_NUMBER}

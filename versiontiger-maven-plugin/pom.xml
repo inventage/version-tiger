@@ -10,6 +10,7 @@
 	</parent>
 	
 	<artifactId>versiontiger-maven-plugin</artifactId>
+	<version>1.4.0-SNAPSHOT</version>
 	<packaging>maven-plugin</packaging>
 	
 	<name>Version-Tiger - Maven Plugin</name>
