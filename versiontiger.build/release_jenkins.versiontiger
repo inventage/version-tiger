@@ -1,0 +1,6 @@
+# Including the universe
+projectRoot ../
+
+# Releasing all artifacts
+setting osgi.version.mapping suffixToQualifier
+releaseWithSuffix versiontiger.parent ${TIMESTAMP}
