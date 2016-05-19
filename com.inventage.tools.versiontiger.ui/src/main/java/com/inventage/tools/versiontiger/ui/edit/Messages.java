@@ -26,5 +26,4 @@ public class Messages extends NLS {
 	public static String editVersionWizardPageColumnHeaderProjectName;
 	public static String editVersionWizardPageColumnHeaderCurrentVersion;
 	public static String editVersionWizardPageColumnHeaderNewVersion;
-	public static String editVersionWizardPageWarningToolTipWrongVersionFormat;
 }

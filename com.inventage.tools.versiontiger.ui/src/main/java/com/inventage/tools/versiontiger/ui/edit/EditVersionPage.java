@@ -1,5 +1,7 @@
 package com.inventage.tools.versiontiger.ui.edit;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -28,8 +30,8 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -53,6 +55,7 @@ import com.inventage.tools.versiontiger.strategy.IncrementBugfixAndSnapshotStrat
 import com.inventage.tools.versiontiger.strategy.IncrementMajorAndSnapshotStrategy;
 import com.inventage.tools.versiontiger.strategy.IncrementMinorAndSnapshotStrategy;
 import com.inventage.tools.versiontiger.strategy.ReleaseStrategy;
+import com.inventage.tools.versiontiger.strategy.ReleaseWithSuffixStrategy;
 import com.inventage.tools.versiontiger.strategy.SetVersionManuallyStrategy;
 import com.inventage.tools.versiontiger.strategy.VersioningStrategy;
 import com.inventage.tools.versiontiger.ui.VersioningUIPlugin;
@@ -85,6 +88,7 @@ public class EditVersionPage extends WizardPage {
 		strategies.add(new IncrementMinorAndSnapshotStrategy());
 		strategies.add(new IncrementBugfixAndSnapshotStrategy());
 		strategies.add(new SetVersionManuallyStrategy());
+		strategies.add(new ReleaseWithSuffixStrategy());
 	}
 
 	@Override
@@ -313,63 +317,26 @@ public class EditVersionPage extends WizardPage {
 		for (final VersioningStrategy versioningStrategy : strategies) {
 
 			final Button b = new Button(versionGroup, SWT.RADIO);
-			final Text additionalDataField = new Text(versionGroup, SWT.BORDER);
-
-			final Label wrongVersionFormatWarningLabel = new Label(versionGroup, SWT.ICON);
-			wrongVersionFormatWarningLabel.setImage(warningImage);
-			wrongVersionFormatWarningLabel.setToolTipText(Messages.editVersionWizardPageWarningToolTipWrongVersionFormat);
-			wrongVersionFormatWarningLabel.setVisible(false);
-
-			additionalDataField.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-			additionalDataField.setVisible(versioningStrategy.requiresDataInput());
-			additionalDataField.addKeyListener(new KeyListener() {
-
-				@Override
-				public void keyReleased(KeyEvent e) {
-
-					/*
-					 * If we fail to set the version strategy, because the data
-					 * is invalid, we show a warning icon.
-					 */
-					try {
-						editVersionModel.setVersionStrategy(editVersionModel.getVersioningStrategy().setData(additionalDataField.getText()));
-						wrongVersionFormatWarningLabel.setVisible(false);
-						setPageComplete(true);
-					} catch (IllegalArgumentException e2) {
-						wrongVersionFormatWarningLabel.setVisible(true);
-						setPageComplete(false);
-					}
-				}
-
-				@Override
-				public void keyPressed(KeyEvent e) {
-				}
-			});
-
 			b.setData(versioningStrategy);
 			b.setText(versioningStrategy.toString());
+
+			final Text additionalDataField = new Text(versionGroup, SWT.BORDER);
+			final Label wrongVersionFormatWarningLabel = new Label(versionGroup, SWT.ICON);
+			wrongVersionFormatWarningLabel.setImage(warningImage);
+			wrongVersionFormatWarningLabel.setVisible(false);
+			
 			b.addSelectionListener(new SelectionListener() {
-
 				@Override
-				public void widgetSelected(SelectionEvent e) {
-					if (versioningStrategy.requiresDataInput()) {
-
-						/*
-						 * If we fail to set the version strategy, because the
-						 * data is invalid, we show a warning icon.
-						 */
-						try {
-							editVersionModel.setVersionStrategy(versioningStrategy.setData(additionalDataField.getText()));
-							wrongVersionFormatWarningLabel.setVisible(false);
-							setPageComplete(true);
-
-						} catch (IllegalArgumentException e2) {
-							wrongVersionFormatWarningLabel.setVisible(true);
-							setPageComplete(false);
-						}
-					} else {
+				public void widgetSelected(SelectionEvent event) {
+					try {
 						editVersionModel.setVersionStrategy(versioningStrategy);
+						wrongVersionFormatWarningLabel.setVisible(false);
 						setPageComplete(true);
+					}
+					catch (IllegalArgumentException e) {
+						wrongVersionFormatWarningLabel.setToolTipText(e.getMessage());
+						wrongVersionFormatWarningLabel.setVisible(true);
+						setPageComplete(false);
 					}
 				}
 
@@ -378,6 +345,48 @@ public class EditVersionPage extends WizardPage {
 					widgetSelected(e);
 				}
 			});
+
+			additionalDataField.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+			additionalDataField.setVisible(versioningStrategy.requiresDataInput());
+			additionalDataField.setEnabled(false);
+			if (versioningStrategy.requiresDataInput()) {
+				additionalDataField.addModifyListener(new ModifyListener() {
+					@Override
+					public void modifyText(ModifyEvent e) {
+						reValidateData(versioningStrategy, additionalDataField, wrongVersionFormatWarningLabel);
+					}
+				});
+			}
+			
+			editVersionModel.addPropertyChangeListener(EditVersionModel.PN_VERSIONING_STRATEGY, new PropertyChangeListener() {
+				@Override
+				public void propertyChange(PropertyChangeEvent evt) {
+					boolean isEnabled = versioningStrategy.equals(evt.getNewValue());
+					additionalDataField.setEnabled(isEnabled);
+					if (isEnabled && versioningStrategy.requiresDataInput()) {
+						reValidateData(versioningStrategy, additionalDataField, wrongVersionFormatWarningLabel);
+					}
+					else {
+						wrongVersionFormatWarningLabel.setVisible(false);
+					}
+				}
+			});
+		}
+	}
+
+	/*
+	 * If we fail to set the version strategy, because the data
+	 * is invalid, we show a warning icon.
+	 */
+	private void reValidateData(VersioningStrategy versioningStrategy, Text additionalDataField, Label wrongVersionFormatWarningLabel) {
+		try {
+			editVersionModel.setVersionStrategy(versioningStrategy.setData(additionalDataField.getText()));
+			wrongVersionFormatWarningLabel.setVisible(false);
+			setPageComplete(true);
+		} catch (IllegalArgumentException e2) {
+			wrongVersionFormatWarningLabel.setToolTipText(e2.getMessage());
+			wrongVersionFormatWarningLabel.setVisible(true);
+			setPageComplete(false);
 		}
 	}
 
