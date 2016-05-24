@@ -32,4 +32,6 @@ public interface ProjectUniverse {
 
 	void updateReferencesFor(String id, MavenVersion oldVersion, MavenVersion newVersion);
 
+	boolean ensureStrictOsgiDependencyTo(String argument);
+
 }

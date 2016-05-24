@@ -47,4 +47,12 @@ public class VersionAttribute implements RequireBundleAttribute {
 		return result;
 	}
 
+	public boolean ensureStrictDependency(VersioningLoggerItem loggerItem) {
+		if (!versionRange.ensureIsStrict()) {
+			loggerItem.appendToMessage("No strict version dependency (" + versionRange + ")");
+			return false;
+		}
+		return true;
+	}
+
 }

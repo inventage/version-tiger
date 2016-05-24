@@ -203,12 +203,12 @@ public enum VersionTigerBatchOperation {
 		@Override
 		void internalExecute(CommandExecuter commandExecuter, Command command) {
 			Versionable projects = commandExecuter.getUniverse().getAllProjectsWithMatchingIdPattern(command.getArgument(0));
-			if (!projects.ensureIsSnapshot()) {
-				logError(commandExecuter.getLogger(), "Not all matched projects are snapshot versions.");
-				commandExecuter.failAndQuit();
+			if (projects.ensureIsSnapshot()) {
+				logSuccess(commandExecuter.getLogger(), "All matched projects are snapshot versions.");
 			}
 			else {
-				logSuccess(commandExecuter.getLogger(), "All matched projects are snapshot versions.");
+				logError(commandExecuter.getLogger(), "Not all matched projects are snapshot versions.");
+				commandExecuter.failAndQuit();
 			}
 		}
 	},
@@ -216,12 +216,24 @@ public enum VersionTigerBatchOperation {
 		@Override
 		void internalExecute(CommandExecuter commandExecuter, Command command) {
 			Versionable projects = commandExecuter.getUniverse().getAllProjectsWithMatchingIdPattern(command.getArgument(0));
-			if (!projects.ensureIsRelease()) {
+			if (projects.ensureIsRelease()) {
+				logSuccess(commandExecuter.getLogger(), "All matched projects are release versions.");
+			}
+			else {
 				logError(commandExecuter.getLogger(), "Not all matched projects are release versions.");
 				commandExecuter.failAndQuit();
 			}
+		}
+	},
+	ENSURESTRICTOSGIDEPENDENCYTO(1, "ensureStrictOsgiDependencyTo <project-id>") {
+		@Override
+		void internalExecute(CommandExecuter commandExecuter, Command command) {
+			if (commandExecuter.getUniverse().ensureStrictOsgiDependencyTo(command.getArgument(0))) {
+				logSuccess(commandExecuter.getLogger(), "All dependencies to '" + command.getArgument(0) + "' are strict.");
+			}
 			else {
-				logSuccess(commandExecuter.getLogger(), "All matched projects are release versions.");
+				logError(commandExecuter.getLogger(), "Not all dependencies to '" + command.getArgument(0) + "' are strict.");
+				commandExecuter.failAndQuit();
 			}
 		}
 	},

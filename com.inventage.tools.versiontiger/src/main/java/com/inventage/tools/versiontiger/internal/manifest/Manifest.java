@@ -83,4 +83,11 @@ public class Manifest {
 		return false;
 	}
 	
+	public boolean ensureStrictDependencyTo(String id, VersioningLoggerItem loggerItem) {
+		if (!sections.isEmpty()) {
+			return sections.get(0).ensureStrictDependencyTo(id, loggerItem);
+		}
+		return true;
+	}
+	
 }

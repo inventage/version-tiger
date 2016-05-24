@@ -58,4 +58,19 @@ public class ManifestSection {
 		return false;
 	}
 
+	public boolean ensureStrictDependencyTo(String id, VersioningLoggerItem loggerItem) {
+		boolean result = true;
+		RequireBundleHeader requireBundleHeader = (RequireBundleHeader) getAttributeHeaderFor(RequireBundleHeader.NAME);
+		if (requireBundleHeader != null && !requireBundleHeader.ensureStrictDependencyTo(id, loggerItem)) {
+			loggerItem.appendToMessage(". ");
+			result = false;
+		}
+		
+		FragmentHostHeader fragmentHostHeader = (FragmentHostHeader) getAttributeHeaderFor(FragmentHostHeader.NAME);
+		if (fragmentHostHeader != null && !fragmentHostHeader.ensureStrictDependencyTo(id, loggerItem)) {
+			result = false;
+		}
+		
+		return result;
+	}
 }

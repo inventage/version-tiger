@@ -8,6 +8,7 @@ import com.inventage.tools.versiontiger.OsgiVersion;
 import com.inventage.tools.versiontiger.ProjectUniverse;
 import com.inventage.tools.versiontiger.VersioningLogger;
 import com.inventage.tools.versiontiger.VersioningLoggerItem;
+import com.inventage.tools.versiontiger.VersioningLoggerStatus;
 import com.inventage.tools.versiontiger.internal.manifest.Manifest;
 import com.inventage.tools.versiontiger.util.FileHandler;
 
@@ -76,7 +77,7 @@ class EclipsePlugin extends MavenProjectImpl {
 	private boolean updateRequireBundleReferences(String id, OsgiVersion oldVersion, OsgiVersion newVersion) {
 		Manifest manifest = parseManifest();
 		
-		VersioningLoggerItem loggerItem = getLoggerItem(oldVersion, newVersion, id);
+		VersioningLoggerItem loggerItem = createLoggerItem(oldVersion, newVersion, id);
 		boolean result = manifest.updateRequireBundleReference(id, oldVersion, newVersion, loggerItem, getVersionFactory().getVersionRangeChangeStrategy());
 		getLogger().addVersioningLoggerItem(loggerItem);
 		
@@ -87,11 +88,24 @@ class EclipsePlugin extends MavenProjectImpl {
 	private boolean updateFragmentHostReference(String id, OsgiVersion oldVersion, OsgiVersion newVersion) {
 		Manifest manifest = parseManifest();
 		
-		VersioningLoggerItem loggerItem = getLoggerItem(oldVersion, newVersion, id);
+		VersioningLoggerItem loggerItem = createLoggerItem(oldVersion, newVersion, id);
 		boolean result = manifest.updateFragmentHostReference(id, oldVersion, newVersion, loggerItem, getVersionFactory().getVersionRangeChangeStrategy());
 		getLogger().addVersioningLoggerItem(loggerItem);
 		
 		manifestContent = manifest.print();
+		return result;
+	}
+	
+	@Override
+	public boolean ensureStrictOsgiDependencyTo(String projectId) {
+		boolean result = super.ensureStrictOsgiDependencyTo(projectId);
+		
+		VersioningLoggerItem loggerItem = createLoggerItem(null, null, projectId);
+		loggerItem.setStatus(VersioningLoggerStatus.ERROR);
+		if (!parseManifest().ensureStrictDependencyTo(projectId, loggerItem)) {
+			getLogger().addVersioningLoggerItem(loggerItem);
+			return false;
+		}
 		return result;
 	}
 	
@@ -116,7 +130,7 @@ class EclipsePlugin extends MavenProjectImpl {
 		return new File(metaInfFolder, "MANIFEST.MF");
 	}
 	
-	private VersioningLoggerItem getLoggerItem(OsgiVersion oldVersion, OsgiVersion newVersion, String originalProject) {
+	private VersioningLoggerItem createLoggerItem(OsgiVersion oldVersion, OsgiVersion newVersion, String originalProject) {
 		VersioningLoggerItem loggerItem = getLogger().createVersioningLoggerItem();
 		loggerItem.setProject(this);
 		loggerItem.setOriginalProject(originalProject);

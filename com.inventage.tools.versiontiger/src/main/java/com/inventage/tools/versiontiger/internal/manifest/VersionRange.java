@@ -99,6 +99,12 @@ public class VersionRange {
 			
 		return false;
 	}
+	
+	public boolean ensureIsStrict() {
+		return startVersion != null && endVersion != null
+				&& startInclusive && !endInclusive
+				&& startVersion.incrementBugfixAndSnapshot().withoutQualifier().equals(endVersion);
+	}
 
 	public boolean rangeMatches(OsgiVersion version) {
 		if (startVersion.isLowerThan(version, startInclusive)) {

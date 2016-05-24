@@ -61,5 +61,16 @@ public class RequireBundleHeader implements ManifestHeader {
 		}
 		return false;
 	}
+	
+	public boolean ensureStrictDependencyTo(String id, VersioningLoggerItem loggerItem) {
+		for (RequireBundle requireBundle : requireBundles) {
+			if (id.equals(requireBundle.getId())) {
+				loggerItem.appendToMessage(NAME);
+				loggerItem.appendToMessage(": ");
+				return requireBundle.ensureStrictDependency(loggerItem);
+			}
+		}
+		return true;
+	}
 
 }

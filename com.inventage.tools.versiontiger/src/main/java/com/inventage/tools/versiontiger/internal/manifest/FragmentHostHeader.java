@@ -46,4 +46,13 @@ public class FragmentHostHeader implements ManifestHeader {
 		return false;
 	}
 
+	public boolean ensureStrictDependencyTo(String id, VersioningLoggerItem loggerItem) {
+		if (id.equals(hostBundle.getId())) {
+			loggerItem.appendToMessage(NAME);
+			loggerItem.appendToMessage(": ");
+			return hostBundle.ensureStrictDependency(loggerItem);
+		}
+		return true;
+	}
+
 }

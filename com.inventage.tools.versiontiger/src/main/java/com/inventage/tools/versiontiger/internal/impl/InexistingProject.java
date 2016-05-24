@@ -125,5 +125,10 @@ public class InexistingProject implements Project {
 		logWarning(null);
 		return true;
 	}
+	
+	@Override
+	public boolean ensureStrictOsgiDependencyTo(String projectId) {
+		return true;
+	}
 
 }

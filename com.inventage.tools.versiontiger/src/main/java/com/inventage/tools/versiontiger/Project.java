@@ -14,4 +14,6 @@ public interface Project extends Versionable, Comparable<Project>, PropertyHolde
 
 	boolean exists();
 
+	boolean ensureStrictOsgiDependencyTo(String projectId);
+
 }

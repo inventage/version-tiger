@@ -275,5 +275,10 @@ class MavenProjectImpl implements MavenProject {
 		}
 		return true;
 	}
+	
+	@Override
+	public boolean ensureStrictOsgiDependencyTo(String projectId) {
+		return true;
+	}
 
 }

@@ -117,4 +117,10 @@ class ReferencesUpdater implements Project {
 	public boolean ensureIsRelease() {
 		return project.ensureIsRelease();
 	}
+	
+	@Override
+	public boolean ensureStrictOsgiDependencyTo(String projectId) {
+		return project.ensureStrictOsgiDependencyTo(projectId);
+	}
+
 }

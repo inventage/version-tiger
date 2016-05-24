@@ -177,4 +177,14 @@ class ProjectUniverseImpl implements ProjectUniverse {
 		}
 	}
 
+	@Override
+	public boolean ensureStrictOsgiDependencyTo(String projectId) {
+		boolean result = true;
+		for (Project project : listAllProjects()) {
+			if (!project.ensureStrictOsgiDependencyTo(projectId)) {
+				result = false;
+			}
+		}
+		return result;
+	}
 }

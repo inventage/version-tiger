@@ -51,5 +51,14 @@ public class RequireBundle {
 		
 		return false;
 	}
+	
+	public boolean ensureStrictDependency(VersioningLoggerItem loggerItem) {
+		VersionAttribute versionAttribute = findVersionAttribute();
+		if (versionAttribute != null) {
+			return versionAttribute.ensureStrictDependency(loggerItem);
+		}
+		loggerItem.appendToMessage("No strict version dependency");
+		return false;
+	}
 
 }
