@@ -23,7 +23,6 @@ public class ExecuteMojo extends AbstractMojo {
     private File statementsFile;
 
     public void execute() throws MojoExecutionException {    	
-    	String[] args = {statementsFile.toString()};
-    	new FileExecution(args);
+    	new FileExecution().execute(statementsFile);
     }
 }

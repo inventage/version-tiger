@@ -78,4 +78,8 @@ public class FileHandler {
 		}
 	}
 	
+	public String getDirectoryPath(File file) {
+		return file.getParent();
+	}
+
 }

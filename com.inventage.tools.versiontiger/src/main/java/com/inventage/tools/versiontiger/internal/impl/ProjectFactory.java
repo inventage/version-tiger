@@ -7,6 +7,7 @@ import java.util.Set;
 
 import com.inventage.tools.versiontiger.MavenProject;
 import com.inventage.tools.versiontiger.Project;
+import com.inventage.tools.versiontiger.RootPathProvider;
 import com.inventage.tools.versiontiger.VersioningLogger;
 import com.inventage.tools.versiontiger.VersioningLoggerItem;
 import com.inventage.tools.versiontiger.VersioningLoggerStatus;
@@ -15,18 +16,18 @@ import com.inventage.tools.versiontiger.util.XmlHandler;
 
 class ProjectFactory {
 	
-	private final String rootPath;
+	private final RootPathProvider rootPathProvider;
 	
 	private VersionFactory versionFactory;
 
-	ProjectFactory(String rootPath, VersionFactory versionFactory) {
-		this.rootPath = rootPath;
+	ProjectFactory(RootPathProvider rootPathProvider, VersionFactory versionFactory) {
+		this.rootPathProvider = rootPathProvider;
 		this.versionFactory = versionFactory;
 	}
 
 	Project createProjectFromRootFilePath(String projectPath, VersioningLogger logger) {
 		
-		File projectFile = new FileHandler().createFileFromPath(rootPath, projectPath);
+		File projectFile = new FileHandler().createFileFromPath(rootPathProvider.getRootPath(), projectPath);
 		if (!projectFile.exists()) {
 			logWarning(logger, "Project does not exist: " + projectFile);
 			return createInexistingProject(projectFile, logger);
@@ -55,7 +56,7 @@ class ProjectFactory {
 	}
 	
 	Set<Project> createRecursiveProjectsFromRootFilePath(String projectPath, VersioningLogger logger) {
-		File projectPathFile = new FileHandler().createFileFromPath(rootPath, projectPath);
+		File projectPathFile = new FileHandler().createFileFromPath(rootPathProvider.getRootPath(), projectPath);
 		if (!projectPathFile.exists() || !projectPathFile.isDirectory()) {
 			throw new IllegalStateException("Directory does not exist: " + projectPathFile);
 		}

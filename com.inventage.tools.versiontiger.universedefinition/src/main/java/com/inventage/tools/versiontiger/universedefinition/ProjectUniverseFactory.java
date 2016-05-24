@@ -5,6 +5,7 @@ import java.io.File;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.variables.VariablesPlugin;
 
+import com.inventage.tools.versiontiger.FixedRootPath;
 import com.inventage.tools.versiontiger.Project;
 import com.inventage.tools.versiontiger.ProjectUniverse;
 import com.inventage.tools.versiontiger.VersioningLogger;
@@ -29,14 +30,16 @@ public class ProjectUniverseFactory {
 	private static final String ATTRIBUTE_ID = "id";
 
 	public ProjectUniverse create(File file, VersioningLogger logger) {
-		String fileContent = new FileHandler().readFileContent(file);
+		FileHandler fileHandler = new FileHandler();
+		String fileContent = fileHandler.readFileContent(file);
 
 		String id = file.getAbsolutePath();
 		Element projectUniverseElement = new XmlHandler().getElement(fileContent, TAG_PROJECTUNIVERSE);
 		Attribute nameAttribute = projectUniverseElement.getAttribute(ATTRIBUTE_NAME);
 		String name = nameAttribute == null ? null : nameAttribute.getValue();
 
-		ProjectUniverse universe = createEmptyUniverse(id, name, logger);
+		String rootPath = fileHandler.getDirectoryPath(file);
+		ProjectUniverse universe = createEmptyUniverse(id, name, rootPath, logger);
 		
 		addProjectLocations(universe, projectUniverseElement);
 		addProjectRootLocations(universe, projectUniverseElement);
@@ -45,8 +48,8 @@ public class ProjectUniverseFactory {
 		return universe;
 	}
 
-	private ProjectUniverse createEmptyUniverse(String id, String name, VersioningLogger logger) {
-		return UniverseDefinitionPlugin.getDefault().getVersioning().createUniverse(id, name, logger);
+	private ProjectUniverse createEmptyUniverse(String id, String name, String rootPath, VersioningLogger logger) {
+		return UniverseDefinitionPlugin.getDefault().getVersioning().createUniverse(id, name, new FixedRootPath(rootPath), logger);
 	}
 
 	private void addProjectLocations(ProjectUniverse universe, Element projectUniverseElement) {

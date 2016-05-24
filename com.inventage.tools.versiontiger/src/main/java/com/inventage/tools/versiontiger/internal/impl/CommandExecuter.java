@@ -3,28 +3,38 @@ package com.inventage.tools.versiontiger.internal.impl;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 import com.inventage.tools.versiontiger.ProjectUniverse;
+import com.inventage.tools.versiontiger.RootPathProvider;
 import com.inventage.tools.versiontiger.Versioning;
 import com.inventage.tools.versiontiger.VersioningLogger;
 
-class CommandExecuter {
-	private static final String COMMAND_EXECUTER_UNIVERSE_ID = "commandExecuterUniverse";
+class CommandExecuter implements RootPathProvider {
 
 	private final Versioning versioning;
 	private final ProjectUniverse universe;
-	private final String rootPath;
 	private final VersioningLogger logger;
+	private final Deque<String> rootPath = new ArrayDeque<String>();
 	
 	private boolean shouldQuit;
 	
-	CommandExecuter(Versioning versioning, String rootPath, VersioningLogger logger) {
-		this.versioning = versioning;
-		this.rootPath = rootPath;
-		this.logger = logger;
-		universe = versioning.createUniverse(COMMAND_EXECUTER_UNIVERSE_ID, null, rootPath, logger);
+	CommandExecuter(Versioning versioning, VersioningLogger logger) {
+		this(versioning, getCurrentDirectory(), logger);
 	}
 	
+	CommandExecuter(Versioning versioning, String initialRootPath, VersioningLogger logger) {
+		this.versioning = versioning;
+		this.logger = logger;
+		this.universe = versioning.createUniverse("commandExecuterUniverse", "commandExecuterUniverse", this, logger);
+		enterNewRootPath(initialRootPath);
+	}
+
+	private static String getCurrentDirectory() {
+		return System.getProperty("user.dir");
+	}
+
 	public Versioning getVersioning() {
 		return versioning;
 	}
@@ -34,7 +44,18 @@ class CommandExecuter {
 	}
 	
 	public String getRootPath() {
-		return rootPath;
+		return rootPath.peek();
+	}
+	
+	public void enterNewRootPath(String rootPath) {
+		this.rootPath.push(rootPath);
+	}
+	
+	public void leaveCurrentRootPath() {
+		if (this.rootPath.size() <= 1) {
+			throw new IllegalStateException("Cannot leave initial root path.");
+		}
+		this.rootPath.pop();
 	}
 	
 	public VersioningLogger getLogger() {

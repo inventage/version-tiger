@@ -15,9 +15,10 @@ public class Main {
 
 	public void executeCommands(String[] args) {
 		try {
-			CommandExecuter commandExecuter = new CommandExecuter(new VersioningImpl(), getCurrentDirectory(), logger);
+			CommandExecuter commandExecuter = new CommandExecuter(new VersioningImpl(), logger);
+			
 			if (args.length == 1)
-				executeCommandFromArgumentFile(args, commandExecuter);
+				executeCommandFromArgumentFile(args[0], commandExecuter);
 			else if (args.length == 0) {
 				System.out.println("Reading commands from standard input:");
 				commandExecuter.executeCommands(stdIn);
@@ -35,14 +36,8 @@ public class Main {
 		}
 	}
 
-	private String getCurrentDirectory() {
-		return System.getProperty("user.dir");
-	}
-
-	private void executeCommandFromArgumentFile(String[] args, CommandExecuter commandExecuter) {
-		if (args.length >= 1) {
-			commandExecuter.execute(new Command(VersionTigerBatchOperation.INCLUDE.toString() + " " + args[0]));
-		}
+	private void executeCommandFromArgumentFile(String relativeOrAbsoluteFilePath, CommandExecuter commandExecuter) {
+		new FileExecution().execute(relativeOrAbsoluteFilePath, commandExecuter);
 	}
 
 }

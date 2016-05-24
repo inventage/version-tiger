@@ -9,7 +9,7 @@ public interface Versioning {
 
 	ProjectUniverse createUniverse(String id, String name, VersioningLogger logger);
 	
-	ProjectUniverse createUniverse(String id, String name, String rootPath, VersioningLogger logger);
+	ProjectUniverse createUniverse(String id, String name, RootPathProvider rootPathProvider, VersioningLogger logger);
 
 	MavenVersion createMavenVersion(String mavenVersion);
 	

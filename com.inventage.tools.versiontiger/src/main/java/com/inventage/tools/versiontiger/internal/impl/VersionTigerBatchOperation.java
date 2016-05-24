@@ -1,10 +1,6 @@
 package com.inventage.tools.versiontiger.internal.impl;
 
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -25,7 +21,6 @@ import com.inventage.tools.versiontiger.Versionable;
 import com.inventage.tools.versiontiger.VersioningLogger;
 import com.inventage.tools.versiontiger.VersioningLoggerItem;
 import com.inventage.tools.versiontiger.VersioningLoggerStatus;
-import com.inventage.tools.versiontiger.util.FileHandler;
 
 /**
  * Denotes the allowed batch operations of the version tiger.
@@ -128,17 +123,7 @@ public enum VersionTigerBatchOperation {
 	INCLUDE(1, "include </path/to/commandsfile>") {
 		@Override
 		void internalExecute(CommandExecuter commandExecuter, Command command) {
-			VersioningLogger logger = commandExecuter.getLogger();
-			File commandsFilePath = new FileHandler().createFileFromPath(commandExecuter.getRootPath(), command.getArgument(0));
-			try {
-				
-				commandExecuter.executeCommands(new BufferedReader(new FileReader(commandsFilePath)));
-				
-			} catch (FileNotFoundException e) {
-				logError(logger, "File not found: " + commandsFilePath.getAbsolutePath());
-			} catch (IOException e) {
-				logError(logger, "Cannot read commands from file: " + commandsFilePath.getAbsolutePath());
-			}
+			new FileExecution().execute(command.getArgument(0), commandExecuter);
 		}
 	},
 	LIST(0, "list") {
