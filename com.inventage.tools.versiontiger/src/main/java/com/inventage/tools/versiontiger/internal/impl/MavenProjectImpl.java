@@ -257,4 +257,23 @@ class MavenProjectImpl implements MavenProject {
 	public boolean exists() {
 		return true;
 	}
+	
+	@Override
+	public boolean ensureIsSnapshot() {
+		if (!getVersion().isSnapshot()) {
+			logError("Should not be a release version: " + getVersion(), null, null);
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public boolean ensureIsRelease() {
+		if (getVersion().isSnapshot()) {
+			logError("Should not be a snapshot version: " + getVersion(), null, null);
+			return false;
+		}
+		return true;
+	}
+
 }

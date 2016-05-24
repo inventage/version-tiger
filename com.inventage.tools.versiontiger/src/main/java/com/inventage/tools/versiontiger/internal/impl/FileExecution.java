@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+import com.inventage.tools.versiontiger.CheckFailedException;
 import com.inventage.tools.versiontiger.VersioningLogger;
 import com.inventage.tools.versiontiger.VersioningLoggerItem;
 import com.inventage.tools.versiontiger.VersioningLoggerStatus;
@@ -15,8 +16,13 @@ public class FileExecution {
 	
 	private final FileHandler fileHandler = new FileHandler();
 
-	public void execute(File statementsFile) {
-		execute(statementsFile, new CommandExecuter(new VersioningImpl(), new StandardOutLogger()));
+	public void execute(File statementsFile, VersioningLogger logger) {
+		CommandExecuter commandExecuter = new CommandExecuter(new VersioningImpl(), logger);
+		execute(statementsFile, commandExecuter);
+		
+		if (commandExecuter.isFailed()) {
+			throw new CheckFailedException("Versiontiger statements execution failed (" + statementsFile + ")");
+		}
 	}
 
 	public void execute(String filePathRelativeToCurrentRoot, CommandExecuter commandExecuter) {

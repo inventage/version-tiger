@@ -107,4 +107,14 @@ class ReferencesUpdater implements Project {
 	public boolean exists() {
 		return project.exists();
 	}
+	
+	@Override
+	public boolean ensureIsSnapshot() {
+		return project.ensureIsSnapshot();
+	}
+	
+	@Override
+	public boolean ensureIsRelease() {
+		return project.ensureIsRelease();
+	}
 }

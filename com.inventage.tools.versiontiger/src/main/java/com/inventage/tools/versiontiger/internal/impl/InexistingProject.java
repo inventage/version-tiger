@@ -113,4 +113,17 @@ public class InexistingProject implements Project {
 	public boolean exists() {
 		return false;
 	}
+	
+	@Override
+	public boolean ensureIsSnapshot() {
+		logWarning(null);
+		return true;
+	}
+
+	@Override
+	public boolean ensureIsRelease() {
+		logWarning(null);
+		return true;
+	}
+
 }

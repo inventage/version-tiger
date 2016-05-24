@@ -16,4 +16,8 @@ public interface Versionable {
 
 	void useReleaseVersionWithSuffix(String newSuffix);
 
+	boolean ensureIsSnapshot();
+	
+	boolean ensureIsRelease();
+
 }

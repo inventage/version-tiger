@@ -14,6 +14,7 @@ public class Main {
 	}
 
 	public void executeCommands(String[] args) {
+		boolean failed = false;
 		try {
 			CommandExecuter commandExecuter = new CommandExecuter(new VersioningImpl(), logger);
 			
@@ -23,8 +24,13 @@ public class Main {
 				System.out.println("Reading commands from standard input:");
 				commandExecuter.executeCommands(stdIn);
 			}
-			else System.err.println("Invalid number of arguments provided");
+			else {
+				System.err.println("Invalid number of arguments provided");
+			}
+			
+			failed = commandExecuter.isFailed();
 		} catch (IOException e) {
+			failed = true;
 			throw new IllegalStateException("Cannot read commands.", e);
 		} finally {
 			try {
@@ -33,6 +39,9 @@ public class Main {
 				// nop
 			}
 			System.out.println("Quitting.");
+			if (failed) {
+				System.exit(1);
+			}
 		}
 	}
 

@@ -18,7 +18,7 @@ class CommandExecuter implements RootPathProvider {
 	private final VersioningLogger logger;
 	private final Deque<String> rootPath = new ArrayDeque<String>();
 	
-	private boolean shouldQuit;
+	private boolean shouldQuitWithFailure;
 	
 	CommandExecuter(Versioning versioning, VersioningLogger logger) {
 		this(versioning, getCurrentDirectory(), logger);
@@ -62,8 +62,12 @@ class CommandExecuter implements RootPathProvider {
 		return logger;
 	}
 	
-	public void quit() {
-		this.shouldQuit = true;
+	public void failAndQuit() {
+		this.shouldQuitWithFailure = true;
+	}
+	
+	public boolean isFailed() {
+		return this.shouldQuitWithFailure;
 	}
 
 	/**
@@ -74,7 +78,7 @@ class CommandExecuter implements RootPathProvider {
 	 */
 	void executeCommands(BufferedReader commandReader) throws IOException {
 		String line;
-		while (!shouldQuit && (line = commandReader.readLine()) != null) {
+		while (!shouldQuitWithFailure && (line = commandReader.readLine()) != null) {
 			
 			Command command = new Command(line);
 			if (!command.isComment()) {

@@ -56,4 +56,26 @@ class MultiProjectVersionable implements Versionable {
 			project.useReleaseVersionWithSuffix(newSuffix);
 		}
 	}
+	
+	@Override
+	public boolean ensureIsSnapshot() {
+		for (Project project : projects) {
+			if (!project.ensureIsSnapshot()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public boolean ensureIsRelease() {
+		boolean result = true;
+		for (Project project : projects) {
+			if (!project.ensureIsRelease()) {
+				result = false;
+			}
+		}
+		return result;
+	}
+
 }

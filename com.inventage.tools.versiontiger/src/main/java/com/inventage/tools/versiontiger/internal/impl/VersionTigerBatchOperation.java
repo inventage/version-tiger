@@ -192,10 +192,36 @@ public enum VersionTigerBatchOperation {
 			Version currentVersion = commandExecuter.getVersioning().createMavenVersion(getVersionTigerVersion());
 			if (currentVersion.isLowerThan(requiredVersion, false)) {
 				logError(commandExecuter.getLogger(), "Versiontiger version too old, required: " + requiredVersion + ", current: " + currentVersion);
-				commandExecuter.quit();
+				commandExecuter.failAndQuit();
 			}
 			else {
 				logSuccess(commandExecuter.getLogger(), "Version tiger version ok (required: " + requiredVersion + ", current: " + currentVersion + ")");
+			}
+		}
+	},
+	ENSURESNAPSHOT(1, "ensureSnapshot <my.artifact.id-pattern>") {
+		@Override
+		void internalExecute(CommandExecuter commandExecuter, Command command) {
+			Versionable projects = commandExecuter.getUniverse().getAllProjectsWithMatchingIdPattern(command.getArgument(0));
+			if (!projects.ensureIsSnapshot()) {
+				logError(commandExecuter.getLogger(), "Not all matched projects are snapshot versions.");
+				commandExecuter.failAndQuit();
+			}
+			else {
+				logSuccess(commandExecuter.getLogger(), "All matched projects are snapshot versions.");
+			}
+		}
+	},
+	ENSURERELEASE(1, "ensureRelease <my.artifact.id-pattern>") {
+		@Override
+		void internalExecute(CommandExecuter commandExecuter, Command command) {
+			Versionable projects = commandExecuter.getUniverse().getAllProjectsWithMatchingIdPattern(command.getArgument(0));
+			if (!projects.ensureIsRelease()) {
+				logError(commandExecuter.getLogger(), "Not all matched projects are release versions.");
+				commandExecuter.failAndQuit();
+			}
+			else {
+				logSuccess(commandExecuter.getLogger(), "All matched projects are release versions.");
 			}
 		}
 	},

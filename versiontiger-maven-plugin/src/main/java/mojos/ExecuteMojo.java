@@ -4,9 +4,11 @@ import java.io.File;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
+import com.inventage.tools.versiontiger.CheckFailedException;
 import com.inventage.tools.versiontiger.internal.impl.FileExecution;
 
 /**
@@ -22,7 +24,16 @@ public class ExecuteMojo extends AbstractMojo {
     @Parameter( defaultValue = "", property = "statementsFile", required = true )
     private File statementsFile;
 
-    public void execute() throws MojoExecutionException {    	
-    	new FileExecution().execute(statementsFile);
+    public void execute() throws MojoFailureException, MojoExecutionException {
+    	try {
+    		new FileExecution().execute(statementsFile, new MavenLogger(getLog()));
+    	}
+    	catch (CheckFailedException e) {
+    		throw new MojoFailureException(e.getMessage());
+    	}
+    	catch (Exception e) {
+    		throw new MojoExecutionException(e.getMessage());
+    	}
     }
+
 }
