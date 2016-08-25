@@ -28,6 +28,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -190,6 +191,7 @@ public class EditVersionPage extends WizardPage {
 	private void bindUniverseDefinition(ComboViewer universeDefinitionCombo) {
 		universeDefinitionCombo.setContentProvider(new ArrayContentProvider());
 		universeDefinitionCombo.setLabelProvider(new ProjectUniverseLabelProvider());
+		universeDefinitionCombo.setComparator(new ViewerComparator());
 		Set<ProjectUniverse> projectUniverses = getProjectUniverses();
 		universeDefinitionCombo.setInput(projectUniverses);
 
