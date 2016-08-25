@@ -1,6 +1,8 @@
 package com.inventage.tools.versiontiger.internal.impl;
 
 import java.io.File;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import com.inventage.tools.versiontiger.MavenProject;
 import com.inventage.tools.versiontiger.MavenVersion;
@@ -85,6 +87,7 @@ class MavenProjectImpl implements MavenProject {
 		version = newVersion;
 
 		setProjectVersionInPom(newVersion);
+		setVersionInKarafFiles(oldVersion, newVersion);
 	}
 
 	private void setProjectVersionInPom(MavenVersion newVersion) {
@@ -151,6 +154,13 @@ class MavenProjectImpl implements MavenProject {
 				pomContent = projectElement.getDocument().toXML();
 				new FileHandler().writeFileContent(getPomXmlFile(), pomContent);
 			}
+			
+			for (File karafFile : getKarafFiles()) {
+				Set<String> updatedReferences = new KarafFeature(karafFile).updateReferencesFor(id, oldVersion, newVersion);
+				for (String updatedKarafReference : updatedReferences) {
+					logReferenceSuccess(karafFile + ": " + updatedKarafReference, oldVersion, newVersion, id);
+				}
+			}
 		}
 	}
 
@@ -198,6 +208,36 @@ class MavenProjectImpl implements MavenProject {
 		}
 
 		return hasModifications;
+	}
+	
+	private Set<File> getKarafFiles() {
+		Set<File> result = new LinkedHashSet<File>();
+		
+		Element propertyElement = new XmlHandler().getElement(getPomContent(), "project/properties/versionTigerFiles");
+		if (propertyElement != null) {
+			String propertyValue = propertyElement.getText();
+			if (propertyValue != null) {
+				for (String fileDef : propertyValue.trim().split("\\s*,\\s*")) {
+					if (fileDef.startsWith("karaf:")) {
+						File karafFile = new FileHandler().createFileFromPath(projectPath, fileDef.substring(6));
+						if (karafFile.exists()) {
+							result.add(karafFile);
+						}
+					}
+				}
+			}
+		}
+		
+		return result;
+	}
+	
+	private void setVersionInKarafFiles(MavenVersion oldVersion, MavenVersion newVersion) {
+		for (File karafFile : getKarafFiles()) {
+			Set<String> updatedReferences = new KarafFeature(karafFile).updateReferencesFor(id, oldVersion, newVersion);
+			for (String updatedKarafReference : updatedReferences) {
+				logSuccess(karafFile + ": " + updatedKarafReference, oldVersion, newVersion);
+			}
+		}
 	}
 
 	private File getPomXmlFile() {
