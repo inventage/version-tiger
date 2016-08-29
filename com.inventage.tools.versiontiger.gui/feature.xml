@@ -2,7 +2,7 @@
 <feature
       id="com.inventage.tools.versiontiger.gui"
       label="Inventage Version-Tiger"
-      version="1.4.0.qualifier"
+      version="1.4.1"
       provider-name="Inventage"
       plugin="com.inventage.tools.versiontiger.ui">
 

@@ -1,0 +1,9 @@
+# Including the universe
+projectRoot ../
+
+setting osgi.version.mapping suffixToQualifier
+
+# Releasing all artifacts
+incrementBugfix versiontiger.parent
+
+ensureSnapshot .*
