@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Version-Tiger - Tests
 Bundle-SymbolicName: com.inventage.tools.versiontiger.test;singleton:=true
-Bundle-Version: 1.4.1
+Bundle-Version: 1.4.1.qualifier
 Bundle-Vendor: Inventage
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Fragment-Host: com.inventage.tools.versiontiger;bundle-version="[1.4.1,1.4.2)"

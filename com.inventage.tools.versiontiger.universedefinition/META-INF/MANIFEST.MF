@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Version-Tiger - Universe Definition
 Bundle-SymbolicName: com.inventage.tools.versiontiger.universedefinition;singleton:=true
-Bundle-Version: 1.4.1
+Bundle-Version: 1.4.1.qualifier
 Bundle-Activator: com.inventage.tools.versiontiger.universedefinition.UniverseDefinitionPlugin
 Bundle-Vendor: Inventage
 Require-Bundle: org.eclipse.ui;bundle-version="3.5.1",
