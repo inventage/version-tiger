@@ -369,7 +369,7 @@ public enum VersionTigerBatchOperation {
 		for (VersionTigerBatchOperation op: VersionTigerBatchOperation.values()) {
 			logMessage(logger, "  " + op.usage);
 		}
-		logMessage(logger, "Available properties in arguments: ${version:my.artifact.id}, ${osgiVersion:my.artifact.id}");
+		logMessage(logger, "Available properties in arguments: ${version:my.artifact.id}, ${osgiVersion:my.artifact.id}, ${property:x}, ${ENVVAR}");
 	}
 	
 	private static String getVersionTigerVersion() {
