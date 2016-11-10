@@ -46,7 +46,7 @@ class EclipseApplication extends MavenProjectImpl {
 		OsgiVersion oldOsgiVersion = asOsgiVersion(oldVersion);
 		OsgiVersion newOsgiVersion = asOsgiVersion(newVersion);
 		
-		if (updateFeatureReferences(id, oldOsgiVersion, newOsgiVersion) | updateProductVersion(id, newOsgiVersion, oldOsgiVersion)) {
+		if (updateFeatureReferences(id, oldOsgiVersion, newOsgiVersion) | updateProductVersion(id, oldOsgiVersion, newOsgiVersion)) {
 			new FileHandler().writeFileContent(getProductXmlFile(), productContent);
 		}
 	}
