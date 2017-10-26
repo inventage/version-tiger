@@ -1,5 +1,7 @@
 package com.inventage.tools.versiontiger.ui.edit;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.List;
 
@@ -83,7 +85,9 @@ public class EditVersionHandler extends AbstractHandler {
 				return wizard.getEditVersionModel();
 			}
 		} catch (Exception e) {
-			StatusManager.getManager().handle(new Status(Status.ERROR, VersioningUIPlugin.PLUGIN_ID, "Cannot display current project version state.", e),
+			StringWriter sw = new StringWriter();
+			e.printStackTrace(new PrintWriter(sw));
+			StatusManager.getManager().handle(new Status(Status.ERROR, VersioningUIPlugin.PLUGIN_ID, "Cannot display current project version state." + "\n" + sw.toString(), e),
 					StatusManager.SHOW);
 		}
 		return null;

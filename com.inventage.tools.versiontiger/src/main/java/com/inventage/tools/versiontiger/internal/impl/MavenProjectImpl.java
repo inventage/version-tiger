@@ -21,7 +21,7 @@ class MavenProjectImpl implements MavenProject {
 
 	private final String projectPath;
 
-	private String pomContent;
+	protected String pomContent;
 	private String id;
 	private MavenVersion version;
 	private MavenVersion oldVersion;
@@ -91,9 +91,13 @@ class MavenProjectImpl implements MavenProject {
 	}
 
 	private void setProjectVersionInPom(MavenVersion newVersion) {
+		if (isVersionInherited()) {
+			logWarning("Cannot set version in pom.xml for project that heirs version from parent.", getVersion(), newVersion);
+			return;
+		}
 		pomContent = new XmlHandler().writeElement(getPomContent(), "project/version", newVersion.toString());
 
-		new FileHandler().writeFileContent(getPomXmlFile(), pomContent);
+		updatePomXmlFile();
 
 		logSuccess(getPomXmlFile() + ": project/version = " + newVersion, oldVersion, newVersion);
 	}
@@ -126,9 +130,16 @@ class MavenProjectImpl implements MavenProject {
 	public void setProperty(String key, String value) {
 		pomContent = new XmlHandler().writeElement(getPomContent(), "project/properties/" + key, value);
 
-		new FileHandler().writeFileContent(getPomXmlFile(), pomContent);
+		updatePomXmlFile();
 
 		logSuccess(getPomXmlFile() + ": project/properties/" + key + " = " + value, null, null);
+	}
+
+	private void updatePomXmlFile() {
+		File pomXmlFile = getPomXmlFile();
+		if (pomXmlFile != null) {
+			new FileHandler().writeFileContent(pomXmlFile, pomContent);
+		}
 	}
 
 	@Override
@@ -152,7 +163,7 @@ class MavenProjectImpl implements MavenProject {
 					| updateParent(projectElement, id, oldVersion, newVersion, projectUniverse)) {
 	
 				pomContent = projectElement.getDocument().toXML();
-				new FileHandler().writeFileContent(getPomXmlFile(), pomContent);
+				updatePomXmlFile();
 			}
 			
 			for (File karafFile : getKarafFiles()) {
@@ -240,11 +251,11 @@ class MavenProjectImpl implements MavenProject {
 		}
 	}
 
-	private File getPomXmlFile() {
+	protected File getPomXmlFile() {
 		return new File(projectPath, "pom.xml");
 	}
 
-	private String getPomContent() {
+	protected String getPomContent() {
 		if (pomContent == null) {
 			pomContent = new FileHandler().readFileContent(getPomXmlFile());
 		}

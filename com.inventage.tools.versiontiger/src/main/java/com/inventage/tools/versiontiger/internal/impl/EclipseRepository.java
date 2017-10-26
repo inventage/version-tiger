@@ -153,6 +153,7 @@ class EclipseRepository extends MavenProjectImpl {
 
 	private List<File> getProductXmlFiles() {
 		String[] names = new File(projectPath()).list(new FilenameFilter() {
+			@Override
 			public boolean accept(File dir, String name) {
 				return name.endsWith(".product");
 			}

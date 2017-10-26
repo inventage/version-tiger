@@ -37,9 +37,13 @@ public class AllWorkspaceProjectsUniverseProvider implements ProjectUniverseProv
 		return universe;
 	}
 
+	private boolean includeClosedProjects = true;
+	
 	private void addAllWorkspaceProjects(ProjectUniverse universe) {
 		for (IProject project : getWorkspaceProjects()) {
-			universe.addProjectPath(getProjectPath(project));
+			if (includeClosedProjects || project.isOpen()) {
+				universe.addProjectPath(getProjectPath(project));
+			}
 		}
 	}
 

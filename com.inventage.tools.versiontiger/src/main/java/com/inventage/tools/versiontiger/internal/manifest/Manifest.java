@@ -17,6 +17,16 @@ public class Manifest {
 		return sections;
 	}
 	
+	public ManifestHeader getManifestHeader(String name) {
+		for (ManifestSection manifestSection : getSections()) {
+			ManifestHeader manifestHeader = manifestSection.getManifestHeader(name);
+			if (manifestHeader != null) {
+				return manifestHeader;
+			}
+		}
+		return null;
+	}
+
 	public void addSection(ManifestSection section) {
 		sections.add(section);
 	}

@@ -35,7 +35,6 @@ class ProjectFactory {
 
 		if (hasPom(projectFile)) {
 			String packagingType = getMavenPackaging(projectFile);
-
 			if ("eclipse-plugin".equals(packagingType) || "eclipse-test-plugin".equals(packagingType)) {
 				return createPluginProject(projectFile, logger);
 			} else if ("eclipse-feature".equals(packagingType)) {
@@ -47,14 +46,28 @@ class ProjectFactory {
 			} else if ("eclipse-application".equals(packagingType)) {
 				return createApplicationProject(projectFile, logger);
 			}
-
 			return createAnyMavenProject(projectFile, logger);
 		} else {
+			// use Tycho's heuristics
+			AbstractEclipseProject eclipseProject = null;
+			if (new File(projectFile, "META-INF/MANIFEST.MF").exists()) {
+				eclipseProject = createPluginProject(projectFile, logger);
+			} else if (new File(projectFile, "feature.xml").exists()) {
+				eclipseProject = createFeatureProject(projectFile, logger);
+			}
+			if (eclipseProject != null) {
+				Project parentProject = createProjectFromRootFilePath(projectPath.substring(0, projectPath.lastIndexOf("/")), logger);
+				if (parentProject instanceof MavenProject) {
+					eclipseProject.setParentProject((MavenProject) parentProject);
+					return eclipseProject;
+				}
+				logWarning(logger, "POM-less Eclipse project without Maven parent project: " + projectFile);
+			}
 			logWarning(logger, "Ignoring unknown project type: " + projectFile);
 			return null;
 		}
 	}
-	
+
 	Set<Project> createRecursiveProjectsFromRootFilePath(String projectPath, VersioningLogger logger) {
 		File projectPathFile = new FileHandler().createFileFromPath(rootPathProvider.getRootPath(), projectPath);
 		if (!projectPathFile.exists() || !projectPathFile.isDirectory()) {
@@ -133,11 +146,11 @@ class ProjectFactory {
 		logger.addVersioningLoggerItem(item);
 	}
 	
-	private MavenProject createPluginProject(File projectPath, VersioningLogger logger) {
+	private AbstractEclipseProject createPluginProject(File projectPath, VersioningLogger logger) {
 		return new EclipsePlugin(projectPath.getAbsolutePath(), logger, versionFactory);
 	}
 
-	private MavenProject createFeatureProject(File projectPath, VersioningLogger logger) {
+	private AbstractEclipseProject createFeatureProject(File projectPath, VersioningLogger logger) {
 		return new EclipseFeature(projectPath.getAbsolutePath(), logger, versionFactory);
 	}
 

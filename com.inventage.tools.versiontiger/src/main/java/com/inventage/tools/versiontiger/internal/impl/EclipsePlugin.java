@@ -2,7 +2,6 @@ package com.inventage.tools.versiontiger.internal.impl;
 
 import java.io.File;
 
-import com.inventage.tools.versiontiger.internal.manifest.ManifestParser;
 import com.inventage.tools.versiontiger.MavenVersion;
 import com.inventage.tools.versiontiger.OsgiVersion;
 import com.inventage.tools.versiontiger.ProjectUniverse;
@@ -10,14 +9,39 @@ import com.inventage.tools.versiontiger.VersioningLogger;
 import com.inventage.tools.versiontiger.VersioningLoggerItem;
 import com.inventage.tools.versiontiger.VersioningLoggerStatus;
 import com.inventage.tools.versiontiger.internal.manifest.Manifest;
+import com.inventage.tools.versiontiger.internal.manifest.ManifestParser;
 import com.inventage.tools.versiontiger.util.FileHandler;
 
-class EclipsePlugin extends MavenProjectImpl {
+class EclipsePlugin extends AbstractEclipseProject {
 
 	private String manifestContent;
 	
 	EclipsePlugin(String projectPath, VersioningLogger logger, VersionFactory versionFactory) {
 		super(projectPath, logger, versionFactory);
+	}
+
+	protected boolean isTestsProject() {
+		return getProjectId().endsWith(".tests");
+	}
+
+	@Override
+	protected String getEclipsePackagingName() {
+		return "eclipse-" + (isTestsProject() ? "test-plugin" : "plugin");
+	}
+
+	@Override
+	protected String getProjectId() {
+		StringBuilder buffer = new StringBuilder();
+		parseManifest().getManifestHeader("Bundle-SymbolicName").print(buffer );
+		int start = buffer.indexOf(":"), end = buffer.lastIndexOf(";");
+		if (end > 0) {
+			buffer.setLength(end);
+		}
+		String s = buffer.toString();
+		if (start > 0) {
+			s = s.substring(start + 1);
+		}
+		return s.trim();
 	}
 
 	@Override

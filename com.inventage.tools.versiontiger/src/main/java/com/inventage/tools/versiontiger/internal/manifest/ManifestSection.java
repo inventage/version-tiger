@@ -11,6 +11,15 @@ public class ManifestSection {
 
 	private final List<ManifestHeader> headers = new ArrayList<ManifestHeader>();
 
+	public ManifestHeader getManifestHeader(String name) {
+		for (ManifestHeader manifestHeader : headers) {
+			if (name.equals(manifestHeader.getName())) {
+				return manifestHeader;
+			}
+		}
+		return null;
+	}
+	
 	public void addHeader(ManifestHeader header) {
 		headers.add(header);
 	}

@@ -20,15 +20,8 @@ class ReferencesUpdater implements Project {
 	}
 
 	public void setVersion(MavenVersion newVersion) {
-		if (isVersionInherited()) {
-			logWarning("Cannot set version for project that heirs version from parent.");
-			return;
-		}
-		
 		MavenVersion oldVersion = getVersion();
-
 		project.setVersion(newVersion);
-
 		projectUniverse.updateReferencesFor(project.id(), oldVersion, newVersion);
 	}
 
