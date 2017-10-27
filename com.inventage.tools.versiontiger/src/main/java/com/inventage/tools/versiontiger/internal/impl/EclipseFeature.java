@@ -13,12 +13,22 @@ import com.inventage.tools.versiontiger.util.XmlHandler;
 import de.pdark.decentxml.Attribute;
 import de.pdark.decentxml.Element;
 
-class EclipseFeature extends MavenProjectImpl {
+class EclipseFeature extends AbstractEclipseProject {
 
 	private String featureContent;
 
 	EclipseFeature(String projectPath, VersioningLogger logger, VersionFactory versionFactory) {
 		super(projectPath, logger, versionFactory);
+	}
+
+	@Override
+	protected String getEclipsePackagingName() {
+		return "eclipse-feature";
+	}
+	
+	@Override
+	protected String getProjectId() {
+		return new XmlHandler().getElement(getFeatureXmlContent(), "feature").getAttributeValue("id");
 	}
 
 	@Override
