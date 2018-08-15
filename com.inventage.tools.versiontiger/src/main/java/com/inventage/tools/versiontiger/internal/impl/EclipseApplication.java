@@ -64,6 +64,9 @@ class EclipseApplication extends MavenProjectImpl {
 
 	private boolean updateFeatureReferences(ProjectId id, OsgiVersion oldVersion, OsgiVersion newVersion) {
 		Element featuresElement = new XmlHandler().getElement(getProductXmlContent(), "product/features");
+		if (featuresElement == null) {
+			return false;
+		}
 
 		boolean hasModifications = false;
 		for (Element featureElement : featuresElement.getChildren("feature")) {
