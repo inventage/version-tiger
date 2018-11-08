@@ -49,7 +49,7 @@ public enum VersionTigerBatchOperation {
 			logMessage(commandExecuter.getLogger(), "Summary: Added " + projects.size() + " projects.");
 		}
 	},
-	IGNOREPROJECT(1, "ignoreProject <my.artifact.id>") {
+	IGNOREPROJECT(1, "ignoreProject <my.project.id>") {
 		@Override
 		void internalExecute(CommandExecuter commandExecuter, Command command) {
 			String projectId = command.getArgument(0);
@@ -65,56 +65,56 @@ public enum VersionTigerBatchOperation {
 			logSuccess(commandExecuter.getLogger(), "Ignored " + removedProjects.size() + " projects in: " + path);
 		}
 	},
-	VERSION(2, "version <my.artifact.id-pattern> <1.2.3-SNAPSHOT>") {
+	VERSION(2, "version <my.project.id-pattern> <1.2.3-SNAPSHOT>") {
 		@Override
 		void internalExecute(CommandExecuter commandExecuter, Command command) {
 			Versionable versionable = commandExecuter.getUniverse().getAllProjectsWithMatchingIdPattern(command.getArgument(0));
 			versionable.setVersion(commandExecuter.getVersioning().createMavenVersion(command.getArgument(1)));
 		}
 	},
-	INCREMENTMAJOR(1, "incrementMajor <my.artifact.id-pattern>") {
+	INCREMENTMAJOR(1, "incrementMajor <my.project.id-pattern>") {
 		@Override
 		void internalExecute(CommandExecuter commandExecuter, Command command) {
 			Versionable versionable = commandExecuter.getUniverse().getAllProjectsWithMatchingIdPattern(command.getArgument(0));
 			versionable.incrementMajorVersionAndSnapshot();
 		}
 	},
-	INCREMENTMINOR(1, "incrementMinor <my.artifact.id-pattern>") {
+	INCREMENTMINOR(1, "incrementMinor <my.project.id-pattern>") {
 		@Override
 		void internalExecute(CommandExecuter commandExecuter, Command command) {
 			Versionable versionable = commandExecuter.getUniverse().getAllProjectsWithMatchingIdPattern(command.getArgument(0));
 			versionable.incrementMinorVersionAndSnapshot();
 		}
 	},
-	INCREMENTBUGFIX(1, "incrementBugfix <my.artifact.id-pattern>") {
+	INCREMENTBUGFIX(1, "incrementBugfix <my.project.id-pattern>") {
 		@Override
 		void internalExecute(CommandExecuter commandExecuter, Command command) {
 			Versionable versionable = commandExecuter.getUniverse().getAllProjectsWithMatchingIdPattern(command.getArgument(0));
 			versionable.incrementBugfixVersionAndSnapshot();
 		}
 	},
-	RELEASE(1, "release <my.artifact.id-pattern>") {
+	RELEASE(1, "release <my.project.id-pattern>") {
 		@Override
 		void internalExecute(CommandExecuter commandExecuter, Command command) {
 			Versionable versionable = commandExecuter.getUniverse().getAllProjectsWithMatchingIdPattern(command.getArgument(0));
 			versionable.useReleaseVersion();
 		}
 	},
-	SNAPSHOT(1, "snapshot <my.artifact.id-pattern>") {
+	SNAPSHOT(1, "snapshot <my.project.id-pattern>") {
 		@Override
 		void internalExecute(CommandExecuter commandExecuter, Command command) {
 			Versionable versionable = commandExecuter.getUniverse().getAllProjectsWithMatchingIdPattern(command.getArgument(0));
 			versionable.useSnapshotVersion();
 		}
 	},
-	RELEASEWITHSUFFIX(2, "releaseWithSuffix <my.artifact.id-pattern> <suffix>") {
+	RELEASEWITHSUFFIX(2, "releaseWithSuffix <my.project.id-pattern> <suffix>") {
 		@Override
 		void internalExecute(CommandExecuter commandExecuter, Command command) {
 			Versionable versionable = commandExecuter.getUniverse().getAllProjectsWithMatchingIdPattern(command.getArgument(0));
 			versionable.useReleaseVersionWithSuffix(command.getArgument(1));
 		}
 	},
-	UPDATEREFERENCES(2, "updateReferences <my.artifact.id> <1.2.3-SNAPSHOT>") {
+	UPDATEREFERENCES(2, "updateReferences <my.project.id> <1.2.3-SNAPSHOT>") {
 		@Override
 		void internalExecute(CommandExecuter commandExecuter, Command command) {
 			commandExecuter.getUniverse().updateReferencesFor(command.getArgument(0), null, commandExecuter.getVersioning().createMavenVersion(command.getArgument(1)));
@@ -133,7 +133,7 @@ public enum VersionTigerBatchOperation {
 			Collections.sort(projects);
 
 			for (Project project : projects) {
-				logMessage(commandExecuter.getLogger(), project.id());
+				logMessage(commandExecuter.getLogger(), project.id().toString());
 			}
 		}
 	},
@@ -199,7 +199,7 @@ public enum VersionTigerBatchOperation {
 			}
 		}
 	},
-	ENSURESNAPSHOT(1, "ensureSnapshot <my.artifact.id-pattern>") {
+	ENSURESNAPSHOT(1, "ensureSnapshot <my.project.id-pattern>") {
 		@Override
 		void internalExecute(CommandExecuter commandExecuter, Command command) {
 			Versionable projects = commandExecuter.getUniverse().getAllProjectsWithMatchingIdPattern(command.getArgument(0));
@@ -212,7 +212,7 @@ public enum VersionTigerBatchOperation {
 			}
 		}
 	},
-	ENSURERELEASE(1, "ensureRelease <my.artifact.id-pattern>") {
+	ENSURERELEASE(1, "ensureRelease <my.project.id-pattern>") {
 		@Override
 		void internalExecute(CommandExecuter commandExecuter, Command command) {
 			Versionable projects = commandExecuter.getUniverse().getAllProjectsWithMatchingIdPattern(command.getArgument(0));

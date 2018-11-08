@@ -56,7 +56,7 @@ class EditVersionModel extends AbstractPropertyChangeSupport {
 			/* If one project fails to create, we want the others being added nevertheless. */
 			try {
 				VersioningProject newVersioningProject = new VersioningProject(project);
-				newVersioningProject.setSelected(isSelected(project.id()));
+				newVersioningProject.setSelected(isSelected(project.id().getArtifactId()));
 	
 				if (versioningStrategy != null) {
 					newVersioningProject.setNewVersion(versioningStrategy.apply(project.getVersion()));

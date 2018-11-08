@@ -7,6 +7,7 @@ import java.util.Set;
 import com.inventage.tools.versiontiger.MavenProject;
 import com.inventage.tools.versiontiger.MavenVersion;
 import com.inventage.tools.versiontiger.Project;
+import com.inventage.tools.versiontiger.ProjectId;
 import com.inventage.tools.versiontiger.ProjectUniverse;
 import com.inventage.tools.versiontiger.Version;
 import com.inventage.tools.versiontiger.VersioningLogger;
@@ -22,22 +23,22 @@ class MavenProjectImpl implements MavenProject {
 	private final String projectPath;
 
 	private String pomContent;
-	private String id;
+	private ProjectId id;
 	private MavenVersion version;
 	private MavenVersion oldVersion;
 	private final VersioningLogger logger;
-	private final VersionFactory versionFactory; 
-	
+	private final VersionFactory versionFactory;
+
 	protected MavenProjectImpl(String projectPath, VersioningLogger logger, VersionFactory versionFactory) {
 		this.projectPath = projectPath;
 		this.logger = logger;
 		this.versionFactory = versionFactory;
 	}
-	
+
 	protected VersioningLogger getLogger() {
 		return logger;
 	}
-	
+
 	protected VersionFactory getVersionFactory() {
 		return versionFactory;
 	}
@@ -46,9 +47,9 @@ class MavenProjectImpl implements MavenProject {
 		return projectPath;
 	}
 
-	public String id() {
+	public ProjectId id() {
 		if (id == null) {
-			id = new XmlHandler().readElement(getPomContent(), "project/artifactId");
+			id = ProjectIdImpl.create(groupId(), artifactId());
 		}
 
 		return id;
@@ -56,8 +57,8 @@ class MavenProjectImpl implements MavenProject {
 
 	@Override
 	public int compareTo(Project o) {
-		String thisId = id();
-		String otherId = o.id();
+		ProjectId thisId = id();
+		ProjectId otherId = o.id();
 		if (thisId != null && otherId != null) {
 			return thisId.compareTo(otherId);
 		}
@@ -75,7 +76,7 @@ class MavenProjectImpl implements MavenProject {
 
 		return version;
 	}
-	
+
 	@Override
 	public boolean isVersionInherited() {
 		return new XmlHandler().readElement(getPomContent(), "project/version") == null;
@@ -113,7 +114,7 @@ class MavenProjectImpl implements MavenProject {
 	public void useReleaseVersion() {
 		setVersion(getVersion().releaseVersion());
 	}
-	
+
 	@Override
 	public void useReleaseVersionWithSuffix(String newSuffix) {
 		setVersion(getVersion().releaseVersionWithSuffix(newSuffix));
@@ -124,8 +125,13 @@ class MavenProjectImpl implements MavenProject {
 	}
 
 	public void setProperty(String key, String value) {
+		String oldValue = getProperty(key);
+		if (oldValue == null) {
+			logError("Unknown property '" + key + "' in project: " + id(), null, null);
+			return;
+		}
+		
 		pomContent = new XmlHandler().writeElement(getPomContent(), "project/properties/" + key, value);
-
 		new FileHandler().writeFileContent(getPomXmlFile(), pomContent);
 
 		logSuccess(getPomXmlFile() + ": project/properties/" + key + " = " + value, null, null);
@@ -142,19 +148,19 @@ class MavenProjectImpl implements MavenProject {
 		return null;
 	}
 
-	public void updateReferencesFor(String id, MavenVersion oldVersion, MavenVersion newVersion, ProjectUniverse projectUniverse) {
+	public void updateReferencesFor(ProjectId id, MavenVersion oldVersion, MavenVersion newVersion, ProjectUniverse projectUniverse) {
 		Element projectElement = new XmlHandler().getElement(getPomContent(), "project");
 		Element dependenciesElement = projectElement.getChild("dependencies");
 		Element dependencyManagementElement = projectElement.getChild("dependencyManagement/dependencies");
-
+		
 		if (oldVersion == null || !oldVersion.equals(newVersion)) {
 			if (updateDependencies(dependenciesElement, id, oldVersion, newVersion) | updateDependencies(dependencyManagementElement, id, oldVersion, newVersion)
 					| updateParent(projectElement, id, oldVersion, newVersion, projectUniverse)) {
-	
+
 				pomContent = projectElement.getDocument().toXML();
 				new FileHandler().writeFileContent(getPomXmlFile(), pomContent);
 			}
-			
+
 			for (File karafFile : getKarafFiles()) {
 				Set<String> updatedReferences = new KarafFeature(karafFile).updateReferencesFor(id, oldVersion, newVersion);
 				for (String updatedKarafReference : updatedReferences) {
@@ -164,14 +170,28 @@ class MavenProjectImpl implements MavenProject {
 		}
 	}
 
-	private boolean updateDependencies(Element dependenciesElement, String id, MavenVersion oldVersion, MavenVersion newVersion) {
+	private String groupId() {
+		String groupId = new XmlHandler().readElement(getPomContent(), "project/groupId");
+		if (groupId == null) {
+			groupId = new XmlHandler().readElement(getPomContent(), "project/parent/groupId");
+		}
+		return groupId;
+	}
+
+	private String artifactId() {
+		return new XmlHandler().readElement(getPomContent(), "project/artifactId");
+	}
+
+	private boolean updateDependencies(Element dependenciesElement, ProjectId id, MavenVersion oldVersion, MavenVersion newVersion) {
 		boolean hasModifications = false;
 
 		if (dependenciesElement != null) {
 			for (Element dependencyElement : dependenciesElement.getChildren()) {
+				Element groupIdElement = dependencyElement.getChild("groupId");
 				Element artifactIdElement = dependencyElement.getChild("artifactId");
 				Element versionElement = dependencyElement.getChild("version");
-				if (artifactIdElement != null && versionElement != null && id.equals(artifactIdElement.getTrimmedText())
+				ProjectId curId = getIdFromElements(groupIdElement, artifactIdElement);
+				if (curId.equalsIgnoreGroupIfUnknown(id) && versionElement != null
 						&& (oldVersion == null || oldVersion.toString().equals(versionElement.getTrimmedText()))) {
 
 					// reference match
@@ -186,20 +206,23 @@ class MavenProjectImpl implements MavenProject {
 		return hasModifications;
 	}
 
-	private boolean updateParent(Element projectElement, String id, MavenVersion oldVersion, MavenVersion newVersion, ProjectUniverse projectUniverse) {
+	private boolean updateParent(Element projectElement, ProjectId id, MavenVersion oldVersion, MavenVersion newVersion, ProjectUniverse projectUniverse) {
 		boolean hasModifications = false;
 
 		Element parentElement = projectElement.getChild("parent");
 		if (parentElement != null) {
+			Element groupIdElement = parentElement.getChild("groupId");
 			Element artifactIdElement = parentElement.getChild("artifactId");
 			Element versionElement = parentElement.getChild("version");
-			if (artifactIdElement != null && id.equals(artifactIdElement.getTrimmedText()) && versionElement != null
+			ProjectId curId = getIdFromElements(groupIdElement, artifactIdElement);
+			
+			if (curId.equalsIgnoreGroupIfUnknown(id) && versionElement != null
 					&& (oldVersion == null || versionElement.getTrimmedText().equals(oldVersion.toString()))) {
 
 				versionElement.setText(newVersion.toString());
 				hasModifications = true;
 				logReferenceSuccess(getPomXmlFile() + ": " + versionElement.getChildPath() + " = " + newVersion, oldVersion, newVersion, id);
-				
+
 				if (isVersionInherited()) {
 					// our (inherited) version changed so lets propagate our version change too
 					projectUniverse.updateReferencesFor(id(), oldVersion, newVersion);
@@ -209,10 +232,18 @@ class MavenProjectImpl implements MavenProject {
 
 		return hasModifications;
 	}
-	
+
+	private ProjectId getIdFromElements(Element groupIdElement, Element artifactIdElement) {
+		ProjectId compositeId = null;
+		if (groupIdElement != null && artifactIdElement != null) {
+			compositeId = ProjectIdImpl.create(groupIdElement.getTrimmedText(), artifactIdElement.getTrimmedText());
+		}
+		return compositeId;
+	}
+
 	private Set<File> getKarafFiles() {
 		Set<File> result = new LinkedHashSet<File>();
-		
+
 		Element propertyElement = new XmlHandler().getElement(getPomContent(), "project/properties/versionTigerFiles");
 		if (propertyElement != null) {
 			String propertyValue = propertyElement.getText();
@@ -227,10 +258,10 @@ class MavenProjectImpl implements MavenProject {
 				}
 			}
 		}
-		
+
 		return result;
 	}
-	
+
 	private void setVersionInKarafFiles(MavenVersion oldVersion, MavenVersion newVersion) {
 		for (File karafFile : getKarafFiles()) {
 			Set<String> updatedReferences = new KarafFeature(karafFile).updateReferencesFor(id, oldVersion, newVersion);
@@ -251,40 +282,40 @@ class MavenProjectImpl implements MavenProject {
 
 		return pomContent;
 	}
-	
+
 	protected void logSuccess(String message, Version oldVersion, Version newVersion) {
 		log(message, VersioningLoggerStatus.SUCCESS, oldVersion, newVersion, null);
 	}
-	
-	protected void logReferenceSuccess(String message, Version oldVersion, Version newVersion, String originalProject) {
-		log(message, VersioningLoggerStatus.SUCCESS, oldVersion, newVersion, originalProject);
+
+	protected void logReferenceSuccess(String message, Version oldVersion, Version newVersion, ProjectId originalProjectId) {
+		log(message, VersioningLoggerStatus.SUCCESS, oldVersion, newVersion, originalProjectId);
 	}
-	
+
 	protected void logWarning(String message, Version oldVersion, Version newVersion) {
 		log(message, VersioningLoggerStatus.WARNING, oldVersion, newVersion, null);
 	}
-	
+
 	protected void logError(String message, Version oldVersion, Version newVersion) {
 		log(message, VersioningLoggerStatus.ERROR, oldVersion, newVersion, null);
 	}
-	
-	protected void logReferenceError(String message, Version oldVersion, Version newVersion, String originalProject) {
-		log(message, VersioningLoggerStatus.ERROR, oldVersion, newVersion, originalProject);
+
+	protected void logReferenceError(String message, Version oldVersion, Version newVersion, ProjectId originalProjectId) {
+		log(message, VersioningLoggerStatus.ERROR, oldVersion, newVersion, originalProjectId);
 	}
-	
-	private void log(String message, VersioningLoggerStatus status, Version oldVersion, Version newVersion, String originalProject) {
+
+	private void log(String message, VersioningLoggerStatus status, Version oldVersion, Version newVersion, ProjectId originalProjectId) {
 		VersioningLoggerItem loggerItem = logger.createVersioningLoggerItem();
-		
+
 		loggerItem.setProject(this);
 		loggerItem.setStatus(status);
-		
-		loggerItem.setOriginalProject(originalProject);
-		
+
+		loggerItem.setOriginalProject(originalProjectId);
+
 		loggerItem.setOldVersion(oldVersion);
 		loggerItem.setNewVersion(newVersion);
-		
+
 		loggerItem.appendToMessage(message);
-		
+
 		logger.addVersioningLoggerItem(loggerItem);
 	}
 
@@ -297,7 +328,7 @@ class MavenProjectImpl implements MavenProject {
 	public boolean exists() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean ensureIsSnapshot() {
 		if (!getVersion().isSnapshot()) {
@@ -315,9 +346,9 @@ class MavenProjectImpl implements MavenProject {
 		}
 		return true;
 	}
-	
+
 	@Override
-	public boolean ensureStrictOsgiDependencyTo(String projectId) {
+	public boolean ensureStrictOsgiDependencyTo(ProjectId projectId) {
 		return true;
 	}
 

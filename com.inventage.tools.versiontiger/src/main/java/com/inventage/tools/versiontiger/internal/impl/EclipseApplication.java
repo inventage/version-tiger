@@ -4,6 +4,7 @@ import java.io.File;
 
 import com.inventage.tools.versiontiger.MavenVersion;
 import com.inventage.tools.versiontiger.OsgiVersion;
+import com.inventage.tools.versiontiger.ProjectId;
 import com.inventage.tools.versiontiger.ProjectUniverse;
 import com.inventage.tools.versiontiger.VersioningLogger;
 import com.inventage.tools.versiontiger.util.FileHandler;
@@ -40,7 +41,7 @@ class EclipseApplication extends MavenProjectImpl {
 	}
 
 	@Override
-	public void updateReferencesFor(String id, MavenVersion oldVersion, MavenVersion newVersion, ProjectUniverse projectUniverse) {
+	public void updateReferencesFor(ProjectId id, MavenVersion oldVersion, MavenVersion newVersion, ProjectUniverse projectUniverse) {
 		super.updateReferencesFor(id, oldVersion, newVersion, projectUniverse);
 
 		OsgiVersion oldOsgiVersion = asOsgiVersion(oldVersion);
@@ -51,8 +52,8 @@ class EclipseApplication extends MavenProjectImpl {
 		}
 	}
 	
-	private boolean updateProductVersion(String id, OsgiVersion oldVersion, OsgiVersion newVersion) {
-		if (id().equals(id)) {
+	private boolean updateProductVersion(ProjectId id, OsgiVersion oldVersion, OsgiVersion newVersion) {
+		if (id().equalsIgnoreGroupIfUnknown(id)) {
 			productContent = new XmlHandler().writeAttribute(getProductXmlContent(), "product", "version", newVersion.toString());
 			
 			logSuccess(getProductXmlFile() + ": product#version = " + newVersion, oldVersion, newVersion);
@@ -61,7 +62,7 @@ class EclipseApplication extends MavenProjectImpl {
 		return false;
 	}
 
-	private boolean updateFeatureReferences(String id, OsgiVersion oldVersion, OsgiVersion newVersion) {
+	private boolean updateFeatureReferences(ProjectId id, OsgiVersion oldVersion, OsgiVersion newVersion) {
 		Element featuresElement = new XmlHandler().getElement(getProductXmlContent(), "product/features");
 
 		boolean hasModifications = false;
@@ -69,7 +70,7 @@ class EclipseApplication extends MavenProjectImpl {
 			Attribute idAttribute = featureElement.getAttribute("id");
 			Attribute versionAttribute = featureElement.getAttribute("version");
 
-			if (idAttribute != null && versionAttribute != null && id.equals(idAttribute.getValue())) {
+			if (idAttribute != null && versionAttribute != null && id.getArtifactId().equals(idAttribute.getValue())) {
 				if (oldVersion == null || oldVersion.toString().equals(versionAttribute.getValue())) {
 					versionAttribute.setValue(newVersion.toString());
 					hasModifications = true;
@@ -93,7 +94,7 @@ class EclipseApplication extends MavenProjectImpl {
 	}
 
 	private File getProductXmlFile() {
-		return new File(projectPath(), id() + ".product");
+		return new File(projectPath(), id().getArtifactId() + ".product");
 	}
 
 }

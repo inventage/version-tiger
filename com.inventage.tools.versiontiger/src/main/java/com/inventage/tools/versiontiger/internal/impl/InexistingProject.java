@@ -2,6 +2,7 @@ package com.inventage.tools.versiontiger.internal.impl;
 
 import com.inventage.tools.versiontiger.MavenVersion;
 import com.inventage.tools.versiontiger.Project;
+import com.inventage.tools.versiontiger.ProjectId;
 import com.inventage.tools.versiontiger.ProjectUniverse;
 import com.inventage.tools.versiontiger.Version;
 import com.inventage.tools.versiontiger.VersioningLogger;
@@ -66,8 +67,8 @@ public class InexistingProject implements Project {
 
 	@Override
 	public int compareTo(Project o) {
-		String thisId = id();
-		String otherId = o.id();
+		ProjectId thisId = id();
+		ProjectId otherId = o.id();
 		if (thisId != null && otherId != null) {
 			return thisId.compareTo(otherId);
 		}
@@ -86,8 +87,8 @@ public class InexistingProject implements Project {
 	}
 
 	@Override
-	public String id() {
-		return "_INEXISTING: " + projectPath;
+	public ProjectId id() {
+		return ProjectIdImpl.create("_INEXISTING", projectPath);
 	}
 
 	@Override
@@ -101,7 +102,7 @@ public class InexistingProject implements Project {
 	}
 
 	@Override
-	public void updateReferencesFor(String id, MavenVersion oldVersion, MavenVersion newVersion, ProjectUniverse projectUniverse) {
+	public void updateReferencesFor(ProjectId id, MavenVersion oldVersion, MavenVersion newVersion, ProjectUniverse projectUniverse) {
 	}
 
 	@Override
@@ -127,7 +128,7 @@ public class InexistingProject implements Project {
 	}
 	
 	@Override
-	public boolean ensureStrictOsgiDependencyTo(String projectId) {
+	public boolean ensureStrictOsgiDependencyTo(ProjectId projectId) {
 		return true;
 	}
 

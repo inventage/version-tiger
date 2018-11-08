@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 import com.inventage.tools.versiontiger.MavenVersion;
 import com.inventage.tools.versiontiger.OsgiVersion;
+import com.inventage.tools.versiontiger.ProjectId;
 import com.inventage.tools.versiontiger.ProjectUniverse;
 import com.inventage.tools.versiontiger.VersioningLogger;
 import com.inventage.tools.versiontiger.util.FileHandler;
@@ -23,7 +24,7 @@ class EclipseUpdateSite extends MavenProjectImpl {
 	}
 
 	@Override
-	public void updateReferencesFor(String id, MavenVersion oldVersion, MavenVersion newVersion, ProjectUniverse projectUniverse) {
+	public void updateReferencesFor(ProjectId id, MavenVersion oldVersion, MavenVersion newVersion, ProjectUniverse projectUniverse) {
 		super.updateReferencesFor(id, oldVersion, newVersion, projectUniverse);
 
 		updateSiteFeatures(id, asOsgiVersion(oldVersion), asOsgiVersion(newVersion));
@@ -33,13 +34,14 @@ class EclipseUpdateSite extends MavenProjectImpl {
 		return mavenVersion == null ? null : getVersionFactory().createOsgiVersion(mavenVersion);
 	}
 
-	private void updateSiteFeatures(String id, OsgiVersion oldVersion, OsgiVersion newVersion) {
+	private void updateSiteFeatures(ProjectId id, OsgiVersion oldVersion, OsgiVersion newVersion) {
 		Element siteElement = new XmlHandler().getElement(getSiteXmlContent(), "site");
+		String aId = id.getArtifactId();
 
 		boolean hasModifications = false;
 		for (Element featureElement : siteElement.getChildren("feature")) {
 			Attribute idAttribute = featureElement.getAttribute("id");
-			if (idAttribute != null && id.equals(idAttribute.getValue())) {
+			if (idAttribute != null && aId.equals(idAttribute.getValue())) {
 				Attribute versionAttribute = featureElement.getAttribute("version");
 				String attributeOldVersion = versionAttribute.getValue();
 				if (versionAttribute != null && (oldVersion == null || oldVersion.toString().equals(attributeOldVersion))) {
@@ -50,10 +52,10 @@ class EclipseUpdateSite extends MavenProjectImpl {
 					Attribute urlAttribute = featureElement.getAttribute("url");
 					if (urlAttribute != null) {
 						String oldUrl = urlAttribute.getValue();
-						Matcher matcher = Pattern.compile(id + "_" + attributeOldVersion, Pattern.LITERAL).matcher(oldUrl);
+						Matcher matcher = Pattern.compile(aId + "_" + attributeOldVersion, Pattern.LITERAL).matcher(oldUrl);
 						StringBuffer newUrl = new StringBuffer();
 						while (matcher.find()) {
-							matcher.appendReplacement(newUrl, id + "_" + newVersion);
+							matcher.appendReplacement(newUrl, aId + "_" + newVersion);
 						}
 						matcher.appendTail(newUrl);
 

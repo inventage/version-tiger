@@ -8,7 +8,7 @@ public abstract class AbstractVersioningLoggerItem implements VersioningLoggerIt
 	public final static String DELIMITER = " - ";
 
 	private Project project;
-	private String originalProject;
+	private ProjectId originalProjectId;
 	private Version oldVersion;
 	private Version newVersion;
 	private VersioningLoggerStatus versioningLoggerStatus = VersioningLoggerStatus.SUCCESS;
@@ -28,16 +28,16 @@ public abstract class AbstractVersioningLoggerItem implements VersioningLoggerIt
 	}
 
 	@Override
-	public void setOriginalProject(String originalProject) {
-		this.originalProject = originalProject;
+	public void setOriginalProject(ProjectId originalProjectId) {
+		this.originalProjectId = originalProjectId;
 	}
 	
-	protected String getOriginalProject() {
-		return originalProject;
+	protected ProjectId getOriginalProject() {
+		return originalProjectId;
 	}
 	
 	private boolean isReference() {
-		return originalProject != null;
+		return originalProjectId != null;
 	}
 
 	@Override
@@ -109,7 +109,7 @@ public abstract class AbstractVersioningLoggerItem implements VersioningLoggerIt
 			if (isReference()) {
 				/* If this is a reference to the examined project in another project, we first display the examined project. */
 				result.append(DELIMITER);
-				result.append(originalProject);
+				result.append(originalProjectId);
 				
 				appendVersionTransistion(result);
 				

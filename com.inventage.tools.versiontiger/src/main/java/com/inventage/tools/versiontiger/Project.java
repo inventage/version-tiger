@@ -2,18 +2,18 @@ package com.inventage.tools.versiontiger;
 
 public interface Project extends Versionable, Comparable<Project>, PropertyHolder {
 
-	String id();
+	ProjectId id();
 
 	String projectPath();
 
 	MavenVersion getVersion();
 
-	void updateReferencesFor(String id, MavenVersion oldVersion, MavenVersion newVersion, ProjectUniverse projectUniverse);
+	void updateReferencesFor(ProjectId id, MavenVersion oldVersion, MavenVersion newVersion, ProjectUniverse projectUniverse);
 
 	boolean isVersionInherited();
 
 	boolean exists();
 
-	boolean ensureStrictOsgiDependencyTo(String projectId);
+	boolean ensureStrictOsgiDependencyTo(ProjectId projectId);
 
 }

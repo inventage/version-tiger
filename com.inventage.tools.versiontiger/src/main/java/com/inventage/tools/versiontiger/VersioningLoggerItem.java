@@ -9,7 +9,7 @@ package com.inventage.tools.versiontiger;
 public interface VersioningLoggerItem {
 	
 	void setProject(Project project);
-	void setOriginalProject(String originalProject);
+	void setOriginalProject(ProjectId originalProjectId);
 	void setOldVersion(Version oldVersion);
 	void setNewVersion(Version newVersion);
 	void setStatus(VersioningLoggerStatus versioningLoggerStatus);

@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 import com.inventage.tools.versiontiger.MavenVersion;
 import com.inventage.tools.versiontiger.OsgiVersion;
+import com.inventage.tools.versiontiger.ProjectId;
 import com.inventage.tools.versiontiger.ProjectUniverse;
 import com.inventage.tools.versiontiger.VersioningLogger;
 import com.inventage.tools.versiontiger.util.FileHandler;
@@ -52,7 +53,7 @@ class EclipseRepository extends MavenProjectImpl {
 	}
 
 	@Override
-	public void updateReferencesFor(String id, MavenVersion oldVersion, MavenVersion newVersion, ProjectUniverse projectUniverse) {
+	public void updateReferencesFor(ProjectId id, MavenVersion oldVersion, MavenVersion newVersion, ProjectUniverse projectUniverse) {
 		super.updateReferencesFor(id, oldVersion, newVersion, projectUniverse);
 
 		OsgiVersion oldOsgiVersion = asOsgiVersion(oldVersion);
@@ -62,7 +63,7 @@ class EclipseRepository extends MavenProjectImpl {
 			updateProductReferences(productFile, id, oldOsgiVersion, newOsgiVersion, "product/features", "feature");
 			updateProductReferences(productFile, id, oldOsgiVersion, newOsgiVersion, "product/plugins", "plugin");
 			
-			if (id().equals(id)) {
+			if (id().equalsIgnoreGroupIfUnknown(id)) {
 				setProductVersion(newOsgiVersion, oldOsgiVersion, productFile);
 			}
 		}
@@ -70,7 +71,7 @@ class EclipseRepository extends MavenProjectImpl {
 		updateCategoryFeatureReferences(getCategoryXmlFile(), id, oldOsgiVersion, newOsgiVersion);
 	}
 
-	private void updateProductReferences(File file, String id, OsgiVersion oldVersion, OsgiVersion newVersion, String elementsPath, String elementName) {
+	private void updateProductReferences(File file, ProjectId id, OsgiVersion oldVersion, OsgiVersion newVersion, String elementsPath, String elementName) {
 		String content = new FileHandler().readFileContent(file);
 		Element elements = new XmlHandler().getElement(content, elementsPath);
 
@@ -80,7 +81,7 @@ class EclipseRepository extends MavenProjectImpl {
 				Attribute idAttribute = element.getAttribute("id");
 				Attribute versionAttribute = element.getAttribute("version");
 
-				if (idAttribute != null && versionAttribute != null && id.equals(idAttribute.getValue())) {
+				if (idAttribute != null && versionAttribute != null && id.getArtifactId().equals(idAttribute.getValue())) {
 					if (oldVersion == null || oldVersion.toString().equals(versionAttribute.getValue())) {
 						versionAttribute.setValue(newVersion.toString());
 						hasModifications = true;
@@ -97,17 +98,18 @@ class EclipseRepository extends MavenProjectImpl {
 		}
 	}
 
-	private void updateCategoryFeatureReferences(File categoryXmlFile, String id, OsgiVersion oldVersion, OsgiVersion newVersion) {
+	private void updateCategoryFeatureReferences(File categoryXmlFile, ProjectId id, OsgiVersion oldVersion, OsgiVersion newVersion) {
 		if (categoryXmlFile.exists()) {
 			String content = getCategoryXmlContent();
 			Element siteElement = new XmlHandler().getElement(content, "site");
+			String aId = id.getArtifactId();
 
 			boolean hasModifications = false;
 			for (Element featureElement : siteElement.getChildren("feature")) {
 				Attribute idAttribute = featureElement.getAttribute("id");
 				Attribute versionAttribute = featureElement.getAttribute("version");
 
-				if (idAttribute != null && versionAttribute != null && id.equals(idAttribute.getValue())) {
+				if (idAttribute != null && versionAttribute != null && aId.equals(idAttribute.getValue())) {
 					String attributeOldVersion = versionAttribute.getValue();
 					if (oldVersion == null || oldVersion.toString().equals(attributeOldVersion)) {
 						hasModifications = true;
@@ -118,10 +120,10 @@ class EclipseRepository extends MavenProjectImpl {
 						Attribute urlAttribute = featureElement.getAttribute("url");
 						if (urlAttribute != null) {
 							String oldUrl = urlAttribute.getValue();
-							Matcher matcher = Pattern.compile(id + "_" + attributeOldVersion, Pattern.LITERAL).matcher(oldUrl);
+							Matcher matcher = Pattern.compile(aId + "_" + attributeOldVersion, Pattern.LITERAL).matcher(oldUrl);
 							StringBuffer newUrl = new StringBuffer();
 							while (matcher.find()) {
-								matcher.appendReplacement(newUrl, id + "_" + newVersion);
+								matcher.appendReplacement(newUrl, aId + "_" + newVersion);
 							}
 							matcher.appendTail(newUrl);
 

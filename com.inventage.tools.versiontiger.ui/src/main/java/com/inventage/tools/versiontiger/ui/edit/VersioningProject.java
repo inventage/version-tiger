@@ -28,7 +28,7 @@ class VersioningProject extends AbstractPropertyChangeSupport implements Compara
 	}
 
 	public String getProjectId() {
-		return project.id();
+		return project.id().getArtifactId();
 	}
 
 	public MavenVersion getOldVersion() {

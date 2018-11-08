@@ -5,6 +5,7 @@ import java.io.File;
 import com.inventage.tools.versiontiger.internal.manifest.ManifestParser;
 import com.inventage.tools.versiontiger.MavenVersion;
 import com.inventage.tools.versiontiger.OsgiVersion;
+import com.inventage.tools.versiontiger.ProjectId;
 import com.inventage.tools.versiontiger.ProjectUniverse;
 import com.inventage.tools.versiontiger.VersioningLogger;
 import com.inventage.tools.versiontiger.VersioningLoggerItem;
@@ -44,7 +45,7 @@ class EclipsePlugin extends MavenProjectImpl {
 	}
 	
 	@Override
-	public void updateReferencesFor(String id, MavenVersion oldVersion, MavenVersion newVersion, ProjectUniverse projectUniverse) {
+	public void updateReferencesFor(ProjectId id, MavenVersion oldVersion, MavenVersion newVersion, ProjectUniverse projectUniverse) {
 		super.updateReferencesFor(id, oldVersion, newVersion, projectUniverse);
 		
 		OsgiVersion oldOsgiVersion = asOsgiVersion(oldVersion);
@@ -61,8 +62,8 @@ class EclipsePlugin extends MavenProjectImpl {
 		}
 	}
 	
-	private boolean updatePluginVersion(String id, OsgiVersion oldVersion, OsgiVersion newVersion) {
-		if (id().equals(id)) {
+	private boolean updatePluginVersion(ProjectId id, OsgiVersion oldVersion, OsgiVersion newVersion) {
+		if (id().equalsIgnoreGroupIfUnknown(id)) {
 			Manifest manifest = parseManifest();
 			manifest.setBundleVersion(newVersion.toString());
 			manifestContent = manifest.print();
@@ -74,22 +75,22 @@ class EclipsePlugin extends MavenProjectImpl {
 		return false;
 	}
 	
-	private boolean updateRequireBundleReferences(String id, OsgiVersion oldVersion, OsgiVersion newVersion) {
+	private boolean updateRequireBundleReferences(ProjectId id, OsgiVersion oldVersion, OsgiVersion newVersion) {
 		Manifest manifest = parseManifest();
 		
 		VersioningLoggerItem loggerItem = createLoggerItem(oldVersion, newVersion, id);
-		boolean result = manifest.updateRequireBundleReference(id, oldVersion, newVersion, loggerItem, getVersionFactory().getVersionRangeChangeStrategy());
+		boolean result = manifest.updateRequireBundleReference(id.getArtifactId(), oldVersion, newVersion, loggerItem, getVersionFactory().getVersionRangeChangeStrategy());
 		getLogger().addVersioningLoggerItem(loggerItem);
 		
 		manifestContent = manifest.print();
 		return result;
 	}
 	
-	private boolean updateFragmentHostReference(String id, OsgiVersion oldVersion, OsgiVersion newVersion) {
+	private boolean updateFragmentHostReference(ProjectId id, OsgiVersion oldVersion, OsgiVersion newVersion) {
 		Manifest manifest = parseManifest();
 		
 		VersioningLoggerItem loggerItem = createLoggerItem(oldVersion, newVersion, id);
-		boolean result = manifest.updateFragmentHostReference(id, oldVersion, newVersion, loggerItem, getVersionFactory().getVersionRangeChangeStrategy());
+		boolean result = manifest.updateFragmentHostReference(id.getArtifactId(), oldVersion, newVersion, loggerItem, getVersionFactory().getVersionRangeChangeStrategy());
 		getLogger().addVersioningLoggerItem(loggerItem);
 		
 		manifestContent = manifest.print();
@@ -97,12 +98,12 @@ class EclipsePlugin extends MavenProjectImpl {
 	}
 	
 	@Override
-	public boolean ensureStrictOsgiDependencyTo(String projectId) {
+	public boolean ensureStrictOsgiDependencyTo(ProjectId projectId) {
 		boolean result = super.ensureStrictOsgiDependencyTo(projectId);
 		
 		VersioningLoggerItem loggerItem = createLoggerItem(null, null, projectId);
 		loggerItem.setStatus(VersioningLoggerStatus.ERROR);
-		if (!parseManifest().ensureStrictDependencyTo(projectId, loggerItem)) {
+		if (!parseManifest().ensureStrictDependencyTo(projectId.getArtifactId(), loggerItem)) {
 			getLogger().addVersioningLoggerItem(loggerItem);
 			return false;
 		}
@@ -130,10 +131,10 @@ class EclipsePlugin extends MavenProjectImpl {
 		return new File(metaInfFolder, "MANIFEST.MF");
 	}
 	
-	private VersioningLoggerItem createLoggerItem(OsgiVersion oldVersion, OsgiVersion newVersion, String originalProject) {
+	private VersioningLoggerItem createLoggerItem(OsgiVersion oldVersion, OsgiVersion newVersion, ProjectId originalProjectId) {
 		VersioningLoggerItem loggerItem = getLogger().createVersioningLoggerItem();
 		loggerItem.setProject(this);
-		loggerItem.setOriginalProject(originalProject);
+		loggerItem.setOriginalProject(originalProjectId);
 		loggerItem.setOldVersion(oldVersion);
 		loggerItem.setNewVersion(newVersion);
 		

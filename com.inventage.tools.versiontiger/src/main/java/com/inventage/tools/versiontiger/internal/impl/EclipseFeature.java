@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.inventage.tools.versiontiger.MavenVersion;
 import com.inventage.tools.versiontiger.OsgiVersion;
+import com.inventage.tools.versiontiger.ProjectId;
 import com.inventage.tools.versiontiger.ProjectUniverse;
 import com.inventage.tools.versiontiger.VersioningLogger;
 import com.inventage.tools.versiontiger.util.FileHandler;
@@ -41,7 +42,7 @@ class EclipseFeature extends MavenProjectImpl {
 	}
 
 	@Override
-	public void updateReferencesFor(String id, MavenVersion oldVersion, MavenVersion newVersion, ProjectUniverse projectUniverse) {
+	public void updateReferencesFor(ProjectId id, MavenVersion oldVersion, MavenVersion newVersion, ProjectUniverse projectUniverse) {
 		super.updateReferencesFor(id, oldVersion, newVersion, projectUniverse);
 
 		OsgiVersion oldOsgiVersion = asOsgiVersion(oldVersion);
@@ -53,8 +54,8 @@ class EclipseFeature extends MavenProjectImpl {
 		}
 	}
 	
-	private boolean updateFeatureVersion(String id, OsgiVersion oldVersion, OsgiVersion newVersion) {
-		if (id().equals(id)) {
+	private boolean updateFeatureVersion(ProjectId id, OsgiVersion oldVersion, OsgiVersion newVersion) {
+		if (id().equalsIgnoreGroupIfUnknown(id)) {
 			featureContent = new XmlHandler().writeAttribute(getFeatureXmlContent(), "feature", "version", newVersion.toString());
 
 			logSuccess(getFeatureXmlFile() + ": feature#version = " + newVersion, oldVersion, newVersion);
@@ -63,7 +64,7 @@ class EclipseFeature extends MavenProjectImpl {
 		return false;
 	}
 
-	private boolean updateFeatureXmlReferencesFor(String id, OsgiVersion oldVersion, OsgiVersion newVersion) {
+	private boolean updateFeatureXmlReferencesFor(ProjectId id, OsgiVersion oldVersion, OsgiVersion newVersion) {
 		Element featureElement = new XmlHandler().getElement(getFeatureXmlContent(), "feature");
 
 		if (updatePluginReferences(featureElement, "plugin", id, oldVersion, newVersion)
@@ -75,13 +76,13 @@ class EclipseFeature extends MavenProjectImpl {
 		return false;
 	}
 
-	private boolean updatePluginReferences(Element featureElement, String elementName, String id, OsgiVersion oldVersion, OsgiVersion newVersion) {
+	private boolean updatePluginReferences(Element featureElement, String elementName, ProjectId id, OsgiVersion oldVersion, OsgiVersion newVersion) {
 		boolean hasModifications = false;
 
 		List<Element> children = featureElement.getChildren(elementName);
 		for (Element child : children) {
 			Attribute idAttribute = child.getAttribute("id");
-			if (idAttribute != null && id.equals(idAttribute.getValue())) {
+			if (idAttribute != null && id.getArtifactId().equals(idAttribute.getValue())) {
 				Attribute versionAttribute = child.getAttribute("version");
 				if (versionAttribute != null && (oldVersion == null || oldVersion.toString().equals(versionAttribute.getValue()))) {
 					versionAttribute.setValue(newVersion.toString());

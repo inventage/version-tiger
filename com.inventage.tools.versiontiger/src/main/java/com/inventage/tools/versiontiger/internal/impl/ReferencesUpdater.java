@@ -2,6 +2,7 @@ package com.inventage.tools.versiontiger.internal.impl;
 
 import com.inventage.tools.versiontiger.MavenVersion;
 import com.inventage.tools.versiontiger.Project;
+import com.inventage.tools.versiontiger.ProjectId;
 import com.inventage.tools.versiontiger.ProjectUniverse;
 import com.inventage.tools.versiontiger.VersioningLogger;
 import com.inventage.tools.versiontiger.VersioningLoggerItem;
@@ -32,7 +33,7 @@ class ReferencesUpdater implements Project {
 		projectUniverse.updateReferencesFor(project.id(), oldVersion, newVersion);
 	}
 
-	public String id() {
+	public ProjectId id() {
 		return project.id();
 	}
 
@@ -70,7 +71,7 @@ class ReferencesUpdater implements Project {
 		setVersion(getVersion().releaseVersionWithSuffix(newSuffix));
 	}
 
-	public void updateReferencesFor(String id, MavenVersion oldVersion, MavenVersion newVersion, ProjectUniverse projectUniverse) {
+	public void updateReferencesFor(ProjectId id, MavenVersion oldVersion, MavenVersion newVersion, ProjectUniverse projectUniverse) {
 		project.updateReferencesFor(id, oldVersion, newVersion, projectUniverse);
 	}
 
@@ -119,7 +120,7 @@ class ReferencesUpdater implements Project {
 	}
 	
 	@Override
-	public boolean ensureStrictOsgiDependencyTo(String projectId) {
+	public boolean ensureStrictOsgiDependencyTo(ProjectId projectId) {
 		return project.ensureStrictOsgiDependencyTo(projectId);
 	}
 

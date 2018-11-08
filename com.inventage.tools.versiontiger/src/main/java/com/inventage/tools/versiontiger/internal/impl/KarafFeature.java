@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.inventage.tools.versiontiger.MavenVersion;
+import com.inventage.tools.versiontiger.ProjectId;
 import com.inventage.tools.versiontiger.util.FileHandler;
 import com.inventage.tools.versiontiger.util.XmlHandler;
 
@@ -25,7 +26,7 @@ class KarafFeature {
 		this.filePath = filePath;
 	}
 	
-	Set<String> updateReferencesFor(String id, MavenVersion oldVersion, MavenVersion newVersion) {
+	Set<String> updateReferencesFor(ProjectId id, MavenVersion oldVersion, MavenVersion newVersion) {
 		XmlHandler xmlHandler = new XmlHandler();
 		Set<String> result = new LinkedHashSet<String>();
 		
@@ -49,13 +50,15 @@ class KarafFeature {
 		return result;
 	}
 
-	private String updateBundleReferencesFor(String id, MavenVersion oldVersion, MavenVersion newVersion, Element bundle) {
+	private String updateBundleReferencesFor(ProjectId id, MavenVersion oldVersion, MavenVersion newVersion, Element bundle) {
 		String bundleReference = bundle.getTrimmedText();
 		if (bundleReference.startsWith(BUNDLE_MVN_PREFIX)) {
 			bundleReference = bundleReference.substring(4);
 			String[] gav = bundleReference.split(GAV_SEPARATOR, 3);
 			if (gav != null && gav.length == 3) {
-				if (id.equals(gav[1]) && (oldVersion == null || gav[2].equals(oldVersion.toString()))) {
+				ProjectId curId = ProjectIdImpl.create(gav[0], gav[1]);
+				if (curId.equalsIgnoreGroupIfUnknown(id) && (oldVersion == null || gav[2].equals(oldVersion.toString()))) {
+					
 					bundleReference = BUNDLE_MVN_PREFIX + gav[0] + GAV_SEPARATOR + gav[1] + GAV_SEPARATOR + newVersion;
 					bundle.setText(bundleReference);
 					return bundle.getChildPath() + " = " + bundleReference;
